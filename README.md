@@ -278,8 +278,17 @@ fellaw features two integrated portals:
 
 ## Future Phases & Roadmap
 
-See [DOCUMENTATION.md](./DOCUMENTATION.md) for detailed information about:
+**See [FEATURES_ROADMAP.md](./FEATURES_ROADMAP.md) for comprehensive feature analysis, competitor research, and implementation priorities.**
 
+Key upcoming features:
+- **Contract Review & Analysis** - AI-powered contract risk assessment
+- **Enhanced Legal Research** - Case law search and citation tracking
+- **E-Signature Integration** - DocuSign, Yousign integration
+- **Urgent Legal Help Workflow** - Fast-track for emergencies
+- **Case Outcome Prediction** - ML-based success probability
+- **Court Filing Integration** - beA (German e-filing system)
+
+Also see [DOCUMENTATION.md](./DOCUMENTATION.md) for:
 - **Phase 2**: Enhanced AI capabilities and multi-jurisdiction support
 - **Phase 3**: OpenClaw agent integration for automated legal research
 - **Phase 4**: Mobile applications and offline-first architecture
