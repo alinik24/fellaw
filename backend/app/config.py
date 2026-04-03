@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Literal
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -9,11 +9,17 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=("../.env", ".env"),  # look in project root first, then CWD
+        env_file=("../.env", ".env"),
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
     )
+
+    # ------------------------------------------------------------------ #
+    # Application
+    # ------------------------------------------------------------------ #
+    APP_NAME: str = "fellaw"
+    APP_VERSION: str = "1.0.0"
 
     # ------------------------------------------------------------------ #
     # Database
@@ -30,27 +36,67 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
     # ------------------------------------------------------------------ #
-    # Azure OpenAI – West Europe  (chat completions)
+    # AI Provider Configuration
     # ------------------------------------------------------------------ #
-    AZURE_WEU_ENDPOINT: str = ""
-    AZURE_WEU_KEY: str = ""
-    AZURE_WEU_API_VERSION: str = "2025-01-01-preview"
-    AZURE_CHAT_MODEL: str = "gpt-4.1-mini"
+    AI_PROVIDER: Literal["openai", "azure", "anthropic", "google", "cohere", "local"] = "openai"
+
+    # Model Configuration
+    CHAT_MODEL: str = "gpt-4-turbo-preview"
+    CHAT_TEMPERATURE: float = 0.3
+    CHAT_MAX_TOKENS: int = 2000
+
+    EMBEDDING_MODEL: str = "text-embedding-3-large"
+    EMBEDDING_DIMENSIONS: int = 1536
 
     # ------------------------------------------------------------------ #
-    # Azure OpenAI – Sweden Central  (embeddings)
+    # OpenAI (Standard API)
     # ------------------------------------------------------------------ #
-    AZURE_SE_ENDPOINT: str = ""
-    AZURE_SE_KEY: str = ""
-    AZURE_SE_API_VERSION: str = "2025-04-01-preview"
-    AZURE_EMBEDDING_MODEL: str = "text-embedding-3-large"
-    AZURE_EMBEDDING_DIMENSIONS: int = 1536
+    OPENAI_API_KEY: str = ""
+    OPENAI_ORG_ID: str = ""
+    OPENAI_BASE_URL: str = "https://api.openai.com/v1"
+
+    # ------------------------------------------------------------------ #
+    # Azure OpenAI
+    # ------------------------------------------------------------------ #
+    AZURE_OPENAI_ENDPOINT: str = ""
+    AZURE_OPENAI_API_KEY: str = ""
+    AZURE_OPENAI_API_VERSION: str = "2024-02-15-preview"
+    AZURE_CHAT_DEPLOYMENT: str = "gpt-4-turbo"
+
+    AZURE_EMBEDDING_ENDPOINT: str = ""
+    AZURE_EMBEDDING_API_KEY: str = ""
+    AZURE_EMBEDDING_API_VERSION: str = "2024-02-15-preview"
+    AZURE_EMBEDDING_DEPLOYMENT: str = "text-embedding-3-large"
+
+    # ------------------------------------------------------------------ #
+    # Anthropic Claude
+    # ------------------------------------------------------------------ #
+    ANTHROPIC_API_KEY: str = ""
+
+    # ------------------------------------------------------------------ #
+    # Google AI / Vertex AI
+    # ------------------------------------------------------------------ #
+    GOOGLE_API_KEY: str = ""
+    GOOGLE_PROJECT_ID: str = ""
+    GOOGLE_LOCATION: str = "us-central1"
+
+    # ------------------------------------------------------------------ #
+    # Cohere
+    # ------------------------------------------------------------------ #
+    COHERE_API_KEY: str = ""
+
+    # ------------------------------------------------------------------ #
+    # Local / Ollama
+    # ------------------------------------------------------------------ #
+    LOCAL_MODEL_URL: str = "http://localhost:11434"
+    LOCAL_CHAT_MODEL: str = "llama3.1:8b"
+    LOCAL_EMBEDDING_MODEL: str = "nomic-embed-text"
 
     # ------------------------------------------------------------------ #
     # Azure Document Intelligence
     # ------------------------------------------------------------------ #
     DOCINTEL_ENDPOINT: str = ""
-    DOCINTEL_KEY: str = ""
+    DOCINTEL_API_KEY: str = ""
 
     # ------------------------------------------------------------------ #
     # File uploads
@@ -87,15 +133,128 @@ class Settings(BaseSettings):
             v = v.strip()
             if v.startswith("["):
                 return json.loads(v)
-            # comma-separated fallback
             return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v  # type: ignore[return-value]
 
     # ------------------------------------------------------------------ #
-    # Application metadata
+    # Optional Features
     # ------------------------------------------------------------------ #
-    APP_NAME: str = "fellaw"
-    APP_VERSION: str = "1.0.0"
+    LOG_LEVEL: str = "INFO"
+    DEBUG: bool = False
+    TESTING: bool = False
+
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_PER_MINUTE: int = 60
+
+    CACHE_ENABLED: bool = False
+    REDIS_URL: str = "redis://localhost:6379/0"
+    CACHE_TTL: int = 3600
+
+    # ------------------------------------------------------------------ #
+    # Helper Methods
+    # ------------------------------------------------------------------ #
+
+    def get_chat_client_config(self) -> dict:
+        """Get configuration for chat/completion client based on AI_PROVIDER."""
+        if self.AI_PROVIDER == "openai":
+            return {
+                "provider": "openai",
+                "api_key": self.OPENAI_API_KEY,
+                "org_id": self.OPENAI_ORG_ID or None,
+                "base_url": self.OPENAI_BASE_URL,
+                "model": self.CHAT_MODEL,
+                "temperature": self.CHAT_TEMPERATURE,
+                "max_tokens": self.CHAT_MAX_TOKENS,
+            }
+        elif self.AI_PROVIDER == "azure":
+            return {
+                "provider": "azure",
+                "api_key": self.AZURE_OPENAI_API_KEY,
+                "endpoint": self.AZURE_OPENAI_ENDPOINT,
+                "api_version": self.AZURE_OPENAI_API_VERSION,
+                "deployment": self.AZURE_CHAT_DEPLOYMENT,
+                "temperature": self.CHAT_TEMPERATURE,
+                "max_tokens": self.CHAT_MAX_TOKENS,
+            }
+        elif self.AI_PROVIDER == "anthropic":
+            return {
+                "provider": "anthropic",
+                "api_key": self.ANTHROPIC_API_KEY,
+                "model": self.CHAT_MODEL,
+                "temperature": self.CHAT_TEMPERATURE,
+                "max_tokens": self.CHAT_MAX_TOKENS,
+            }
+        elif self.AI_PROVIDER == "google":
+            return {
+                "provider": "google",
+                "api_key": self.GOOGLE_API_KEY,
+                "project_id": self.GOOGLE_PROJECT_ID or None,
+                "location": self.GOOGLE_LOCATION,
+                "model": self.CHAT_MODEL,
+                "temperature": self.CHAT_TEMPERATURE,
+                "max_tokens": self.CHAT_MAX_TOKENS,
+            }
+        elif self.AI_PROVIDER == "cohere":
+            return {
+                "provider": "cohere",
+                "api_key": self.COHERE_API_KEY,
+                "model": self.CHAT_MODEL,
+                "temperature": self.CHAT_TEMPERATURE,
+                "max_tokens": self.CHAT_MAX_TOKENS,
+            }
+        elif self.AI_PROVIDER == "local":
+            return {
+                "provider": "local",
+                "base_url": self.LOCAL_MODEL_URL,
+                "model": self.LOCAL_CHAT_MODEL,
+                "temperature": self.CHAT_TEMPERATURE,
+                "max_tokens": self.CHAT_MAX_TOKENS,
+            }
+        else:
+            raise ValueError(f"Unsupported AI provider: {self.AI_PROVIDER}")
+
+    def get_embedding_client_config(self) -> dict:
+        """Get configuration for embedding client based on AI_PROVIDER."""
+        if self.AI_PROVIDER == "openai":
+            return {
+                "provider": "openai",
+                "api_key": self.OPENAI_API_KEY,
+                "base_url": self.OPENAI_BASE_URL,
+                "model": self.EMBEDDING_MODEL,
+                "dimensions": self.EMBEDDING_DIMENSIONS,
+            }
+        elif self.AI_PROVIDER == "azure":
+            return {
+                "provider": "azure",
+                "api_key": self.AZURE_EMBEDDING_API_KEY,
+                "endpoint": self.AZURE_EMBEDDING_ENDPOINT,
+                "api_version": self.AZURE_EMBEDDING_API_VERSION,
+                "deployment": self.AZURE_EMBEDDING_DEPLOYMENT,
+                "dimensions": self.EMBEDDING_DIMENSIONS,
+            }
+        elif self.AI_PROVIDER == "cohere":
+            return {
+                "provider": "cohere",
+                "api_key": self.COHERE_API_KEY,
+                "model": self.EMBEDDING_MODEL,
+                "dimensions": self.EMBEDDING_DIMENSIONS,
+            }
+        elif self.AI_PROVIDER == "google":
+            return {
+                "provider": "google",
+                "api_key": self.GOOGLE_API_KEY,
+                "model": self.EMBEDDING_MODEL,
+                "dimensions": self.EMBEDDING_DIMENSIONS,
+            }
+        elif self.AI_PROVIDER == "local":
+            return {
+                "provider": "local",
+                "base_url": self.LOCAL_MODEL_URL,
+                "model": self.LOCAL_EMBEDDING_MODEL,
+                "dimensions": self.EMBEDDING_DIMENSIONS,
+            }
+        else:
+            raise ValueError(f"Unsupported AI provider for embeddings: {self.AI_PROVIDER}")
 
 
 settings = Settings()

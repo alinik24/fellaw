@@ -1,26 +1,61 @@
+# =============================================================================
+# fellaw - Backend Dependencies
+# =============================================================================
+
+# ── Core Framework ───────────────────────────────────────────────────────────
 fastapi==0.115.6
 uvicorn[standard]==0.32.1
+python-multipart==0.0.20
+python-dotenv==1.0.1
+
+# ── Database ─────────────────────────────────────────────────────────────────
 sqlalchemy==2.0.36
 asyncpg==0.30.0
 alembic==1.14.0
+pgvector==0.3.6
+
+# ── Validation & Configuration ───────────────────────────────────────────────
 pydantic==2.10.3
 pydantic-settings==2.7.0
+
+# ── Authentication ───────────────────────────────────────────────────────────
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 bcrypt==4.2.1
-python-multipart==0.0.20
+
+# ── HTTP Client ──────────────────────────────────────────────────────────────
 httpx==0.28.1
-openai==1.57.4
+
+# ── AI Providers (Required: OpenAI SDK for OpenAI/Azure/Local) ──────────────
+openai==1.57.4  # For OpenAI, Azure OpenAI, and local models (Ollama)
+
+# Optional AI Providers (uncomment as needed):
+# anthropic==0.39.0  # For Anthropic Claude
+# google-generativeai==0.8.3  # For Google AI (Gemini)
+# cohere==5.11.4  # For Cohere
+# google-cloud-aiplatform==1.73.0  # For Vertex AI
+
+# ── Document Processing ──────────────────────────────────────────────────────
 aiofiles==24.1.0
-beautifulsoup4==4.12.3
-lxml==5.3.0
-pgvector==0.3.6
-python-dotenv==1.0.1
-tenacity==9.0.0
-redis==5.2.1
-celery==5.4.0
 Pillow==11.0.0
 pypdf==5.1.0
 python-docx==1.1.2
-structlog==24.4.0
-rich==13.9.4
+
+# ── Web Scraping ─────────────────────────────────────────────────────────────
+beautifulsoup4==4.12.3
+lxml==5.3.0
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+tenacity==9.0.0  # Retry logic
+structlog==24.4.0  # Structured logging
+rich==13.9.4  # Rich terminal output
+
+# ── Background Tasks (Optional) ──────────────────────────────────────────────
+# Uncomment if using Celery for async tasks
+# redis==5.2.1
+# celery==5.4.0
+
+# ── Additional Optional Dependencies ─────────────────────────────────────────
+# sentry-sdk==2.19.2  # Error tracking
+# prometheus-client==0.21.0  # Metrics
+# slowapi==0.1.9  # Rate limiting
