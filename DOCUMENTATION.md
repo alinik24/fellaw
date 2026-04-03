@@ -1263,10 +1263,10 @@ For commercial use, please contact: research@example.de
 
 ## Contact
 
-**Project Lead**: [Your Name]  
-**Email**: research@example.de  
-**GitHub**: https://github.com/YOUR_USERNAME/fellaw  
-**Issues**: https://github.com/YOUR_USERNAME/fellaw/issues
+**Project Lead**: [ali_nik]  
+**Email**: alinazarikhah1@gmail.com 
+**GitHub**: https://github.com/alinik24/fellaw  
+**Issues**: https://github.com/alinik24/fellaw/issues
 
 ---
 
