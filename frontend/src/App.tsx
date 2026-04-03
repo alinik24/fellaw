@@ -25,6 +25,15 @@ const UrgentSelect  = lazy(() => import('@/pages/UrgentSelect'))
 const UrgentAction  = lazy(() => import('@/pages/UrgentAction'))
 const UrgentSummary = lazy(() => import('@/pages/UrgentSummary'))
 
+// Case Type-Specific Forms
+const CaseTypeSelector    = lazy(() => import('@/pages/CaseTypeSelector'))
+const NewCaseEmployment   = lazy(() => import('@/pages/NewCaseEmployment'))
+const NewCaseFamily       = lazy(() => import('@/pages/NewCaseFamily'))
+const NewCaseImmigration  = lazy(() => import('@/pages/NewCaseImmigration'))
+const NewCaseConsumer     = lazy(() => import('@/pages/NewCaseConsumer'))
+const NewCaseTraffic      = lazy(() => import('@/pages/NewCaseTraffic'))
+const NewCaseHousing      = lazy(() => import('@/pages/NewCaseHousing'))
+
 // Professional Portal
 const LawyerDashboard   = lazy(() => import('@/pages/pro/LawyerDashboard'))
 const LawyerOnboarding  = lazy(() => import('@/pages/pro/LawyerOnboarding'))
@@ -92,7 +101,14 @@ export default function App() {
         >
           <Route path="/dashboard"   element={<Dashboard />} />
           <Route path="/cases"       element={<Cases />} />
-          <Route path="/cases/new"   element={<NewCase />} />
+          <Route path="/cases/new"   element={<CaseTypeSelector />} />
+          <Route path="/cases/new/employment"   element={<NewCaseEmployment />} />
+          <Route path="/cases/new/family"       element={<NewCaseFamily />} />
+          <Route path="/cases/new/immigration"  element={<NewCaseImmigration />} />
+          <Route path="/cases/new/consumer"     element={<NewCaseConsumer />} />
+          <Route path="/cases/new/traffic"      element={<NewCaseTraffic />} />
+          <Route path="/cases/new/housing"      element={<NewCaseHousing />} />
+          <Route path="/cases/new/general"      element={<NewCase />} />
           <Route path="/cases/:id"   element={<CaseDetail />} />
           <Route path="/chat"        element={<Chat />} />
           <Route path="/chat/:conversationId" element={<Chat />} />
