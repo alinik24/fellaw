@@ -20,6 +20,11 @@ const Documents   = lazy(() => import('@/pages/Documents'))
 const FindLawyer  = lazy(() => import('@/pages/FindLawyer'))
 const MyReferrals = lazy(() => import('@/pages/MyReferrals'))
 
+// Urgent Legal Help
+const UrgentSelect  = lazy(() => import('@/pages/UrgentSelect'))
+const UrgentAction  = lazy(() => import('@/pages/UrgentAction'))
+const UrgentSummary = lazy(() => import('@/pages/UrgentSummary'))
+
 // Professional Portal
 const LawyerDashboard   = lazy(() => import('@/pages/pro/LawyerDashboard'))
 const LawyerOnboarding  = lazy(() => import('@/pages/pro/LawyerOnboarding'))
@@ -95,6 +100,10 @@ export default function App() {
           <Route path="/documents"   element={<Documents />} />
           <Route path="/find-lawyer" element={<FindLawyer />} />
           <Route path="/referrals"   element={<MyReferrals />} />
+          {/* Urgent Legal Help */}
+          <Route path="/urgent/select" element={<UrgentSelect />} />
+          <Route path="/urgent/action/:type" element={<UrgentAction />} />
+          <Route path="/urgent/summary/:type" element={<UrgentSummary />} />
         </Route>
 
         {/* ── Professional Portal (protected, pro layout) ── */}
