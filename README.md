@@ -316,7 +316,7 @@ Please open an issue before starting work on major changes.
 
 ## License
 
-For academic / research use — Fraunhofer research project.
+For academic / research use.
 
 ---
 
@@ -330,8 +330,8 @@ For academic / research use — Fraunhofer research project.
 
 For questions, issues, or collaboration:
 
-- **GitHub Issues**: [https://github.com/YOUR_USERNAME/fellaw/issues](https://github.com/YOUR_USERNAME/fellaw/issues)
-- **Research Contact**: research@example.de
+- **GitHub Issues**: [https://github.com/YOUR_USERNAME/fellaw/issues](https://github.com/alinik24/fellaw/issues)
+- **Research Contact**: alinazarikhah1@gmail.com
 
 ---
 
