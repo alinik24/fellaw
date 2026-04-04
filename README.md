@@ -68,34 +68,67 @@ fellaw/
 ├── docker-compose.yml   # Docker orchestration
 ├── .env.example        # Environment variables template
 └── README.md           # This file
-```
-
 ---
-
+```
 ## 🏗️ Architecture
 
 FelLaw uses a shared PostgreSQL database instance for efficient resource management:
 
+```mermaid
+flowchart LR
+    U[Users] --> F[Frontend React + TypeScript + Vite]
+    F --> B[Backend API FastAPI + SQLAlchemy]
+    B --> D[(PostgreSQL)]
+    A[Adminer] --> D
+
+    subgraph Repo [fellaw repository]
+        F
+        B
+        D
+        A
+        C[Docker Compose]
+    end
+
+    C --> F
+    C --> B
+    C --> D
+    C --> A
 ```
-┌──────────────┐         ┌──────────────┐         ┌──────────────┐
-│              │         │              │         │              │
-│   Frontend   │────────▶│   Backend    │────────▶│  PostgreSQL  │
-│   (React)    │         │  (FastAPI)   │         │   (Shared)   │
-│   Port 80    │         │  Port 8000   │         │  Port 5432   │
-│              │         │              │         │              │
-└──────────────┘         └──────────────┘         └──────────────┘
-                                                         │
-                                                         ▼
-                                                  ┌──────────────┐
-                                                  │   Adminer    │
-                                                  │  Port 8080   │
-                                                  └──────────────┘
+
+```mermaid
+flowchart TD
+    R[fellaw]
+
+    R --> FE[frontend/]
+    R --> BE[backend/]
+    R --> ENV[.env.example]
+    R --> DC[docker-compose.yml]
+    R --> RD[README.md]
+
+    FE --> FE1[src/pages]
+    FE --> FE2[src/components]
+    FE --> FE3[src/contexts]
+    FE --> FE4[src/lib]
+    FE --> FE5[index.css]
+    FE --> FE6[public/]
+    FE --> FE7[package.json]
+
+    BE --> BE1[app/api]
+    BE --> BE2[app/models]
+    BE --> BE3[app/core]
+    BE --> BE4[main.py]
+    BE --> BE5[alembic/]
+    BE --> BE6[uploads/]
+    BE --> BE7[requirements.txt]
+
+    FE -. UI requests .-> API[FastAPI backend]
+    API -. ORM auth business logic .-> DB[(PostgreSQL)]
+    ADM[Adminer :8080] -. DB admin .-> DB
 ```
 
 ---
 
 ## ✨ Features
-
 ### Client-Facing Features
 - **Urgent Legal Help Workflow**: Crisis-driven intake with immediate routing
 - **Case-Specific Intake Forms**: Tailored forms for 6 different legal areas
