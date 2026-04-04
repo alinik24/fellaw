@@ -14,13 +14,15 @@ import {
   Phone,
   Globe,
   X,
-  Home
+  Home,
+  MessageCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ChatAssistant } from '@/components/ChatAssistant';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,6 +31,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const { t } = useLanguage();
   const location = useLocation();
 
@@ -68,13 +71,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   const navigationLinks = [
-    { name: 'My Cases', icon: Briefcase, href: '/ongoing-cases' },
-    { name: 'Law Firms Network', icon: Building2, href: '/law-firms' },
-    { name: 'Find Lawyers', icon: UserCheck, href: '/find-lawyer' },
-    { name: 'Legal Insurance', icon: Shield, href: '/insurance' },
-    { name: 'Self-Service Legal Tools', icon: BookOpen, href: '/self-service' },
-    { name: 'Contact & Support', icon: Phone, href: '/contact' }
+    { name: 'My Cases', icon: Briefcase, href: '/ongoing-cases', requiresAuth: true },
+    { name: 'Law Firms Network', icon: Building2, href: '/law-firms', requiresAuth: false },
+    { name: 'Find Lawyers', icon: UserCheck, href: '/find-lawyer', requiresAuth: false },
+    { name: 'Legal Insurance', icon: Shield, href: '/insurance', requiresAuth: false },
+    { name: 'Self-Service Legal Tools', icon: BookOpen, href: '/self-service', requiresAuth: false },
+    { name: 'Contact & Support', icon: Phone, href: '/contact', requiresAuth: false }
   ];
+
+  const handleNavClick = (e: React.MouseEvent, link: typeof navigationLinks[0]) => {
+    if (link.requiresAuth && !isRegisteredUser) {
+      e.preventDefault();
+      window.location.href = '/auth/user/login';
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-background relative">
@@ -168,10 +178,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="p-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center space-x-2">
+                <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMenuOpen(false)}>
                   <img src="/logo.png" alt="fellaw" className="h-6 w-6 object-contain" />
                   <span className="text-lg font-semibold">fellaw</span>
-                </div>
+                </Link>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -184,17 +194,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
               {/* Navigation Links */}
               <nav className="space-y-4 mb-8">
-                {navigationLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <link.icon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <span className="text-gray-800 dark:text-gray-200">{link.name}</span>
-                  </Link>
-                ))}
+                {navigationLinks
+                  .filter(link => !link.requiresAuth || isRegisteredUser)
+                  .map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.href}
+                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted transition-colors"
+                      onClick={(e) => {
+                        handleNavClick(e, link);
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <link.icon className="h-5 w-5 text-muted-foreground" />
+                      <span className="text-foreground">{link.name}</span>
+                    </Link>
+                  ))}
               </nav>
             </div>
           </div>
@@ -205,6 +220,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main className="pt-16 min-h-screen">
         {children}
       </main>
+
+      {/* Floating Chat Button */}
+      {!isChatOpen && !isEmergencyMode && (
+        <Button
+          onClick={() => setIsChatOpen(true)}
+          className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg hover:scale-110 transition-transform"
+          size="icon"
+        >
+          <MessageCircle className="h-6 w-6" />
+        </Button>
+      )}
+
+      {/* Chat Assistant */}
+      {isChatOpen && <ChatAssistant onClose={() => setIsChatOpen(false)} />}
     </div>
   );
 };

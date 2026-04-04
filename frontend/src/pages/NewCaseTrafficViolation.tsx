@@ -39,20 +39,20 @@ const NewCaseTrafficViolation = () => {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-            <Car className="h-8 w-8 text-white" />
+          <div className="w-16 h-16 mx-auto mb-6 bg-primary rounded-xl flex items-center justify-center">
+            <Car className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Traffic Violation Case</h1>
+          <h1 className="text-4xl font-bold mb-4 text-foreground">Traffic Violation Case</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Provide specific details about your traffic violation to receive targeted legal guidance.
           </p>
         </div>
 
         {/* Violation Details */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle>Violation Details</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">Violation Details</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Please provide specific information about your traffic violation.
             </CardDescription>
           </CardHeader>
@@ -120,10 +120,10 @@ const NewCaseTrafficViolation = () => {
         </Card>
 
         {/* Document Upload */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle>Supporting Documents</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">Supporting Documents</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Upload any relevant documents such as the fine notice, photos, or witness statements.
             </CardDescription>
           </CardHeader>
@@ -132,7 +132,7 @@ const NewCaseTrafficViolation = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('fine-notice')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -144,7 +144,7 @@ const NewCaseTrafficViolation = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('photos')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <Upload className="h-8 w-8" />
                 <div className="text-center">
@@ -156,7 +156,7 @@ const NewCaseTrafficViolation = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('documents')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -171,10 +171,10 @@ const NewCaseTrafficViolation = () => {
                 <Label>Uploaded Files:</Label>
                 <div className="space-y-2">
                   {uploadedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-2 bg-green-50 dark:bg-green-900/30 rounded border">
-                      <Upload className="h-4 w-4 text-green-600" />
+                    <div key={index} className="flex items-center space-x-2 p-2 bg-success/10 rounded border">
+                      <Upload className="h-4 w-4 text-success" />
                       <span className="text-sm font-medium">{file}</span>
-                      <span className="text-xs text-green-600">✓ Uploaded & Analyzed</span>
+                      <span className="text-xs text-success">✓ Uploaded & Analyzed</span>
                     </div>
                   ))}
                 </div>
@@ -184,35 +184,34 @@ const NewCaseTrafficViolation = () => {
         </Card>
 
         {/* AI Guidance */}
-        <Card className="bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-lg p-6 mb-8">
+        <Card className="bg-primary/10 backdrop-blur-sm border-2 border-primary rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="text-blue-800">AI Legal Guidance</CardTitle>
+            <CardTitle className="text-primary">AI Legal Guidance</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-blue-700 mb-4">
-              Based on German traffic law, traffic violations can often be contested if there are procedural errors, 
+            <p className="text-foreground mb-4">
+              Based on German traffic law, traffic violations can often be contested if there are procedural errors,
               unclear signage, or mitigating circumstances. Our AI will analyze your case for potential defenses.
             </p>
-            <div className="text-sm text-blue-600">
-              <strong>Common defenses include:</strong> Faulty measurement equipment, unclear road signs, 
+            <div className="text-sm text-muted-foreground">
+              <strong>Common defenses include:</strong> Faulty measurement equipment, unclear road signs,
               emergency situations, or procedural violations in the citation process.
             </div>
           </CardContent>
         </Card>
 
         {/* Submission */}
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
           <CardContent className="text-center">
-            <h3 className="text-xl font-semibold mb-4">Ready for Traffic Law Analysis?</h3>
+            <h3 className="text-xl font-semibold mb-4 text-foreground">Ready for Traffic Law Analysis?</h3>
             <p className="text-muted-foreground mb-6">
-              Our AI will analyze your traffic violation case, review applicable German traffic laws, 
+              Our AI will analyze your traffic violation case, review applicable German traffic laws,
               and recommend the best defense strategy.
             </p>
             <Button
               size="lg"
               disabled={!canSubmit}
               asChild={canSubmit}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
               {canSubmit ? (
                 <Link to={`/case-assessment/traffic-${Date.now()}`}>

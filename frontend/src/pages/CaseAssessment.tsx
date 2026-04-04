@@ -27,9 +27,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const CaseAssessment = () => {
   const { caseId } = useParams<{ caseId: string }>();
+  const { t } = useLanguage();
   const [disclaimerAcknowledged, setDisclaimerAcknowledged] = useState(false);
   const [assessmentStep, setAssessmentStep] = useState<'intake' | 'assessment' | 'options'>('intake');
   const [caseConfirmed, setCaseConfirmed] = useState(false);
@@ -67,26 +69,26 @@ const CaseAssessment = () => {
   const renderIntakeStep = () => (
     <div className="space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">Confirm Your Case Details</h1>
+        <h1 className="text-3xl font-bold mb-4 text-foreground">Confirm Your Case Details</h1>
         <p className="text-muted-foreground">Review and confirm the information we've extracted from your input.</p>
       </div>
 
-      <Card className="bg-blue-50/80 dark:bg-blue-900/30 backdrop-blur-sm border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6">
+      <Card className="bg-primary/10 backdrop-blur-sm border-2 border-primary rounded-lg p-6">
         <CardHeader>
-          <CardTitle>AI Auto-Categorization</CardTitle>
+          <CardTitle className="text-foreground">AI Auto-Categorization</CardTitle>
         </CardHeader>
         <CardContent>
           <p>Based on your input, this appears to be a <strong>{mockCaseData.legalArea}</strong> (tenancy law) concerning a <strong>{mockCaseData.specificProcedure}</strong> (rent increase).</p>
         </CardContent>
       </Card>
 
-      <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6">
+      <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
         <CardHeader>
-          <CardTitle>Dynamic Case Preview</CardTitle>
+          <CardTitle className="text-foreground">Dynamic Case Preview</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <h3 className="font-semibold">Case Name (Suggested)</h3>
+            <h3 className="font-semibold text-foreground">Case Name (Suggested)</h3>
             <p className="text-muted-foreground">{mockCaseData.caseName}</p>
           </div>
           <div>
@@ -115,7 +117,7 @@ const CaseAssessment = () => {
       <div className="text-center">
         <p className="mb-4">Is this an accurate starting point for your case?</p>
         <div className="space-x-4">
-          <Button onClick={() => setCaseConfirmed(true)} className="bg-green-600 hover:bg-green-700">
+          <Button onClick={() => setCaseConfirmed(true)}>
             <CheckCircle2 className="h-4 w-4 mr-2" />
             Yes, Looks Good
           </Button>
@@ -131,13 +133,13 @@ const CaseAssessment = () => {
   const renderAssessmentStep = () => (
     <div className="space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">Your Case: Assessment & Options</h1>
+        <h1 className="text-3xl font-bold mb-4 text-foreground">Your Case: Assessment & Options</h1>
         <Progress value={75} className="w-full max-w-md mx-auto" />
       </div>
 
-      <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6">
+      <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
         <CardHeader>
-          <CardTitle>Legal Assessment (AI-driven)</CardTitle>
+          <CardTitle className="text-foreground">Legal Assessment (AI-driven)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
@@ -151,15 +153,15 @@ const CaseAssessment = () => {
               Relevant Rules Summary & Links:
             </h3>
             <div className="space-y-2">
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded border dark:border-blue-700">
-                <p className="text-sm font-medium">§§ 557a BGB - Mietpreisbremse (Rent Brake)</p>
+              <div className="p-3 bg-primary/10 rounded border border-primary">
+                <p className="text-sm font-medium text-foreground">§§ 557a BGB - Mietpreisbremse (Rent Brake)</p>
                 <p className="text-xs text-muted-foreground">Rent increases in areas with tight housing markets are limited to 10% above local comparative rent.</p>
-                <a href="#" className="text-blue-600 text-xs hover:underline">View on gesetze-im-internet.de</a>
+                <a href="#" className="text-primary text-xs hover:underline">View on gesetze-im-internet.de</a>
               </div>
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded border dark:border-blue-700">
+              <div className="p-3 bg-primary/10 rounded border border-primary">
                 <p className="text-sm font-medium">Paderborn Rent Brake Regulation (2020)</p>
                 <p className="text-xs text-muted-foreground">Specific application of rent brake rules in Paderborn housing market.</p>
-                <a href="#" className="text-blue-600 text-xs hover:underline">View official NRW housing portal</a>
+                <a href="#" className="text-primary text-xs hover:underline">View official NRW housing portal</a>
               </div>
             </div>
           </div>
@@ -171,19 +173,19 @@ const CaseAssessment = () => {
             </h3>
             <div className="space-y-2">
               <div className="flex items-start space-x-2">
-                <Lightbulb className="h-4 w-4 text-yellow-500 mt-1 flex-shrink-0" />
+                <Lightbulb className="h-4 w-4 text-warning mt-1 flex-shrink-0" />
                 <p className="text-sm">Gather all rental communication records and payment history documentation</p>
               </div>
               <div className="flex items-start space-x-2">
-                <Lightbulb className="h-4 w-4 text-yellow-500 mt-1 flex-shrink-0" />
+                <Lightbulb className="h-4 w-4 text-warning mt-1 flex-shrink-0" />
                 <p className="text-sm">Research comparable rent prices in your Paderborn neighborhood using official sources</p>
               </div>
               <div className="flex items-start space-x-2">
-                <Lightbulb className="h-4 w-4 text-yellow-500 mt-1 flex-shrink-0" />
+                <Lightbulb className="h-4 w-4 text-warning mt-1 flex-shrink-0" />
                 <p className="text-sm">Respond to rent increase notice within legal deadline (usually 3 months)</p>
               </div>
               <div className="flex items-start space-x-2">
-                <Lightbulb className="h-4 w-4 text-yellow-500 mt-1 flex-shrink-0" />
+                <Lightbulb className="h-4 w-4 text-warning mt-1 flex-shrink-0" />
                 <p className="text-sm">Consider mediation before formal legal proceedings to save costs</p>
               </div>
             </div>
@@ -193,56 +195,56 @@ const CaseAssessment = () => {
           <div>
             <h3 className="font-semibold mb-4">Scenario Outcomes (AI Prediction):</h3>
             <div className="grid md:grid-cols-3 gap-4">
-              <Card className="border-red-200 bg-red-50/50">
+              <Card className="bg-card border-2 border-destructive">
                 <CardHeader className="pb-3">
                   <div className="flex items-center space-x-2">
-                    <AlertCircle className="h-5 w-5 text-red-600" />
-                    <CardTitle className="text-lg text-red-800">Worse Scenario</CardTitle>
+                    <AlertCircle className="h-5 w-5 text-destructive" />
+                    <CardTitle className="text-lg text-foreground">Worse Scenario</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-red-700 mb-2">
+                  <p className="text-sm text-foreground mb-2">
                     Rent increase is upheld due to insufficient evidence or procedural errors in your objection.
                   </p>
                   <div className="space-y-2">
-                    <Progress value={scenarioProgress.worse} className="h-2 bg-red-100" />
-                    <div className="text-xs text-red-600 font-medium">{scenarioProgress.worse}% likelihood</div>
+                    <Progress value={scenarioProgress.worse} className="h-2 [&>div]:bg-destructive" />
+                    <div className="text-xs text-destructive font-medium">{scenarioProgress.worse}% likelihood</div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-yellow-200 bg-yellow-50/50">
+              <Card className="bg-card border-2 border-warning">
                 <CardHeader className="pb-3">
                   <div className="flex items-center space-x-2">
-                    <Scale className="h-5 w-5 text-yellow-600" />
-                    <CardTitle className="text-lg text-yellow-800">Middle Scenario</CardTitle>
+                    <Scale className="h-5 w-5 text-warning" />
+                    <CardTitle className="text-lg text-foreground">Middle Scenario</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-yellow-700 mb-2">
+                  <p className="text-sm text-foreground mb-2">
                     Partial success - rent increase reduced but not completely invalidated through negotiation.
                   </p>
                   <div className="space-y-2">
-                    <Progress value={scenarioProgress.middle} className="h-2 bg-yellow-100" />
-                    <div className="text-xs text-yellow-600 font-medium">{scenarioProgress.middle}% likelihood</div>
+                    <Progress value={scenarioProgress.middle} className="h-2 [&>div]:bg-warning" />
+                    <div className="text-xs text-warning font-medium">{scenarioProgress.middle}% likelihood</div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/30">
+              <Card className="bg-card border-2 border-success">
                 <CardHeader className="pb-3">
                   <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    <CardTitle className="text-lg text-green-800">Best Scenario</CardTitle>
+                    <CheckCircle className="h-5 w-5 text-success" />
+                    <CardTitle className="text-lg text-foreground">Best Scenario</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-green-700 mb-2">
+                  <p className="text-sm text-foreground mb-2">
                     Complete invalidation of rent increase based on Mietpreisbremse violations with potential compensation.
                   </p>
                   <div className="space-y-2">
-                    <Progress value={scenarioProgress.best} className="h-2 bg-green-100" />
-                    <div className="text-xs text-green-600 font-medium">{scenarioProgress.best}% likelihood</div>
+                    <Progress value={scenarioProgress.best} className="h-2 [&>div]:bg-success" />
+                    <div className="text-xs text-success font-medium">{scenarioProgress.best}% likelihood</div>
                   </div>
                 </CardContent>
               </Card>
@@ -255,11 +257,11 @@ const CaseAssessment = () => {
           <div>
             <h3 className="font-semibold mb-2">Relevant Similar Cases & User Experiences:</h3>
             <div className="space-y-2">
-              <div className="p-3 bg-gray-50 rounded">
-                <p className="text-sm">"Successfully challenged rent increase in Paderborn - saved €200/month" - JuraForum user</p>
+              <div className="p-3 bg-card border-2 border-border rounded">
+                <p className="text-sm text-foreground">"Successfully challenged rent increase in Paderborn - saved €200/month" - JuraForum user</p>
               </div>
-              <div className="p-3 bg-gray-50 rounded">
-                <p className="text-sm">"Mietpreisbremse applies in Paderborn since 2020" - Mieterverein NRW</p>
+              <div className="p-3 bg-card border-2 border-border rounded">
+                <p className="text-sm text-foreground">"Mietpreisbremse applies in Paderborn since 2020" - Mieterverein NRW</p>
               </div>
             </div>
           </div>
@@ -267,16 +269,18 @@ const CaseAssessment = () => {
       </Card>
 
       {/* Important Disclaimer */}
-      <Card className="bg-orange-50/80 backdrop-blur-sm border border-orange-200 rounded-lg p-6">
+      <Card className="bg-card border-2 border-warning rounded-lg p-6">
         <CardHeader>
-          <CardTitle className="text-orange-800">Important Disclaimer</CardTitle>
+          <CardTitle className="text-foreground flex items-center">
+            <AlertCircle className="h-5 w-5 mr-2 text-warning" />
+            Important Disclaimer
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-orange-700 mb-4">This assessment is AI-generated and for informational purposes only. It is NOT legal advice and does not substitute for consultation with a qualified lawyer. Always seek professional legal counsel for specific situations.</p>
-          <Button 
-            variant="secondary" 
+          <p className="text-foreground mb-4">This assessment is AI-generated and for informational purposes only. It is NOT legal advice and does not substitute for consultation with a qualified lawyer. Always seek professional legal counsel for specific situations.</p>
+          <Button
+            variant="secondary"
             onClick={handleDisclaimerAcknowledge}
-            className="bg-orange-100 hover:bg-orange-200"
           >
             <CheckCircle2 className="h-4 w-4 mr-2" />
             Acknowledge & Continue
@@ -288,164 +292,193 @@ const CaseAssessment = () => {
       {disclaimerAcknowledged && (
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-6">Your Next Steps: Tailored Legal Options</h2>
-            <p className="text-muted-foreground">Based on your case assessment and preferences, here are the pathways available to you. Select the option that best suits your needs and budget.</p>
+            <h2 className="text-3xl font-bold mb-6 text-foreground">{t('caseAssessment.nextSteps')}</h2>
+            <p className="text-muted-foreground">{t('caseAssessment.nextStepsDesc')}</p>
           </div>
 
-          <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Self-Service Option */}
-            <Card className="bg-blue-50/80 dark:bg-blue-900/30 backdrop-blur-sm border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 shadow-md">
-              <CardHeader>
+            <Card className="bg-card border-2 border-primary rounded-lg p-6 shadow-md flex flex-col">
+              <CardHeader className="p-0 mb-6">
                 <div className="flex items-center space-x-2">
-                  <ListChecks className="h-6 w-6 text-blue-600" />
-                  <CardTitle className="text-xl">1. Self-Service Legal Tools</CardTitle>
+                  <ListChecks className="h-6 w-6 text-primary flex-shrink-0" />
+                  <CardTitle className="text-lg text-foreground leading-tight">1. {t('caseAssessment.selfService')}</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p>Manage your legal case independently using our AI-powered platform. Get step-by-step guidance, automated document creation, and easy communication support.</p>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Best For:</h4>
-                  <p className="text-sm text-muted-foreground">Straightforward administrative issues, minor disputes, or if you want full control over your case.</p>
+              <CardContent className="p-0 flex flex-col flex-1">
+                <div className="flex flex-col">
+                  {/* 1. Description paragraph - based on LONGEST across 3 cards */}
+                  <div className="h-[84px] mb-16">
+                    <p className="text-sm text-foreground leading-relaxed">{t('caseAssessment.selfServiceDesc')}</p>
+                  </div>
+
+                  {/* 2. Best For section - Title + Content as one block */}
+                  <div className="h-[104px] mb-6">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.bestFor')}</h4>
+                    <p className="text-sm text-foreground leading-relaxed">{t('caseAssessment.bestForSelf')}</p>
+                  </div>
+
+                  {/* 3. Why Choose section - Title + Content as one block */}
+                  <div className="h-[136px] mb-16">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.whyChoose')}</h4>
+                    <ul className="text-sm text-foreground space-y-2 leading-relaxed">
+                      <li>✅ {t('caseAssessment.whyChooseSelf1')}</li>
+                      <li>✅ {t('caseAssessment.whyChooseSelf2')}</li>
+                      <li>✅ {t('caseAssessment.whyChooseSelf3')}</li>
+                    </ul>
+                  </div>
+
+                  {/* 4. Keep in Mind section - Title + Content as one block - based on LONGEST (3 items) */}
+                  <div className="h-[136px] mb-12">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.keepInMind')}</h4>
+                    <ul className="text-sm text-foreground space-y-2 leading-relaxed">
+                      <li>❌ {t('caseAssessment.keepInMindSelf1')}</li>
+                      <li>❌ {t('caseAssessment.keepInMindSelf2')}</li>
+                      <li>❌ {t('caseAssessment.keepInMindSelf3')}</li>
+                    </ul>
+                  </div>
+
+                  {/* 5. Pricing section - Title + Content as one block */}
+                  <div className="h-[72px] mb-12">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.pricing')}</h4>
+                    <p className="text-lg font-bold text-primary">{t('caseAssessment.pricingSelf')}</p>
+                  </div>
                 </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">Why Choose This?</h4>
-                  <ul className="text-sm space-y-1">
-                    <li>✅ Affordable: Minimal or no legal fees</li>
-                    <li>✅ Full Control: You lead every step</li>
-                    <li>✅ Instant Access: Begin immediately</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Keep in Mind:</h4>
-                  <ul className="text-sm space-y-1">
-                    <li>❌ No lawyer representation</li>
-                    <li>❌ Not suited for complex cases</li>
-                    <li>❌ Requires your time and effort</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Pricing:</h4>
-                  <p className="text-sm font-bold">Starting at €0 – €49/month</p>
-                </div>
-
+                {/* Button - always at bottom */}
                 <Button
-                  className="w-full whitespace-normal h-auto py-3"
+                  className="w-full h-12 mt-auto"
                   disabled={!disclaimerAcknowledged}
                   asChild={disclaimerAcknowledged}
                 >
                   {disclaimerAcknowledged ? (
-                    <Link to="/self-service" className="text-center">Start Self-Service Workflow</Link>
+                    <Link to="/self-service" className="flex items-center justify-center">{t('caseAssessment.startSelfService')}</Link>
                   ) : (
-                    <span className="text-center">Please acknowledge disclaimer first</span>
+                    <span className="text-center text-xs">{t('caseAssessment.acknowledgeFirst')}</span>
                   )}
                 </Button>
               </CardContent>
             </Card>
 
             {/* Lawyer Consultation Option */}
-            <Card className="bg-green-50/80 dark:bg-green-900/30 backdrop-blur-sm border-2 border-green-200 dark:border-green-800 rounded-lg p-6 shadow-md">
-              <CardHeader>
+            <Card className="bg-card border-2 border-success rounded-lg p-6 shadow-md flex flex-col">
+              <CardHeader className="p-0 mb-6">
                 <div className="flex items-center space-x-2">
-                  <Scale className="h-6 w-6 text-green-600" />
-                  <CardTitle className="text-xl">2. Lawyer Consultation</CardTitle>
+                  <Scale className="h-6 w-6 text-success flex-shrink-0" />
+                  <CardTitle className="text-lg text-foreground leading-tight">2. {t('caseAssessment.lawyerConsult')}</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p>Get expert advice from a qualified German lawyer who will review your case and provide strategic recommendations tailored to you.</p>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Best For:</h4>
-                  <p className="text-sm text-muted-foreground">When you want professional legal insight without full representation.</p>
+              <CardContent className="p-0 flex flex-col flex-1">
+                <div className="flex flex-col">
+                  {/* 1. Description paragraph - SAME height */}
+                  <div className="h-[84px] mb-16">
+                    <p className="text-sm text-foreground leading-relaxed">{t('caseAssessment.lawyerConsultDesc')}</p>
+                  </div>
+
+                  {/* 2. Best For section - SAME total height → title aligns */}
+                  <div className="h-[104px] mb-6">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.bestFor')}</h4>
+                    <p className="text-sm text-foreground leading-relaxed">{t('caseAssessment.bestForConsult')}</p>
+                  </div>
+
+                  {/* 3. Why Choose section - SAME total height → title aligns */}
+                  <div className="h-[136px] mb-16">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.whyChoose')}</h4>
+                    <ul className="text-sm text-foreground space-y-2 leading-relaxed">
+                      <li>✅ {t('caseAssessment.whyChooseConsult1')}</li>
+                      <li>✅ {t('caseAssessment.whyChooseConsult2')}</li>
+                      <li>✅ {t('caseAssessment.whyChooseConsult3')}</li>
+                    </ul>
+                  </div>
+
+                  {/* 4. Keep in Mind section - SAME total height → title aligns */}
+                  <div className="h-[136px] mb-12">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.keepInMind')}</h4>
+                    <ul className="text-sm text-foreground space-y-2 leading-relaxed">
+                      <li>❌ {t('caseAssessment.keepInMindConsult1')}</li>
+                      <li>❌ {t('caseAssessment.keepInMindConsult2')}</li>
+                    </ul>
+                  </div>
+
+                  {/* 5. Pricing section - SAME total height → title aligns */}
+                  <div className="h-[72px] mb-12">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.pricing')}</h4>
+                    <p className="text-lg font-bold text-primary">{t('caseAssessment.pricingConsult')}</p>
+                  </div>
                 </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">Why Choose This?</h4>
-                  <ul className="text-sm space-y-1">
-                    <li>✅ Expert Guidance: Clear legal understanding</li>
-                    <li>✅ Cost-Effective: Lower fees than full representation</li>
-                    <li>✅ Focused Advice: Tailored strategy for your situation</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Keep in Mind:</h4>
-                  <ul className="text-sm space-y-1">
-                    <li>❌ No ongoing case management</li>
-                    <li>❌ Fees apply per consultation</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Pricing:</h4>
-                  <p className="text-sm font-bold">€190–€250 + VAT per consultation</p>
-                </div>
-
+                {/* Button - always at bottom */}
                 <Button
-                  className="w-full whitespace-normal h-auto py-3"
+                  className="w-full h-12 mt-auto"
                   disabled={!disclaimerAcknowledged}
                   asChild={disclaimerAcknowledged}
                 >
                   {disclaimerAcknowledged ? (
-                    <Link to="/find-lawyer?consultationOnly=true" className="text-center">Find & Book Lawyer Consultation</Link>
+                    <Link to="/find-lawyer?consultationOnly=true" className="flex items-center justify-center">{t('caseAssessment.bookConsultation')}</Link>
                   ) : (
-                    <span className="text-center">Please acknowledge disclaimer first</span>
+                    <span className="text-center text-xs">{t('caseAssessment.acknowledgeFirst')}</span>
                   )}
                 </Button>
               </CardContent>
             </Card>
 
             {/* Full Representation Option */}
-            <Card className="bg-purple-50/80 dark:bg-purple-900/30 backdrop-blur-sm border-2 border-purple-200 dark:border-purple-800 rounded-lg p-6 shadow-md">
-              <CardHeader>
+            <Card className="bg-card border-2 border-accent rounded-lg p-6 shadow-md flex flex-col">
+              <CardHeader className="p-0 mb-6">
                 <div className="flex items-center space-x-2">
-                  <Briefcase className="h-6 w-6 text-purple-600" />
-                  <CardTitle className="text-xl">3. Full Legal Representation</CardTitle>
+                  <Briefcase className="h-6 w-6 text-accent flex-shrink-0" />
+                  <CardTitle className="text-lg text-foreground leading-tight">3. {t('caseAssessment.fullRep')}</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p>Engage a lawyer to fully manage your case—handling all communication, preparing documents, and representing you in court if needed.</p>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Best For:</h4>
-                  <p className="text-sm text-muted-foreground">Complex disputes, court proceedings, or when you want comprehensive legal support.</p>
+              <CardContent className="p-0 flex flex-col flex-1">
+                <div className="flex flex-col">
+                  {/* 1. Description paragraph - SAME height */}
+                  <div className="h-[84px] mb-16">
+                    <p className="text-sm text-foreground leading-relaxed">{t('caseAssessment.fullRepDesc')}</p>
+                  </div>
+
+                  {/* 2. Best For section - SAME total height → title aligns */}
+                  <div className="h-[104px] mb-6">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.bestFor')}</h4>
+                    <p className="text-sm text-foreground leading-relaxed">{t('caseAssessment.bestForFull')}</p>
+                  </div>
+
+                  {/* 3. Why Choose section - SAME total height → title aligns */}
+                  <div className="h-[136px] mb-16">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.whyChoose')}</h4>
+                    <ul className="text-sm text-foreground space-y-2 leading-relaxed">
+                      <li>✅ {t('caseAssessment.whyChooseFull1')}</li>
+                      <li>✅ {t('caseAssessment.whyChooseFull2')}</li>
+                      <li>✅ {t('caseAssessment.whyChooseFull3')}</li>
+                    </ul>
+                  </div>
+
+                  {/* 4. Keep in Mind section - SAME total height → title aligns */}
+                  <div className="h-[136px] mb-12">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.keepInMind')}</h4>
+                    <ul className="text-sm text-foreground space-y-2 leading-relaxed">
+                      <li>❌ {t('caseAssessment.keepInMindFull1')}</li>
+                      <li>❌ {t('caseAssessment.keepInMindFull2')}</li>
+                    </ul>
+                  </div>
+
+                  {/* 5. Pricing section - SAME total height → title aligns */}
+                  <div className="h-[72px] mb-12">
+                    <h4 className="font-semibold text-foreground mb-3">{t('caseAssessment.pricing')}</h4>
+                    <p className="text-lg font-bold text-primary">{t('caseAssessment.pricingFull')}</p>
+                  </div>
                 </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">Why Choose This?</h4>
-                  <ul className="text-sm space-y-1">
-                    <li>✅ Full-Service Support: From start to finish</li>
-                    <li>✅ Highest Chance of Success: Professional representation</li>
-                    <li>✅ Peace of Mind: Less stress, more confidence</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Keep in Mind:</h4>
-                  <ul className="text-sm space-y-1">
-                    <li>❌ Higher cost</li>
-                    <li>❌ Less direct control over case actions</li>
-                    <li className="text-blue-600">If your case may be resolved outside court, we recommend trying Graybeard Mediation First</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Pricing:</h4>
-                  <p className="text-sm font-bold">€500–€5000+ (varies by case complexity)</p>
-                </div>
-
-                <Button 
-                  className="w-full" 
+                {/* Button - always at bottom */}
+                <Button
+                  className="w-full h-12 mt-auto"
                   disabled={!disclaimerAcknowledged}
                   asChild={disclaimerAcknowledged}
                 >
                   {disclaimerAcknowledged ? (
-                    <Link to="/find-lawyer?fullRepresentation=true">Find & Retain Lawyer</Link>
+                    <Link to="/find-lawyer?fullRepresentation=true" className="flex items-center justify-center">{t('caseAssessment.retainLawyer')}</Link>
                   ) : (
-                    <span>Please acknowledge disclaimer first</span>
+                    <span className="text-center text-xs">{t('caseAssessment.acknowledgeFirst')}</span>
                   )}
                 </Button>
               </CardContent>
@@ -454,16 +487,16 @@ const CaseAssessment = () => {
 
           {/* Graybeard Mediation */}
           {mockCaseData.isSuitableForMediation && disclaimerAcknowledged && (
-            <Card className="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-lg p-6">
+            <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
               <CardContent className="text-center">
                 <div className="flex items-center justify-center mb-4">
-                  <Handshake className="h-8 w-8 text-orange-600 mr-2" />
-                  <h3 className="text-xl font-semibold">Consider Graybeard Mediation First</h3>
+                  <Handshake className="h-8 w-8 text-warning mr-2" />
+                  <h3 className="text-xl font-semibold text-foreground">Consider Graybeard Mediation First</h3>
                 </div>
                 <p className="text-muted-foreground mb-6">
                   Based on your case type, mediation could resolve this dispute faster and at lower cost than traditional legal proceedings.
                 </p>
-                <Button asChild className="bg-orange-600 hover:bg-orange-700">
+                <Button asChild>
                   <Link to={`/graybeard-mediation?caseId=${caseId}&returnTo=/case-assessment/${caseId}`}>
                     Start Graybeard Mediation First
                   </Link>

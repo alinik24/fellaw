@@ -14,7 +14,7 @@ const NotFound = () => {
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center max-w-2xl mx-auto px-4">
         <div className="text-8xl font-bold text-muted-foreground mb-4">404</div>
-        <h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
+        <h1 className="text-4xl font-bold mb-4 text-foreground">Page Not Found</h1>
         <p className="text-xl text-muted-foreground mb-8">
           The page you're looking for doesn't exist or has been moved.
         </p>
@@ -35,7 +35,7 @@ const NotFound = () => {
         
         <div className="mt-8">
           <p className="text-sm text-muted-foreground">
-            Need help? <Link to="/contact" className="text-blue-600 hover:underline">Contact our support team</Link>
+            Need help? <Link to="/contact" className="text-primary hover:underline">Contact our support team</Link>
           </p>
         </div>
       </div>

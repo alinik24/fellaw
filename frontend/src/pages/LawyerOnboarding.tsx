@@ -113,9 +113,9 @@ const LawyerOnboarding = () => {
   };
 
   const renderStep1 = () => (
-    <Card>
+    <Card className="bg-card border-2 hover:shadow-xl transition-all">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-foreground">
           <Building2 className="h-6 w-6" />
           <span>Firm/Individual Profile</span>
         </CardTitle>
@@ -210,9 +210,9 @@ const LawyerOnboarding = () => {
   );
 
   const renderStep2 = () => (
-    <Card>
+    <Card className="bg-card border-2 hover:shadow-xl transition-all">
       <CardHeader>
-        <CardTitle>Legal Specializations</CardTitle>
+        <CardTitle className="text-foreground">Legal Specializations</CardTitle>
         <CardDescription>Select your areas of legal expertise (select multiple)</CardDescription>
       </CardHeader>
       <CardContent>
@@ -244,9 +244,9 @@ const LawyerOnboarding = () => {
   );
 
   const renderStep3 = () => (
-    <Card>
+    <Card className="bg-card border-2 hover:shadow-xl transition-all">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-foreground">
           <Globe className="h-6 w-6" />
           <span>Languages Spoken</span>
         </CardTitle>
@@ -281,9 +281,9 @@ const LawyerOnboarding = () => {
   );
 
   const renderStep4 = () => (
-    <Card>
+    <Card className="bg-card border-2 hover:shadow-xl transition-all">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-foreground">
           <DollarSign className="h-6 w-6" />
           <span>Pricing Models</span>
         </CardTitle>
@@ -342,9 +342,9 @@ const LawyerOnboarding = () => {
   );
 
   const renderStep5 = () => (
-    <Card>
+    <Card className="bg-card border-2 hover:shadow-xl transition-all">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-foreground">
           <Shield className="h-6 w-6" />
           <span>Professional Verification</span>
         </CardTitle>
@@ -366,7 +366,7 @@ const LawyerOnboarding = () => {
         
         <div>
           <Label htmlFor="license-upload">Upload License/Certificate</Label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+          <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
             <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm text-muted-foreground mb-2">
               Upload your bar admission certificate or professional license
@@ -376,11 +376,11 @@ const LawyerOnboarding = () => {
             </Button>
           </div>
         </div>
-        
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded">
-          <p className="text-sm text-blue-800">
+
+        <div className="p-4 bg-primary/10 rounded">
+          <p className="text-sm text-foreground">
             <Shield className="h-4 w-4 inline mr-1" />
-            All documents are securely encrypted and only used for verification purposes. 
+            All documents are securely encrypted and only used for verification purposes.
             Your information will be verified within 24-48 hours.
           </p>
         </div>
@@ -390,9 +390,9 @@ const LawyerOnboarding = () => {
 
   const renderStep6 = () => (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-card border-2 hover:shadow-xl transition-all">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center space-x-2 text-foreground">
             <Calendar className="h-6 w-6" />
             <span>Availability Settings</span>
           </CardTitle>
@@ -417,26 +417,26 @@ const LawyerOnboarding = () => {
       </Card>
 
       {/* Profile Preview */}
-      <Card>
+      <Card className="bg-card border-2 hover:shadow-xl transition-all">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center space-x-2 text-foreground">
             <Eye className="h-6 w-6" />
             <span>Public Profile Preview</span>
           </CardTitle>
           <CardDescription>How your profile will appear to potential clients</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
+          <div className="border border-border rounded-lg p-4 bg-muted">
             <div className="flex items-center space-x-3 mb-3">
-              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
                 {formData.firmName.charAt(0) || 'L'}
               </div>
               <div>
-                <h3 className="font-semibold">{formData.firmName || 'Your Firm Name'}</h3>
+                <h3 className="font-semibold text-foreground">{formData.firmName || 'Your Firm Name'}</h3>
                 <p className="text-sm text-muted-foreground">{formData.city || 'Your City'}</p>
               </div>
             </div>
-            
+
             <div className="space-y-2 text-sm">
               <div className="flex flex-wrap gap-1">
                 {formData.specializations.slice(0, 3).map((spec) => (
@@ -446,12 +446,12 @@ const LawyerOnboarding = () => {
                   <Badge variant="secondary" className="text-xs">+{formData.specializations.length - 3} more</Badge>
                 )}
               </div>
-              
+
               <div className="flex items-center space-x-4 text-muted-foreground">
                 <span>📞 {formData.phone || 'Phone Number'}</span>
                 <span>💬 {formData.languages.slice(0, 2).join(', ') || 'Languages'}</span>
               </div>
-              
+
               {formData.freeConsultation && (
                 <Badge variant="outline" className="text-xs">Free Consultation</Badge>
               )}
@@ -492,14 +492,14 @@ const LawyerOnboarding = () => {
         
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4">Lawyer Onboarding & Profile Setup</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4">Lawyer Onboarding & Profile Setup</h1>
           <p className="text-xl text-muted-foreground">Join our network of qualified legal professionals</p>
         </div>
 
         {/* Progress Bar */}
-        <Card className="mb-8">
+        <Card className="mb-8 bg-card border-2 hover:shadow-xl transition-all">
           <CardContent className="p-6">
-            <div className="flex justify-between text-sm mb-2">
+            <div className="flex justify-between text-sm mb-2 text-foreground">
               <span>Step {currentStep} of {totalSteps}</span>
               <span>{Math.round(progressPercentage)}% Complete</span>
             </div>
@@ -530,8 +530,8 @@ const LawyerOnboarding = () => {
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           ) : (
-            <Button 
-              className="bg-green-600 hover:bg-green-700"
+            <Button
+              className="bg-success hover:bg-success/90 text-success-foreground"
               disabled={!isStepValid()}
               asChild
             >

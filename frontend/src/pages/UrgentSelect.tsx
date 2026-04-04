@@ -156,12 +156,12 @@ const UrgentSelect = () => {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {emergencyTypes.map((emergency) => (
             <Link key={emergency.id} to={`/urgent/action/${emergency.id}`} className="group">
-              <Card className="bg-background border-2 border-border rounded-lg p-6 hover:border-red-500 hover:shadow-lg transition-all duration-200 h-full">
+              <Card className="bg-card border-2 rounded-lg p-6 hover:border-destructive hover:shadow-lg transition-all duration-200 h-full">
                 <CardHeader className="pb-4">
-                  <div className="p-3 bg-red-50 dark:bg-red-900/30 rounded-lg w-fit mb-4">
-                    <emergency.icon className="h-8 w-8 text-red-600 dark:text-red-400" />
+                  <div className="p-3 bg-destructive/10 rounded-lg w-fit mb-4">
+                    <emergency.icon className="h-8 w-8 text-destructive" />
                   </div>
-                  <CardTitle className="text-xl font-semibold group-hover:text-red-600 transition-colors">
+                  <CardTitle className="text-xl font-semibold text-foreground group-hover:text-destructive transition-colors">
                     {emergency.title}
                   </CardTitle>
                   <CardDescription className="text-sm text-muted-foreground">
@@ -174,13 +174,13 @@ const UrgentSelect = () => {
                     <ul className="space-y-1">
                       {emergency.features.map((feature, index) => (
                         <li key={index} className="text-xs text-muted-foreground flex items-start">
-                          <span className="w-1 h-1 bg-red-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                          <span className="w-1 h-1 bg-destructive rounded-full mt-2 mr-2 flex-shrink-0"></span>
                           {feature}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="flex items-center text-red-600 font-medium">
+                  <div className="flex items-center text-destructive font-medium">
                     <span className="text-sm">Get Help Now</span>
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </div>
@@ -192,9 +192,9 @@ const UrgentSelect = () => {
 
         {/* AI Voice Assistant Option */}
         <div className="max-w-2xl mx-auto">
-          <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
+          <Card className="bg-card border-2 border-primary rounded-lg p-6 text-center">
             <div className="flex flex-col items-center">
-              <Mic className="h-12 w-12 text-blue-600 dark:text-blue-400 mb-4" />
+              <Mic className="h-12 w-12 text-primary mb-4" />
               <h3 className="text-xl font-semibold mb-2 text-foreground">Can't Find Your Situation?</h3>
               <p className="text-muted-foreground mb-6">
                 Our AI can understand and respond to any emergency through voice interaction.

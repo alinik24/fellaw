@@ -129,9 +129,9 @@ const LawyerDashboard = () => {
   const renderDashboardContent = () => (
     <div className="space-y-6">
       {/* Urgent Alerts */}
-      <Card className="border-red-200 bg-red-50/50">
+      <Card className="border-destructive bg-destructive/10">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-red-800">
+          <CardTitle className="flex items-center space-x-2 text-foreground">
             <AlertTriangle className="h-6 w-6" />
             <span>Urgent Client Alerts</span>
             <Badge variant="destructive">{dashboardStats.urgentAlerts}</Badge>
@@ -140,12 +140,12 @@ const LawyerDashboard = () => {
         <CardContent>
           <div className="space-y-3">
             {urgentAlerts.map((alert) => (
-              <div key={alert.id} className="p-3 bg-white rounded border-l-4 border-red-500">
+              <div key={alert.id} className="p-3 bg-card rounded border-l-4 border-destructive">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="font-medium text-red-800">{alert.type}</p>
+                    <p className="font-medium text-foreground">{alert.type}</p>
                     <p className="text-sm text-muted-foreground">Client: {alert.client}</p>
-                    <p className="text-sm">{alert.situation}</p>
+                    <p className="text-sm text-foreground">{alert.situation}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">{alert.timestamp}</p>
@@ -163,48 +163,48 @@ const LawyerDashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="bg-card border-2 hover:shadow-xl transition-all">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Inbox className="h-8 w-8 text-blue-600 mr-3" />
+              <Inbox className="h-8 w-8 text-primary mr-3" />
               <div>
-                <p className="text-2xl font-bold">{dashboardStats.newRequests}</p>
+                <p className="text-2xl font-bold text-foreground">{dashboardStats.newRequests}</p>
                 <p className="text-sm text-muted-foreground">New Client Requests</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card className="bg-card border-2 hover:shadow-xl transition-all">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Briefcase className="h-8 w-8 text-green-600 mr-3" />
+              <Briefcase className="h-8 w-8 text-success mr-3" />
               <div>
-                <p className="text-2xl font-bold">{dashboardStats.activeCases}</p>
+                <p className="text-2xl font-bold text-foreground">{dashboardStats.activeCases}</p>
                 <p className="text-sm text-muted-foreground">Active Cases</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card className="bg-card border-2 hover:shadow-xl transition-all">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Clock className="h-8 w-8 text-orange-600 mr-3" />
+              <Clock className="h-8 w-8 text-warning mr-3" />
               <div>
-                <p className="text-2xl font-bold">{dashboardStats.upcomingDeadlines}</p>
+                <p className="text-2xl font-bold text-foreground">{dashboardStats.upcomingDeadlines}</p>
                 <p className="text-sm text-muted-foreground">Upcoming Deadlines</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card className="bg-card border-2 hover:shadow-xl transition-all">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <DollarSign className="h-8 w-8 text-green-600 mr-3" />
+              <DollarSign className="h-8 w-8 text-success mr-3" />
               <div>
-                <p className="text-2xl font-bold">{dashboardStats.thisMonthRevenue}</p>
+                <p className="text-2xl font-bold text-foreground">{dashboardStats.thisMonthRevenue}</p>
                 <p className="text-sm text-muted-foreground">This Month Revenue</p>
               </div>
             </div>
@@ -215,9 +215,9 @@ const LawyerDashboard = () => {
       {/* Main Dashboard Widgets */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* New Client Requests */}
-        <Card>
+        <Card className="bg-card border-2 hover:shadow-xl transition-all">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between text-foreground">
               <span>New Client Requests</span>
               <Button variant="outline" size="sm">
                 Review All Requests
@@ -228,15 +228,15 @@ const LawyerDashboard = () => {
           <CardContent>
             <div className="space-y-4">
               {newClientRequests.map((request) => (
-                <div key={request.id} className="p-3 border rounded hover:bg-gray-50 dark:hover:bg-gray-800">
+                <div key={request.id} className="p-3 border border-border rounded hover:bg-muted">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-medium">{request.client}</p>
+                      <p className="font-medium text-foreground">{request.client}</p>
                       <p className="text-sm text-muted-foreground">{request.caseType}</p>
-                      <p className="text-sm">{request.description}</p>
+                      <p className="text-sm text-foreground">{request.description}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">{request.estimatedValue}</p>
+                      <p className="text-sm font-medium text-foreground">{request.estimatedValue}</p>
                       <p className="text-xs text-muted-foreground">{request.requestedDate}</p>
                     </div>
                   </div>
@@ -251,9 +251,9 @@ const LawyerDashboard = () => {
         </Card>
 
         {/* Upcoming Deadlines */}
-        <Card>
+        <Card className="bg-card border-2 hover:shadow-xl transition-all">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between text-foreground">
               <span>Upcoming Deadlines</span>
               <Button variant="outline" size="sm">
                 View All Deadlines
@@ -264,16 +264,16 @@ const LawyerDashboard = () => {
           <CardContent>
             <div className="space-y-4">
               {upcomingDeadlines.map((deadline) => (
-                <div key={deadline.id} className="p-3 border rounded">
+                <div key={deadline.id} className="p-3 border border-border rounded">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-medium">{deadline.case}</p>
-                      <p className="text-sm">{deadline.task}</p>
+                      <p className="font-medium text-foreground">{deadline.case}</p>
+                      <p className="text-sm text-foreground">{deadline.task}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">{deadline.deadline}</p>
-                      <Badge 
-                        variant={deadline.priority === 'high' ? 'destructive' : 
+                      <p className="text-sm font-medium text-foreground">{deadline.deadline}</p>
+                      <Badge
+                        variant={deadline.priority === 'high' ? 'destructive' :
                                 deadline.priority === 'medium' ? 'secondary' : 'outline'}
                         className="text-xs"
                       >
@@ -289,16 +289,16 @@ const LawyerDashboard = () => {
       </div>
 
       {/* Recent Activity Feed */}
-      <Card>
+      <Card className="bg-card border-2 hover:shadow-xl transition-all">
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle className="text-foreground">Recent Activity</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {recentActivity.map((activity, index) => (
               <div key={index} className="flex items-center space-x-3 text-sm">
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <span className="flex-1">{activity.action}</span>
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <span className="flex-1 text-foreground">{activity.action}</span>
                 <span className="text-muted-foreground">{activity.time}</span>
               </div>
             ))}
@@ -309,9 +309,9 @@ const LawyerDashboard = () => {
   );
 
   const renderPlaceholderContent = (title: string) => (
-    <Card>
+    <Card className="bg-card border-2 hover:shadow-xl transition-all">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="text-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground">This section is under development and will be available soon.</p>
@@ -338,19 +338,19 @@ const LawyerDashboard = () => {
     <div className="min-h-screen bg-background">
       <div className="flex">
         {/* Left Navigation Sidebar */}
-        <div className="w-64 bg-white border-r border-border p-6 min-h-screen">
+        <div className="w-64 bg-card border-r border-border p-6 min-h-screen">
           <div className="mb-8">
-            <h2 className="text-xl font-bold">Legal Command Center</h2>
+            <h2 className="text-xl font-bold text-foreground">Legal Command Center</h2>
             <p className="text-sm text-muted-foreground">Dr. Maria Weber</p>
           </div>
-          
+
           <nav className="space-y-2">
             {sidebarItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors ${
-                  activeTab === item.id ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600' : 'hover:bg-gray-50'
+                  activeTab === item.id ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-foreground'
                 }`}
               >
                 <div className="flex items-center space-x-3">
@@ -373,7 +373,7 @@ const LawyerDashboard = () => {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h1 className="text-3xl font-bold">
+                <h1 className="text-3xl font-bold text-foreground">
                   {sidebarItems.find(item => item.id === activeTab)?.label || 'Dashboard'}
                 </h1>
                 <p className="text-muted-foreground">Welcome back, Dr. Weber</p>

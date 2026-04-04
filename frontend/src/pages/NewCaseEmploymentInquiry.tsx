@@ -39,20 +39,20 @@ const NewCaseEmploymentInquiry = () => {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-600 to-green-600 rounded-xl flex items-center justify-center">
-            <Briefcase className="h-8 w-8 text-white" />
+          <div className="w-16 h-16 mx-auto mb-6 bg-primary rounded-xl flex items-center justify-center">
+            <Briefcase className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Employment Law Inquiry</h1>
+          <h1 className="text-4xl font-bold mb-4 text-foreground">Employment Law Inquiry</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Get guidance on employment law matters including workplace rights, termination, contracts, and workplace disputes.
           </p>
         </div>
 
         {/* Employment Details */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle>Employment Issue Details</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">Employment Issue Details</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Please provide information about your employment law situation.
             </CardDescription>
           </CardHeader>
@@ -135,7 +135,7 @@ const NewCaseEmploymentInquiry = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('contract')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -147,7 +147,7 @@ const NewCaseEmploymentInquiry = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('correspondence')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <Upload className="h-8 w-8" />
                 <div className="text-center">
@@ -159,7 +159,7 @@ const NewCaseEmploymentInquiry = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('evidence')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -174,10 +174,10 @@ const NewCaseEmploymentInquiry = () => {
                 <Label>Uploaded Files:</Label>
                 <div className="space-y-2">
                   {uploadedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-2 bg-green-50 dark:bg-green-900/30 rounded border">
-                      <Upload className="h-4 w-4 text-green-600" />
+                    <div key={index} className="flex items-center space-x-2 p-2 bg-success/10 rounded border">
+                      <Upload className="h-4 w-4 text-success" />
                       <span className="text-sm font-medium">{file}</span>
-                      <span className="text-xs text-green-600">✓ Uploaded & Analyzed</span>
+                      <span className="text-xs text-success">✓ Uploaded & Analyzed</span>
                     </div>
                   ))}
                 </div>
@@ -187,35 +187,34 @@ const NewCaseEmploymentInquiry = () => {
         </Card>
 
         {/* AI Guidance */}
-        <Card className="bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-lg p-6 mb-8">
+        <Card className="bg-primary/10 backdrop-blur-sm border-2 border-primary rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="text-blue-800">Employment Law Guidance</CardTitle>
+            <CardTitle className="text-primary">Employment Law Guidance</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-blue-700 mb-4">
-              German employment law provides strong worker protections including termination protections, 
+            <p className="text-foreground mb-4">
+              German employment law provides strong worker protections including termination protections,
               equal treatment requirements, and comprehensive rights for employees.
             </p>
-            <div className="text-sm text-blue-600">
-              <strong>Key protections include:</strong> Notice periods for termination, protection against unfair dismissal, 
+            <div className="text-sm text-muted-foreground">
+              <strong>Key protections include:</strong> Notice periods for termination, protection against unfair dismissal,
               anti-discrimination laws, wage continuation during illness, and works council rights.
             </div>
           </CardContent>
         </Card>
 
         {/* Submission */}
-        <Card className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-6">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
           <CardContent className="text-center">
-            <h3 className="text-xl font-semibold mb-4">Ready for Employment Law Analysis?</h3>
+            <h3 className="text-xl font-semibold mb-4 text-foreground">Ready for Employment Law Analysis?</h3>
             <p className="text-muted-foreground mb-6">
-              Our AI will analyze your employment law situation, review applicable German labor law, 
+              Our AI will analyze your employment law situation, review applicable German labor law,
               and recommend the best course of action to protect your rights.
             </p>
             <Button
               size="lg"
               disabled={!canSubmit}
               asChild={canSubmit}
-              className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
             >
               {canSubmit ? (
                 <Link to={`/case-assessment/employment-${Date.now()}`}>

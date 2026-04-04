@@ -46,28 +46,28 @@ const UrgentSummary = () => {
       status: 'Complete',
       detail: '4:32 minutes, HD quality',
       icon: FileText,
-      statusColor: 'text-green-600'
+      statusColor: 'text-success'
     },
     {
       name: 'GPS Location Data',
       status: 'Complete',
       detail: 'Precise coordinates + timestamp',
       icon: MapPin,
-      statusColor: 'text-green-600'
+      statusColor: 'text-success'
     },
     {
       name: 'Timeline Documentation',
       status: 'Complete',
       detail: '8 events logged with timestamps',
       icon: Clock,
-      statusColor: 'text-green-600'
+      statusColor: 'text-success'
     },
     {
       name: 'Photo Evidence',
       status: 'Missing',
       detail: 'No photos captured',
       icon: Upload,
-      statusColor: 'text-orange-600'
+      statusColor: 'text-warning'
     }
   ];
 
@@ -95,42 +95,42 @@ const UrgentSummary = () => {
         </div>
 
         {/* Emergency Status */}
-        <Card className="bg-green-50/80 backdrop-blur-sm border border-green-200 rounded-lg p-6 mb-8">
+        <Card className="bg-success/10 backdrop-blur-sm border border-success rounded-lg p-6 mb-8">
           <div className="flex items-center justify-center space-x-3">
-            <CheckCircle className="h-8 w-8 text-green-600" />
+            <CheckCircle className="h-8 w-8 text-success" />
             <div>
-              <h2 className="text-xl font-semibold text-green-800">Emergency Response Complete</h2>
-              <p className="text-green-700">Your situation has been documented and you have taken appropriate protective actions.</p>
+              <h2 className="text-xl font-semibold text-foreground">Emergency Response Complete</h2>
+              <p className="text-muted-foreground">Your situation has been documented and you have taken appropriate protective actions.</p>
             </div>
           </div>
         </Card>
 
         {/* Status & Legal Options for Accident Cases */}
         {isAccidentCase && (
-          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6 mb-8">
+          <Card className="bg-card backdrop-blur-sm border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
             <CardHeader>
-              <CardTitle>Your Status & Legal Options</CardTitle>
+              <CardTitle className="text-foreground">Your Status & Legal Options</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <Link to="/find-lawyer" className="block">
-                  <Card className="bg-blue-50 border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer">
+                  <Card className="bg-primary/10 border-primary hover:bg-primary/20 transition-colors cursor-pointer">
                     <CardContent className="p-4 flex items-center space-x-3">
-                      <GraduationCap className="h-6 w-6 text-blue-600" />
+                      <GraduationCap className="h-6 w-6 text-primary" />
                       <div>
-                        <div className="font-medium">I'm a Student</div>
+                        <div className="font-medium text-foreground">I'm a Student</div>
                         <div className="text-sm text-muted-foreground">Access student legal aid</div>
                       </div>
                     </CardContent>
                   </Card>
                 </Link>
-                
+
                 <Link to="/find-lawyer" className="block">
-                  <Card className="bg-green-50 border-green-200 hover:bg-green-100 transition-colors cursor-pointer">
+                  <Card className="bg-success/10 border-success hover:bg-success/20 transition-colors cursor-pointer">
                     <CardContent className="p-4 flex items-center space-x-3">
-                      <Shield className="h-6 w-6 text-green-600" />
+                      <Shield className="h-6 w-6 text-success" />
                       <div>
-                        <div className="font-medium">I Have Legal Insurance</div>
+                        <div className="font-medium text-foreground">I Have Legal Insurance</div>
                         <div className="text-sm text-muted-foreground">Check coverage options</div>
                       </div>
                     </CardContent>
@@ -138,16 +138,16 @@ const UrgentSummary = () => {
                 </Link>
               </div>
 
-              <div className="border-t pt-6">
+              <div className="border-t border-border pt-6">
                 <div className="flex items-start space-x-3 mb-4">
-                  <DollarSign className="h-6 w-6 text-orange-600 mt-1" />
+                  <DollarSign className="h-6 w-6 text-warning mt-1" />
                   <div>
-                    <div className="font-medium">Estimated Cost</div>
-                    <div className="text-lg font-semibold text-orange-600">{estimatedCost}</div>
+                    <div className="font-medium text-foreground">Estimated Cost</div>
+                    <div className="text-lg font-semibold text-warning">{estimatedCost}</div>
                     <div className="text-sm text-muted-foreground">{costDescription}</div>
                   </div>
                 </div>
-                
+
                 <Button asChild>
                   <Link to="/case-assessment/initial-review">
                     Explore Detailed Legal Options
@@ -160,9 +160,9 @@ const UrgentSummary = () => {
 
         {/* Further Incident Details for Accident Cases */}
         {isAccidentCase && (
-          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6 mb-8">
+          <Card className="bg-card backdrop-blur-sm border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
             <CardHeader>
-              <CardTitle>Further Incident Details (Optional)</CardTitle>
+              <CardTitle className="text-foreground">Further Incident Details (Optional)</CardTitle>
               <CardDescription>
                 Adding more evidence can strengthen your case and insurance claim.
               </CardDescription>
@@ -187,9 +187,9 @@ const UrgentSummary = () => {
         )}
 
         {/* Captured Documentation Summary */}
-        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6 mb-8">
+        <Card className="bg-card backdrop-blur-sm border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle>Documentation Summary</CardTitle>
+            <CardTitle className="text-foreground">Documentation Summary</CardTitle>
             <CardDescription>
               Review all collected evidence and documentation from your emergency response.
             </CardDescription>
@@ -197,11 +197,11 @@ const UrgentSummary = () => {
           <CardContent>
             <div className="space-y-4">
               {collectedDocuments.map((doc, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <doc.icon className="h-5 w-5 text-gray-600" />
+                    <doc.icon className="h-5 w-5 text-muted-foreground" />
                     <div>
-                      <div className="font-medium">{doc.name}</div>
+                      <div className="font-medium text-foreground">{doc.name}</div>
                       <div className="text-sm text-muted-foreground">{doc.detail}</div>
                     </div>
                   </div>
@@ -210,9 +210,9 @@ const UrgentSummary = () => {
                       {doc.status}
                     </span>
                     {doc.status === 'Complete' ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-success" />
                     ) : (
-                      <AlertTriangle className="h-4 w-4 text-orange-600" />
+                      <AlertTriangle className="h-4 w-4 text-warning" />
                     )}
                   </div>
                 </div>
@@ -222,10 +222,10 @@ const UrgentSummary = () => {
         </Card>
 
         {/* Important Missing Details */}
-        <Card className="bg-orange-50/80 dark:bg-orange-900/30 backdrop-blur-sm border-2 border-orange-200 dark:border-orange-800 rounded-lg p-6 mb-8">
+        <Card className="bg-warning/10 backdrop-blur-sm border-2 border-warning rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="text-orange-800">Important Missing Details</CardTitle>
-            <CardDescription className="text-orange-700">
+            <CardTitle className="text-foreground">Important Missing Details</CardTitle>
+            <CardDescription className="text-muted-foreground">
               These items could strengthen your case if added now.
             </CardDescription>
           </CardHeader>
@@ -244,9 +244,9 @@ const UrgentSummary = () => {
         </Card>
 
         {/* Decision Point */}
-        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6">
+        <Card className="bg-card backdrop-blur-sm border-2 hover:shadow-xl transition-all rounded-lg p-6">
           <CardHeader>
-            <CardTitle>What would you like to do next?</CardTitle>
+            <CardTitle className="text-foreground">What would you like to do next?</CardTitle>
             <CardDescription>
               Choose how you want to proceed with your documented case.
             </CardDescription>
@@ -254,20 +254,20 @@ const UrgentSummary = () => {
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">
               {/* Create Full Legal Case */}
-              <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors cursor-pointer">
+              <Card className="border-2 border-primary hover:border-primary/80 transition-colors cursor-pointer">
                 <CardHeader>
                   <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-6 w-6 text-blue-600" />
-                    <CardTitle className="text-lg">Create Full Legal Case</CardTitle>
+                    <CheckCircle className="h-6 w-6 text-primary" />
+                    <CardTitle className="text-lg text-foreground">Create Full Legal Case</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="mb-4">
-                    Get comprehensive AI analysis, lawyer matching, and full legal support for your situation. 
+                    Get comprehensive AI analysis, lawyer matching, and full legal support for your situation.
                     This includes case strategy, document preparation, and potential representation.
                   </CardDescription>
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full"
                     asChild
                     onClick={() => setSelectedDecision('case')}
                   >
@@ -279,20 +279,20 @@ const UrgentSummary = () => {
               </Card>
 
               {/* Download Files Only */}
-              <Card className="border-2 border-gray-200 hover:border-gray-400 transition-colors cursor-pointer">
+              <Card className="border-2 border-border hover:border-muted-foreground transition-colors cursor-pointer">
                 <CardHeader>
                   <div className="flex items-center space-x-3">
-                    <Download className="h-6 w-6 text-gray-600" />
-                    <CardTitle className="text-lg">Download Files Only</CardTitle>
+                    <Download className="h-6 w-6 text-muted-foreground" />
+                    <CardTitle className="text-lg text-foreground">Download Files Only</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="mb-4">
-                    Download your collected data and documentation for personal records or to share 
+                    Download your collected data and documentation for personal records or to share
                     with your own legal representation. All files are encrypted and legally admissible.
                   </CardDescription>
-                  <Button 
-                    variant="secondary" 
+                  <Button
+                    variant="secondary"
                     className="w-full"
                     onClick={() => handleDecision('download')}
                   >
@@ -305,12 +305,12 @@ const UrgentSummary = () => {
         </Card>
 
         {selectedDecision === 'download' && (
-          <Card className="bg-green-50/80 backdrop-blur-sm border border-green-200 rounded-lg p-6 mt-6">
+          <Card className="bg-success/10 backdrop-blur-sm border border-success rounded-lg p-6 mt-6">
             <CardContent className="text-center">
-              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-green-800 mb-2">Download Complete</h3>
-              <p className="text-green-700">
-                Your emergency documentation has been securely packaged and downloaded. 
+              <CheckCircle className="h-12 w-12 text-success mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">Download Complete</h3>
+              <p className="text-muted-foreground">
+                Your emergency documentation has been securely packaged and downloaded.
                 All files are encrypted and can be used as legal evidence if needed.
               </p>
             </CardContent>

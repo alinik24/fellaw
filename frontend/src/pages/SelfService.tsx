@@ -24,6 +24,11 @@ import { Badge } from '@/components/ui/badge';
 const SelfService = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{id: number, sender: 'user' | 'ai', content: string}>>([
+    { id: 1, sender: 'ai', content: 'Hello! I\'m here to help you with your rent increase dispute case. What questions do you have?' }
+  ]);
+  const [newMessage, setNewMessage] = useState('');
 
   // Mock case data
   const caseData = {
@@ -134,6 +139,46 @@ const SelfService = () => {
 
   const progressPercentage = (completedSteps.length / steps.length) * 100;
 
+  const handleSendMessage = () => {
+    if (!newMessage.trim()) return;
+
+    const userMsg = {
+      id: chatMessages.length + 1,
+      sender: 'user' as const,
+      content: newMessage
+    };
+    setChatMessages([...chatMessages, userMsg]);
+    setNewMessage('');
+
+    // Simulate AI response based on context
+    setTimeout(() => {
+      const aiResponse = {
+        id: chatMessages.length + 2,
+        sender: 'ai' as const,
+        content: generateContextualResponse(newMessage)
+      };
+      setChatMessages(prev => [...prev, aiResponse]);
+    }, 1000);
+  };
+
+  const generateContextualResponse = (input: string): string => {
+    const lowerInput = input.toLowerCase();
+
+    if (lowerInput.includes('appeal') || lowerInput.includes('letter')) {
+      return 'The appeal letter has been drafted based on Mietpreisbremse regulations. You can review and customize it in Step 1. Make sure to include your specific lease details and the comparison rent data from your neighborhood.';
+    } else if (lowerInput.includes('document') || lowerInput.includes('upload')) {
+      return 'For Step 2, you\'ll need: 1) Your current lease agreement, 2) Previous rent receipts showing payment history, 3) Local rent comparison data (Mietspiegel) for Paderborn. These documents strengthen your case significantly.';
+    } else if (lowerInput.includes('landlord') || lowerInput.includes('contact')) {
+      return 'In Step 3, we provide email templates and phone conversation scripts. Remember to keep all communication professional and documented. Always send important objections via registered mail (Einschreiben).';
+    } else if (lowerInput.includes('deadline') || lowerInput.includes('time')) {
+      return 'You typically have 3 months to object to a rent increase after receiving the notice. The expected response from your landlord is by July 15, 2024. We\'ll set up reminders for you in Step 5.';
+    } else if (lowerInput.includes('success') || lowerInput.includes('chance')) {
+      return 'Based on similar cases in Paderborn, there\'s a high probability of success. Mietpreisbremse has been in effect since 2020, and many rent increases have been successfully challenged when they exceed the 10% limit above local comparative rent.';
+    } else {
+      return 'I can help you with: understanding the appeal letter, gathering documents, communicating with your landlord, understanding deadlines, or assessing your chances. What would you like to know more about?';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -150,7 +195,7 @@ const SelfService = () => {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4">Your Step-by-Step Guide: {caseData.name}</h1>
+          <h1 className="text-4xl font-bold mb-4 text-foreground">Your Step-by-Step Guide: {caseData.name}</h1>
           <p className="text-xl text-muted-foreground mb-6">Your Task: {caseData.task}</p>
           
           {/* Progress Bar */}
@@ -171,32 +216,33 @@ const SelfService = () => {
             const isAccessible = step.id <= currentStep || isCompleted;
 
             return (
-              <Card 
-                key={step.id} 
+              <Card
+                key={step.id}
                 className={`
-                  ${isCurrent ? 'border-blue-500 bg-blue-50/50' : ''}
-                  ${isCompleted ? 'border-green-500 bg-green-50/50' : ''}
+                  ${isCurrent ? 'border-2 border-primary bg-primary/10' : ''}
+                  ${isCompleted ? 'border-2 border-success bg-success/10' : ''}
                   ${!isAccessible ? 'opacity-50' : ''}
+                  ${!isCurrent && !isCompleted ? 'bg-card border-2 hover:shadow-xl transition-all' : ''}
                 `}
               >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <step.icon className={`h-6 w-6 ${isCompleted ? 'text-green-600' : isCurrent ? 'text-blue-600' : 'text-gray-400'}`} />
+                      <step.icon className={`h-6 w-6 ${isCompleted ? 'text-success' : isCurrent ? 'text-primary' : 'text-muted-foreground'}`} />
                       <div>
-                        <CardTitle className="text-lg">{step.title}</CardTitle>
-                        <CardDescription>{step.description}</CardDescription>
+                        <CardTitle className="text-lg text-foreground">{step.title}</CardTitle>
+                        <CardDescription className="text-muted-foreground">{step.description}</CardDescription>
                       </div>
                     </div>
                     <div className="flex space-x-2">
                       {isCompleted && (
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                        <Badge variant="secondary" className="bg-success/10">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
                           Completed
                         </Badge>
                       )}
                       {isCurrent && !isCompleted && (
-                        <Badge variant="default" className="bg-blue-100 text-blue-800">
+                        <Badge variant="default" className="bg-primary/10">
                           <Clock className="h-3 w-3 mr-1" />
                           Current Step
                         </Badge>
@@ -226,8 +272,8 @@ const SelfService = () => {
                     </div>
 
                     {isCurrent && !isCompleted && step.actions.length > 0 && (
-                      <div className="mt-4 p-3 bg-blue-50 rounded">
-                        <p className="text-sm text-blue-800">
+                      <div className="mt-4 p-3 bg-primary/10 rounded">
+                        <p className="text-sm text-foreground">
                           💡 Complete the actions above, then click "Mark Complete & Next Step" to proceed.
                         </p>
                       </div>
@@ -258,8 +304,7 @@ const SelfService = () => {
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           ) : (
-            <Button 
-              className="bg-green-600 hover:bg-green-700"
+            <Button
               disabled={completedSteps.length !== steps.length}
             >
               <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -269,18 +314,22 @@ const SelfService = () => {
         </div>
 
         {/* Need More Help Section */}
-        <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
           <CardHeader>
-            <CardTitle>Need More Help?</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">Need More Help?</CardTitle>
+            <CardDescription className="text-muted-foreground">
               If you encounter difficulties or need expert guidance, these options are available.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              <Button variant="outline" className="justify-start">
+            <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <Button
+                variant="outline"
+                className="justify-start"
+                onClick={() => setIsChatOpen(!isChatOpen)}
+              >
                 <MessageSquare className="h-4 w-4 mr-2" />
-                Chat With AI Assistant
+                {isChatOpen ? 'Hide AI Assistant' : 'Chat With AI Assistant'}
               </Button>
               <Button variant="outline" asChild className="justify-start">
                 <Link to="/find-lawyer">
@@ -289,6 +338,58 @@ const SelfService = () => {
                 </Link>
               </Button>
             </div>
+
+            {/* Inline Chat Interface */}
+            {isChatOpen && (
+              <div className="mt-6 border-2 border-primary rounded-lg overflow-hidden">
+                <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <MessageSquare className="h-5 w-5" />
+                    <span className="font-semibold">AI Assistant - Rent Increase Case Support</span>
+                  </div>
+                </div>
+
+                {/* Chat Messages */}
+                <div className="bg-background p-4 h-96 overflow-y-auto space-y-4">
+                  {chatMessages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] px-4 py-3 rounded-lg ${
+                          msg.sender === 'user'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-card border-2 border-border text-foreground'
+                        }`}
+                      >
+                        <p className="text-sm">{msg.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Chat Input */}
+                <div className="bg-card p-4 border-t-2 border-border">
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      placeholder="Ask about your case, documents, deadlines..."
+                      className="flex-1 px-4 py-2 border-2 border-border rounded bg-background text-foreground"
+                    />
+                    <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
+                      <MessageSquare className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Context-aware assistant for your Rent Increase Dispute case
+                  </p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

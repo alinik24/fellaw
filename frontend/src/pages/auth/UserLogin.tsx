@@ -65,16 +65,16 @@ const UserLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md border-2 shadow-xl">
         <CardHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4">
             <img src="/logo.png" alt="fellaw" className="w-full h-full object-contain" />
           </div>
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-2xl font-bold text-foreground">
             {t('auth.loginAsUser')}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-muted-foreground">
             Access your legal cases and documents
           </CardDescription>
         </CardHeader>
@@ -83,7 +83,7 @@ const UserLogin = () => {
             <div className="space-y-2">
               <Label htmlFor="email">{t('auth.email')}</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
@@ -99,7 +99,7 @@ const UserLogin = () => {
             <div className="space-y-2">
               <Label htmlFor="password">{t('auth.password')}</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type="password"
@@ -115,7 +115,7 @@ const UserLogin = () => {
             <div className="flex items-center justify-between">
               <Link
                 to="/auth/forgot-password"
-                className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                className="text-sm text-primary hover:underline"
               >
                 {t('auth.forgotPassword')}
               </Link>
@@ -126,12 +126,12 @@ const UserLogin = () => {
             </Button>
 
             <div className="text-center text-sm">
-              <span className="text-gray-600 dark:text-gray-400">
+              <span className="text-muted-foreground">
                 {t('auth.noAccount')}{' '}
               </span>
               <Link
                 to="/auth/user/register"
-                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium"
+                className="text-primary hover:underline font-medium"
               >
                 {t('auth.register')}
               </Link>
@@ -139,10 +139,10 @@ const UserLogin = () => {
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t"></div>
+                <div className="w-full border-t border-border"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or</span>
+                <span className="px-2 bg-card text-muted-foreground">Or</span>
               </div>
             </div>
 

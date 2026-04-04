@@ -69,17 +69,17 @@ const LawFirms = () => {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Law Firms Network</h1>
+          <h1 className="text-4xl font-bold mb-4 text-foreground">Law Firms Network</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover trusted law firms across Germany. Find established practices with proven track records 
+            Discover trusted law firms across Germany. Find established practices with proven track records
             and specialized expertise in your area of need.
           </p>
         </div>
 
         {/* Search and Filters */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="flex items-center">
+            <CardTitle className="flex items-center text-foreground">
               <Search className="h-5 w-5 mr-2" />
               Find Law Firms
             </CardTitle>
@@ -107,18 +107,18 @@ const LawFirms = () => {
         {/* Law Firms Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {mockLawFirms.map((firm) => (
-            <Card key={firm.id} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:shadow-lg transition-shadow">
+            <Card key={firm.id} className="bg-card border-2 hover:shadow-xl transition-all">
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <Building2 className="h-8 w-8 text-blue-600 mb-2" />
+                  <Building2 className="h-8 w-8 text-primary mb-2" />
                   <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="text-sm font-medium">{firm.rating}</span>
+                    <Star className="h-4 w-4 text-warning fill-current" />
+                    <span className="text-sm font-medium text-foreground">{firm.rating}</span>
                     <span className="text-xs text-muted-foreground">({firm.reviewCount})</span>
                   </div>
                 </div>
-                <CardTitle className="text-xl">{firm.name}</CardTitle>
-                <CardDescription>{firm.description}</CardDescription>
+                <CardTitle className="text-xl text-foreground">{firm.name}</CardTitle>
+                <CardDescription className="text-muted-foreground">{firm.description}</CardDescription>
               </CardHeader>
               
               <CardContent className="space-y-4">
@@ -171,11 +171,11 @@ const LawFirms = () => {
         </div>
 
         {/* Call to Action */}
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 mt-12 text-center">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mt-12 text-center">
           <CardContent>
-            <h3 className="text-xl font-semibold mb-4">Law Firm Not Listed?</h3>
+            <h3 className="text-xl font-semibold mb-4 text-foreground">Law Firm Not Listed?</h3>
             <p className="text-muted-foreground mb-6">
-              Are you a law firm interested in joining our network? 
+              Are you a law firm interested in joining our network?
               Connect with clients looking for trusted legal representation.
             </p>
             <Button asChild>

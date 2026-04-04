@@ -142,8 +142,8 @@ const GraybeardMediation = () => {
           <CardDescription>While mediation aims to avoid court, having legal counsel available can strengthen your position</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 bg-blue-50 rounded">
-            <p className="text-sm text-blue-800 mb-3">
+          <div className="p-4 bg-primary/10 rounded">
+            <p className="text-sm text-foreground mb-3">
               Based on your dispute type (tenancy law), we recommend having a qualified lawyer available for consultation during mediation.
             </p>
             <Button asChild variant="outline">
@@ -154,8 +154,8 @@ const GraybeardMediation = () => {
           </div>
           
           <div className="flex items-center space-x-3">
-            <CheckCircle2 className="h-5 w-5 text-green-600" />
-            <span className="text-sm">I understand the recommendation and am ready to proceed</span>
+            <CheckCircle2 className="h-5 w-5 text-success" />
+            <span className="text-sm text-foreground">I understand the recommendation and am ready to proceed</span>
           </div>
           
           <Button onClick={handleNextStep}>
@@ -185,9 +185,9 @@ const GraybeardMediation = () => {
             />
           </div>
           
-          <div className="p-4 bg-gray-50 rounded">
-            <h4 className="font-medium mb-2">Auto-Generated Invitation Preview:</h4>
-            <p className="text-sm text-muted-foreground">
+          <div className="p-4 bg-muted rounded-lg border border-border">
+            <h4 className="font-semibold text-foreground mb-2">Auto-Generated Invitation Preview:</h4>
+            <p className="text-sm text-foreground">
               "Dear [Landlord], I would like to invite you to participate in an AI-assisted mediation process to resolve our rent dispute. This neutral platform can help us reach a fair agreement without court proceedings..."
             </p>
           </div>
@@ -214,16 +214,16 @@ const GraybeardMediation = () => {
         </CardHeader>
         <CardContent>
           {/* Chat Interface */}
-          <div className="border rounded-lg p-4 h-80 overflow-y-auto mb-4 bg-gray-50">
+          <div className="border-2 border-border rounded-lg p-4 h-80 overflow-y-auto mb-4 bg-background">
             <div className="space-y-3">
               {messages.map((message) => (
                 <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-xs px-3 py-2 rounded-lg ${
-                    message.type === 'user' ? 'bg-blue-600 text-white' : 'bg-white border'
+                  <div className={`max-w-xs px-4 py-3 rounded-lg ${
+                    message.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-card border-2 border-border text-foreground'
                   }`}>
-                    <p className="text-sm font-medium">{message.sender}</p>
-                    <p className="text-sm">{message.content}</p>
-                    <p className="text-xs opacity-70 mt-1">{message.timestamp}</p>
+                    <p className="text-sm font-semibold mb-1">{message.sender}</p>
+                    <p className="text-sm leading-relaxed">{message.content}</p>
+                    <p className="text-xs opacity-70 mt-2">{message.timestamp}</p>
                   </div>
                 </div>
               ))}
@@ -245,8 +245,8 @@ const GraybeardMediation = () => {
           </div>
           
           {/* AI Suggestions */}
-          <div className="mt-4 p-3 bg-blue-50 rounded">
-            <p className="text-sm font-medium text-blue-800 mb-2">AI Suggestions:</p>
+          <div className="mt-4 p-4 bg-primary/10 border-2 border-primary/20 rounded-lg">
+            <p className="text-sm font-semibold text-foreground mb-3">AI Suggestions:</p>
             <div className="space-y-2">
               <Button variant="outline" size="sm" className="text-xs">
                 "Would you be open to a 10% increase instead of 30%?"
@@ -293,11 +293,11 @@ const GraybeardMediation = () => {
             </Button>
           </div>
           
-          <div className="p-4 bg-green-50 rounded">
-            <p className="text-sm text-green-800 mb-3">
+          <div className="p-4 bg-success/10 rounded">
+            <p className="text-sm text-foreground mb-3">
               Both parties have indicated agreement to these terms. Ready to finalize?
             </p>
-            <Button className="bg-green-600 hover:bg-green-700">
+            <Button>
               <CheckCircle2 className="h-4 w-4 mr-2" />
               Finalize Agreement
             </Button>
@@ -335,16 +335,16 @@ const GraybeardMediation = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <Handshake className="h-8 w-8 text-blue-600" />
-            <h1 className="text-4xl font-bold">AI-Assisted Mediation (Graybeard)</h1>
+            <Handshake className="h-8 w-8 text-primary" />
+            <h1 className="text-4xl font-bold text-foreground">AI-Assisted Mediation (Graybeard)</h1>
           </div>
           <p className="text-xl text-muted-foreground">Resolve Disputes Amicably with AI Guidance</p>
         </div>
 
         {/* Progress Overview */}
-        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle>Mediation Progress</CardTitle>
+            <CardTitle className="text-foreground">Mediation Progress</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center mb-4">
@@ -357,9 +357,9 @@ const GraybeardMediation = () => {
               {mediationSteps.map((step, index) => (
                 <div key={step.id} className="flex flex-col items-center">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step.status === 'completed' ? 'bg-green-600 text-white' :
-                    step.status === 'current' ? 'bg-blue-600 text-white' :
-                    'bg-gray-300 text-gray-600'
+                    step.status === 'completed' ? 'bg-success text-primary-foreground' :
+                    step.status === 'current' ? 'bg-primary text-primary-foreground' :
+                    'bg-muted text-muted-foreground'
                   }`}>
                     {step.status === 'completed' ? <CheckCircle2 className="h-4 w-4" /> : step.id}
                   </div>

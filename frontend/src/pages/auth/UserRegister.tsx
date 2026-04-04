@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Scale, Mail, Lock } from 'lucide-react';
+import { Shield, Mail, Lock, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,47 +8,58 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/components/ui/use-toast';
 
-const LawyerLogin = () => {
+const UserRegister = () => {
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      toast({
+        title: 'Error',
+        description: 'Passwords do not match',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+      const response = await fetch('http://localhost:8000/api/v1/auth/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
-          username: email,
+        body: JSON.stringify({
+          email: email,
           password: password,
+          full_name: fullName,
+          user_type: 'client'
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('isRegisteredUser', 'true');
-        localStorage.setItem('isAnonymous', 'false');
-        localStorage.setItem('userType', 'lawyer');
 
         toast({
-          title: 'Login Successful',
-          description: 'Welcome to your dashboard!',
+          title: 'Registration Successful',
+          description: 'Please log in with your credentials',
         });
 
-        navigate('/lawyer/dashboard');
+        navigate('/auth/user/login');
       } else {
+        const error = await response.json();
         toast({
-          title: 'Login Failed',
-          description: 'Invalid credentials',
+          title: 'Registration Failed',
+          description: error.detail || 'Could not create account',
           variant: 'destructive',
         });
       }
@@ -65,20 +76,36 @@ const LawyerLogin = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md bg-card border-2 hover:shadow-xl transition-all">
+      <Card className="w-full max-w-md border-2 shadow-xl">
         <CardHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4">
             <img src="/logo.png" alt="fellaw" className="w-full h-full object-contain" />
           </div>
           <CardTitle className="text-2xl font-bold text-foreground">
-            {t('auth.loginAsLawyer')}
+            Create Your Account
           </CardTitle>
-          <CardDescription>
-            Access your professional dashboard
+          <CardDescription className="text-muted-foreground">
+            Join fellaw and get legal help today
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="fullName">{t('auth.fullName')}</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="John Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">{t('auth.email')}</Label>
               <div className="relative">
@@ -86,7 +113,7 @@ const LawyerLogin = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="lawyer@lawfirm.com"
+                  placeholder="your@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
@@ -107,32 +134,41 @@ const LawyerLogin = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
                   required
+                  minLength={8}
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <Link
-                to="/auth/forgot-password"
-                className="text-sm text-primary hover:text-primary/80"
-              >
-                {t('auth.forgotPassword')}
-              </Link>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="pl-10"
+                  required
+                  minLength={8}
+                />
+              </div>
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : t('auth.login')}
+              {isLoading ? 'Creating account...' : t('auth.register')}
             </Button>
 
             <div className="text-center text-sm">
               <span className="text-muted-foreground">
-                {t('auth.noAccount')}{' '}
+                {t('auth.haveAccount')}{' '}
               </span>
               <Link
-                to="/work-with-us/professionals"
-                className="text-primary hover:text-primary/80 font-medium"
+                to="/auth/user/login"
+                className="text-primary hover:underline font-medium"
               >
-                {t('auth.registerAsLawyer')}
+                {t('auth.login')}
               </Link>
             </div>
 
@@ -149,9 +185,9 @@ const LawyerLogin = () => {
               type="button"
               variant="outline"
               className="w-full"
-              onClick={() => navigate('/auth/user/login')}
+              onClick={() => navigate('/auth/lawyer/login')}
             >
-              {t('auth.loginAsUser')}
+              {t('auth.loginAsLawyer')}
             </Button>
           </form>
         </CardContent>
@@ -160,4 +196,4 @@ const LawyerLogin = () => {
   );
 };
 
-export default LawyerLogin;
+export default UserRegister;

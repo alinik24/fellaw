@@ -12,14 +12,41 @@ from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.session import get_db
+from app.database import get_db
 from app.models.user import User
-from app.api.deps import get_current_user, get_current_user_optional
+from app.api.auth import get_current_user, _oauth2_scheme
 from app.services.document_intelligence import get_document_intelligence_service
 from app.services.openrouter_vision import get_openrouter_vision_service
 from pydantic import BaseModel
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 logger = logging.getLogger(__name__)
+
+# Optional authentication dependency
+security = HTTPBearer(auto_error=False)
+
+async def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    db: Annotated[AsyncSession, Depends(get_db)] = None
+) -> Optional[User]:
+    """Optional authentication - returns User if authenticated, None otherwise."""
+    if credentials is None:
+        return None
+    try:
+        from app.api.auth import verify_token
+        import uuid
+        from sqlalchemy import select
+
+        subject = verify_token(credentials.credentials)
+        if subject is None:
+            return None
+
+        user_id = uuid.UUID(subject)
+        stmt = select(User).where(User.id == user_id, User.is_active == True)
+        result = await db.execute(stmt)
+        return result.scalars().first()
+    except Exception:
+        return None
 
 router = APIRouter(prefix="/upload", tags=["Document Upload"])
 

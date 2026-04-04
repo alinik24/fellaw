@@ -74,32 +74,32 @@ const UserDashboard = () => {
       label: 'Active Cases',
       value: activeCases.length,
       icon: FolderOpen,
-      color: 'text-blue-600 dark:text-blue-400',
-      bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
       change: `${mockCases.length} total`
     },
     {
       label: 'Urgent Cases',
       value: urgentCases.length,
       icon: AlertCircle,
-      color: 'text-orange-600 dark:text-orange-400',
-      bgColor: 'bg-orange-100 dark:bg-orange-900/30',
+      color: 'text-warning',
+      bgColor: 'bg-warning/10',
       change: 'High Priority'
     },
     {
       label: 'Documents',
       value: mockDocuments.length,
       icon: FileText,
-      color: 'text-teal-600 dark:text-teal-400',
-      bgColor: 'bg-teal-100 dark:bg-teal-900/30',
+      color: 'text-success',
+      bgColor: 'bg-success/10',
       change: `${mockDocuments.length} analyzed`
     },
     {
       label: 'AI Chats',
       value: 5,
       icon: MessageSquare,
-      color: 'text-purple-600 dark:text-purple-400',
-      bgColor: 'bg-purple-100 dark:bg-purple-900/30',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10',
       change: 'AI Conversations'
     }
   ];
@@ -110,28 +110,28 @@ const UserDashboard = () => {
       desc: 'Start a new legal case',
       icon: Plus,
       onClick: () => navigate('/new-case'),
-      color: 'text-blue-600 dark:text-blue-400'
+      color: 'text-primary'
     },
     {
       label: 'Ask AI',
       desc: 'Get legal guidance',
       icon: MessageSquare,
       onClick: () => navigate('/chat'),
-      color: 'text-teal-600 dark:text-teal-400'
+      color: 'text-success'
     },
     {
       label: 'Upload Document',
       desc: 'Analyze documents',
       icon: Upload,
       onClick: () => navigate('/documents'),
-      color: 'text-purple-600 dark:text-purple-400'
+      color: 'text-accent'
     },
     {
       label: 'Find Lawyer',
       desc: 'Get professional help',
       icon: Scale,
       onClick: () => navigate('/find-lawyer'),
-      color: 'text-orange-600 dark:text-orange-400'
+      color: 'text-warning'
     }
   ];
 
@@ -144,7 +144,7 @@ const UserDashboard = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Welcome Banner */}
-        <Card className="border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40">
+        <Card className="border-2 border-primary bg-primary/10">
           <CardContent className="p-6">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
@@ -156,7 +156,7 @@ const UserDashboard = () => {
                     ? `You have ${activeCases.length} active case${activeCases.length === 1 ? '' : 's'}`
                     : 'Start your first legal case'}
                   {urgentCases.length > 0 && (
-                    <span className="ml-2 text-orange-600 dark:text-orange-400 font-medium">
+                    <span className="ml-2 text-warning font-medium">
                       · {urgentCases.length} urgent
                     </span>
                   )}
@@ -173,7 +173,7 @@ const UserDashboard = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
-            <Card key={index} className="border-2 hover:shadow-lg transition-shadow">
+            <Card key={index} className="bg-card border-2 hover:shadow-xl transition-all">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -192,17 +192,17 @@ const UserDashboard = () => {
 
         {/* Quick Actions */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
               <Card
                 key={index}
-                className="cursor-pointer hover:shadow-lg transition-all hover:scale-105 border-2"
+                className="bg-card cursor-pointer hover:shadow-xl transition-all hover:scale-105 border-2"
                 onClick={action.onClick}
               >
                 <CardContent className="p-6">
                   <action.icon className={`h-8 w-8 ${action.color} mb-3`} />
-                  <h3 className="font-semibold text-lg mb-1">{action.label}</h3>
+                  <h3 className="font-semibold text-lg text-foreground mb-1">{action.label}</h3>
                   <p className="text-sm text-muted-foreground">{action.desc}</p>
                 </CardContent>
               </Card>
@@ -229,7 +229,7 @@ const UserDashboard = () => {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           case_.urgency === 'high'
                             ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
-                            : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                            : 'bg-info/10 text-info'
                         }`}>
                           {case_.urgency}
                         </span>
@@ -275,8 +275,8 @@ const UserDashboard = () => {
               <Card key={doc.id} className="border-2 hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-lg">
-                      <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    <div className="bg-muted p-2 rounded-lg">
+                      <FileText className="h-6 w-6 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{doc.name}</p>

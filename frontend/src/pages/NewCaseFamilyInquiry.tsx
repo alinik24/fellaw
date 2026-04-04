@@ -39,20 +39,20 @@ const NewCaseFamilyInquiry = () => {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-pink-600 to-red-600 rounded-xl flex items-center justify-center">
-            <Heart className="h-8 w-8 text-white" />
+          <div className="w-16 h-16 mx-auto mb-6 bg-destructive rounded-xl flex items-center justify-center">
+            <Heart className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Family Law Inquiry</h1>
+          <h1 className="text-4xl font-bold mb-4 text-foreground">Family Law Inquiry</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Get guidance on family law matters including marriage, divorce, child custody, and inheritance issues.
           </p>
         </div>
 
         {/* Family Law Details */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle>Family Law Inquiry Details</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">Family Law Inquiry Details</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Please provide information about your family law situation.
             </CardDescription>
           </CardHeader>
@@ -129,7 +129,7 @@ const NewCaseFamilyInquiry = () => {
         </Card>
 
         {/* Document Upload */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
             <CardTitle>Supporting Documents</CardTitle>
             <CardDescription>
@@ -141,7 +141,7 @@ const NewCaseFamilyInquiry = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('certificates')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -153,7 +153,7 @@ const NewCaseFamilyInquiry = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('legal-documents')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <Upload className="h-8 w-8" />
                 <div className="text-center">
@@ -165,7 +165,7 @@ const NewCaseFamilyInquiry = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('evidence')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -180,10 +180,10 @@ const NewCaseFamilyInquiry = () => {
                 <Label>Uploaded Files:</Label>
                 <div className="space-y-2">
                   {uploadedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-2 bg-green-50 dark:bg-green-900/30 rounded border">
-                      <Upload className="h-4 w-4 text-green-600" />
+                    <div key={index} className="flex items-center space-x-2 p-2 bg-success/10 rounded border">
+                      <Upload className="h-4 w-4 text-success" />
                       <span className="text-sm font-medium">{file}</span>
-                      <span className="text-xs text-green-600">✓ Uploaded & Analyzed</span>
+                      <span className="text-xs text-success">✓ Uploaded & Analyzed</span>
                     </div>
                   ))}
                 </div>
@@ -193,35 +193,34 @@ const NewCaseFamilyInquiry = () => {
         </Card>
 
         {/* AI Guidance */}
-        <Card className="bg-pink-50/80 backdrop-blur-sm border border-pink-200 rounded-lg p-6 mb-8">
+        <Card className="bg-destructive/10 backdrop-blur-sm border-2 border-destructive rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="text-pink-800">Family Law Guidance</CardTitle>
+            <CardTitle className="text-destructive">Family Law Guidance</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-pink-700 mb-4">
-              German family law provides comprehensive protections for families and children. 
+            <p className="text-foreground mb-4">
+              German family law provides comprehensive protections for families and children.
               Family matters often require sensitive handling and specialized legal expertise.
             </p>
-            <div className="text-sm text-pink-600">
-              <strong>Key principles:</strong> Best interests of children, financial security provisions, 
+            <div className="text-sm text-muted-foreground">
+              <strong>Key principles:</strong> Best interests of children, financial security provisions,
               mediation before court proceedings, equal parental rights, and protection from domestic violence.
             </div>
           </CardContent>
         </Card>
 
         {/* Submission */}
-        <Card className="bg-gradient-to-r from-pink-50 to-red-50 border border-pink-200 rounded-lg p-6">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
           <CardContent className="text-center">
-            <h3 className="text-xl font-semibold mb-4">Ready for Family Law Analysis?</h3>
+            <h3 className="text-xl font-semibold mb-4 text-foreground">Ready for Family Law Analysis?</h3>
             <p className="text-muted-foreground mb-6">
-              Our AI will analyze your family law situation, review applicable German family law, 
+              Our AI will analyze your family law situation, review applicable German family law,
               and recommend appropriate next steps with sensitivity to your family's needs.
             </p>
             <Button
               size="lg"
               disabled={!canSubmit}
               asChild={canSubmit}
-              className="bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700"
             >
               {canSubmit ? (
                 <Link to={`/case-assessment/family-${Date.now()}`}>

@@ -27,8 +27,10 @@ import LawFirms from "./pages/LawFirms";
 import Insurance from "./pages/Insurance";
 import Careers from "./pages/Careers";
 import UserLogin from "./pages/auth/UserLogin";
+import UserRegister from "./pages/auth/UserRegister";
 import LawyerLogin from "./pages/auth/LawyerLogin";
 import UserDashboard from "./pages/UserDashboard";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,9 +65,12 @@ const App = () => (
             <Route path="/work-with-us/professionals" element={<LawyerOnboarding />} />
             <Route path="/work-with-us/careers" element={<Careers />} />
             <Route path="/dashboard" element={<LawyerDashboard />} />
+            <Route path="/lawyer/dashboard" element={<LawyerDashboard />} />
             <Route path="/user/dashboard" element={<UserDashboard />} />
+            <Route path="/contact" element={<Contact />} />
             {/* Authentication Routes */}
             <Route path="/auth/user/login" element={<UserLogin />} />
+            <Route path="/auth/user/register" element={<UserRegister />} />
             <Route path="/auth/lawyer/login" element={<LawyerLogin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

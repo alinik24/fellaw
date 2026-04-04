@@ -38,20 +38,20 @@ const NewCaseVisaImmigration = () => {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
-            <PassportIcon className="h-8 w-8 text-white" />
+          <div className="w-16 h-16 mx-auto mb-6 bg-primary rounded-xl flex items-center justify-center">
+            <PassportIcon className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Visa & Immigration Inquiry</h1>
+          <h1 className="text-4xl font-bold mb-4 text-foreground">Visa & Immigration Inquiry</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Get guidance on visa applications, residence permits, citizenship, and immigration law matters in Germany.
           </p>
         </div>
 
         {/* Immigration Details */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle>Immigration Inquiry Details</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">Immigration Inquiry Details</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Please provide information about your visa or immigration situation.
             </CardDescription>
           </CardHeader>
@@ -143,7 +143,7 @@ const NewCaseVisaImmigration = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('passport')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <PassportIcon className="h-8 w-8" />
                 <div className="text-center">
@@ -155,7 +155,7 @@ const NewCaseVisaImmigration = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('official-letters')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -167,7 +167,7 @@ const NewCaseVisaImmigration = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('supporting-docs')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <Upload className="h-8 w-8" />
                 <div className="text-center">
@@ -182,10 +182,10 @@ const NewCaseVisaImmigration = () => {
                 <Label>Uploaded Files:</Label>
                 <div className="space-y-2">
                   {uploadedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-2 bg-green-50 dark:bg-green-900/30 rounded border">
-                      <Upload className="h-4 w-4 text-green-600" />
+                    <div key={index} className="flex items-center space-x-2 p-2 bg-success/10 rounded border">
+                      <Upload className="h-4 w-4 text-success" />
                       <span className="text-sm font-medium">{file}</span>
-                      <span className="text-xs text-green-600">✓ Uploaded & Analyzed</span>
+                      <span className="text-xs text-success">✓ Uploaded & Analyzed</span>
                     </div>
                   ))}
                 </div>
@@ -195,35 +195,34 @@ const NewCaseVisaImmigration = () => {
         </Card>
 
         {/* AI Guidance */}
-        <Card className="bg-purple-50/80 backdrop-blur-sm border border-purple-200 rounded-lg p-6 mb-8">
+        <Card className="bg-primary/10 backdrop-blur-sm border-2 border-primary rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="text-purple-800">Immigration Law Guidance</CardTitle>
+            <CardTitle className="text-primary">Immigration Law Guidance</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-purple-700 mb-4">
-              German immigration law provides various pathways for living and working in Germany. 
+            <p className="text-foreground mb-4">
+              German immigration law provides various pathways for living and working in Germany.
               Each visa type has specific requirements and application procedures.
             </p>
-            <div className="text-sm text-purple-600">
-              <strong>Important considerations:</strong> Application deadlines, required documentation, 
+            <div className="text-sm text-muted-foreground">
+              <strong>Important considerations:</strong> Application deadlines, required documentation,
               language requirements, integration courses, and compliance with residence conditions.
             </div>
           </CardContent>
         </Card>
 
         {/* Submission */}
-        <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
           <CardContent className="text-center">
-            <h3 className="text-xl font-semibold mb-4">Ready for Immigration Law Analysis?</h3>
+            <h3 className="text-xl font-semibold mb-4 text-foreground">Ready for Immigration Law Analysis?</h3>
             <p className="text-muted-foreground mb-6">
-              Our AI will analyze your immigration situation, review applicable German immigration law, 
+              Our AI will analyze your immigration situation, review applicable German immigration law,
               and provide guidance on the best path forward for your visa or residence goals.
             </p>
             <Button
               size="lg"
               disabled={!canSubmit}
               asChild={canSubmit}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
             >
               {canSubmit ? (
                 <Link to={`/case-assessment/immigration-${Date.now()}`}>

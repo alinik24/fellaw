@@ -39,20 +39,20 @@ const NewCaseConsumerDispute = () => {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-green-600 to-blue-600 rounded-xl flex items-center justify-center">
-            <ShoppingCart className="h-8 w-8 text-white" />
+          <div className="w-16 h-16 mx-auto mb-6 bg-success rounded-xl flex items-center justify-center">
+            <ShoppingCart className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Consumer Dispute Case</h1>
+          <h1 className="text-4xl font-bold mb-4 text-foreground">Consumer Dispute Case</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Report issues with products, services, or unfair business practices to receive targeted consumer protection guidance.
           </p>
         </div>
 
         {/* Dispute Details */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle>Consumer Dispute Details</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">Consumer Dispute Details</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Please provide information about your consumer dispute or product/service issue.
             </CardDescription>
           </CardHeader>
@@ -119,7 +119,7 @@ const NewCaseConsumerDispute = () => {
         </Card>
 
         {/* Document Upload */}
-        <Card className="bg-background border rounded-lg p-6 mb-8">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 mb-8">
           <CardHeader>
             <CardTitle>Supporting Documents</CardTitle>
             <CardDescription>
@@ -131,7 +131,7 @@ const NewCaseConsumerDispute = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('receipt')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -143,7 +143,7 @@ const NewCaseConsumerDispute = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('correspondence')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <Upload className="h-8 w-8" />
                 <div className="text-center">
@@ -155,7 +155,7 @@ const NewCaseConsumerDispute = () => {
               <Button
                 variant="outline"
                 onClick={() => handleFileUpload('evidence')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
               >
                 <FileText className="h-8 w-8" />
                 <div className="text-center">
@@ -170,10 +170,10 @@ const NewCaseConsumerDispute = () => {
                 <Label>Uploaded Files:</Label>
                 <div className="space-y-2">
                   {uploadedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-2 bg-green-50 dark:bg-green-900/30 rounded border">
-                      <Upload className="h-4 w-4 text-green-600" />
+                    <div key={index} className="flex items-center space-x-2 p-2 bg-success/10 rounded border">
+                      <Upload className="h-4 w-4 text-success" />
                       <span className="text-sm font-medium">{file}</span>
-                      <span className="text-xs text-green-600">✓ Uploaded & Analyzed</span>
+                      <span className="text-xs text-success">✓ Uploaded & Analyzed</span>
                     </div>
                   ))}
                 </div>
@@ -183,35 +183,34 @@ const NewCaseConsumerDispute = () => {
         </Card>
 
         {/* AI Guidance */}
-        <Card className="bg-green-50/80 backdrop-blur-sm border border-green-200 rounded-lg p-6 mb-8">
+        <Card className="bg-success/10 backdrop-blur-sm border-2 border-success rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="text-green-800">Consumer Protection Guidance</CardTitle>
+            <CardTitle className="text-success">Consumer Protection Guidance</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-green-700 mb-4">
-              German consumer protection laws (Verbraucherschutzgesetze) provide strong rights including 
+            <p className="text-foreground mb-4">
+              German consumer protection laws (Verbraucherschutzgesetze) provide strong rights including
               warranty claims, return rights, and protection against unfair business practices.
             </p>
-            <div className="text-sm text-green-600">
-              <strong>Your rights may include:</strong> 14-day return policy for online purchases, 
+            <div className="text-sm text-muted-foreground">
+              <strong>Your rights may include:</strong> 14-day return policy for online purchases,
               2-year warranty on products, right to repair or replacement, compensation for defective services.
             </div>
           </CardContent>
         </Card>
 
         {/* Submission */}
-        <Card className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6">
           <CardContent className="text-center">
-            <h3 className="text-xl font-semibold mb-4">Ready for Consumer Rights Analysis?</h3>
+            <h3 className="text-xl font-semibold mb-4 text-foreground">Ready for Consumer Rights Analysis?</h3>
             <p className="text-muted-foreground mb-6">
-              Our AI will analyze your consumer dispute, review applicable German consumer protection laws, 
+              Our AI will analyze your consumer dispute, review applicable German consumer protection laws,
               and recommend the best course of action.
             </p>
             <Button
               size="lg"
               disabled={!canSubmit}
               asChild={canSubmit}
-              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
             >
               {canSubmit ? (
                 <Link to={`/case-assessment/consumer-${Date.now()}`}>

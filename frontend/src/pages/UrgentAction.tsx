@@ -177,7 +177,7 @@ const UrgentAction = () => {
               <Clock className="h-5 w-5" />
               <span className="font-mono">{formatTime(elapsedTime)}</span>
             </div>
-            <div className="bg-white/20 dark:bg-gray-800/20 dark:bg-gray-800/20 px-3 py-1 rounded-full text-sm font-medium">
+            <div className="bg-card/20 px-3 py-1 rounded-full text-sm font-medium">
               EMERGENCY ACTIVE
             </div>
           </div>
@@ -186,18 +186,18 @@ const UrgentAction = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32">
         {/* Emergency Title & AI Guidance */}
-        <Card className="bg-orange-50/80 dark:bg-orange-900/30 backdrop-blur-sm border-2 border-orange-200 dark:border-orange-800 rounded-lg p-6 mb-8">
+        <Card className="bg-warning/10 backdrop-blur-sm border-2 border-warning rounded-lg p-6 mb-8">
           <CardHeader className="pb-4">
-            <CardTitle className="text-2xl font-bold text-orange-800">
+            <CardTitle className="text-2xl font-bold text-foreground">
               {getEmergencyTitle(type || '')}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-4">
+            <Card className="bg-card/80 backdrop-blur-sm border border-border rounded-lg p-4">
               <div className="flex items-start space-x-3">
-                <Mic className="h-6 w-6 text-blue-600 mt-1 flex-shrink-0" />
+                <Mic className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <div className="font-medium text-sm text-blue-600 mb-2">AI LEGAL ASSISTANT</div>
+                  <div className="font-medium text-sm text-primary mb-2">AI LEGAL ASSISTANT</div>
                   <p className="text-sm text-foreground leading-relaxed">
                     {getAIGuidance(type || '')}
                   </p>
@@ -237,9 +237,9 @@ const UrgentAction = () => {
 
         {/* Complete Emergency Response Button */}
         <div className="text-center">
-          <Button 
-            size="lg" 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4"
+          <Button
+            size="lg"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4"
             asChild
           >
             <a href={`/urgent/summary/${type}`}>
@@ -250,7 +250,7 @@ const UrgentAction = () => {
       </div>
 
       {/* Fixed Bottom Quick Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-t border-border p-4 z-30 shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-sm border-t border-border p-4 z-30 shadow-2xl">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {quickActions.map((action) => (

@@ -54,10 +54,10 @@ const Insurance = () => {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-green-600 to-blue-600 rounded-xl flex items-center justify-center">
-            <Shield className="h-10 w-10 text-white" />
+          <div className="w-20 h-20 mx-auto mb-6 bg-success rounded-xl flex items-center justify-center">
+            <Shield className="h-10 w-10 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Legal Insurance</h1>
+          <h1 className="text-4xl font-bold mb-4 text-foreground">Legal Insurance</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Protect yourself with legal insurance coverage. Check your existing policy or explore new options 
             for comprehensive legal protection in Germany.
@@ -65,10 +65,10 @@ const Insurance = () => {
         </div>
 
         {/* My Insurance Policy Section */}
-        <Card className="bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-lg p-6 mb-8">
+        <Card className="bg-primary/10 backdrop-blur-sm border-2 border-primary rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="text-blue-800">My Insurance Policy</CardTitle>
-            <CardDescription className="text-blue-700">
+            <CardTitle className="text-primary">My Insurance Policy</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Check your current legal insurance coverage and verify what legal services are included.
             </CardDescription>
           </CardHeader>
@@ -113,13 +113,13 @@ const Insurance = () => {
           <h2 className="text-3xl font-bold text-center mb-8">Explore Insurance Providers</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {insuranceProviders.map((provider, index) => (
-              <Card key={index} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:shadow-lg transition-shadow">
+              <Card key={index} className="bg-card border-2 hover:shadow-xl transition-all">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Shield className="h-6 w-6 text-green-600 mr-2" />
+                  <CardTitle className="flex items-center text-foreground">
+                    <Shield className="h-6 w-6 text-success mr-2" />
                     {provider.name}
                   </CardTitle>
-                  <CardDescription>{provider.description}</CardDescription>
+                  <CardDescription className="text-muted-foreground">{provider.description}</CardDescription>
                 </CardHeader>
                 
                 <CardContent className="space-y-4">
@@ -128,7 +128,7 @@ const Insurance = () => {
                     <ul className="space-y-1">
                       {provider.coverage.map((item, idx) => (
                         <li key={idx} className="text-sm text-muted-foreground flex items-center">
-                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          <CheckCircle className="h-3 w-3 text-success mr-2" />
                           {item}
                         </li>
                       ))}
@@ -150,31 +150,31 @@ const Insurance = () => {
         </div>
 
         {/* Benefits Section */}
-        <Card className="bg-green-50/80 backdrop-blur-sm border border-green-200 rounded-lg p-6 mb-8">
+        <Card className="bg-success/10 backdrop-blur-sm border-2 border-success rounded-lg p-6 mb-8">
           <CardHeader>
-            <CardTitle className="text-green-800">Why Legal Insurance?</CardTitle>
+            <CardTitle className="text-success">Why Legal Insurance?</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
-                <DollarSign className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">Cost Protection</h3>
+                <DollarSign className="h-12 w-12 text-success mx-auto mb-4" />
+                <h3 className="font-semibold mb-2 text-foreground">Cost Protection</h3>
                 <p className="text-sm text-muted-foreground">
                   Legal insurance covers attorney fees, court costs, and expert witness expenses.
                 </p>
               </div>
               
               <div className="text-center">
-                <Users className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">Access to Lawyers</h3>
+                <Users className="h-12 w-12 text-success mx-auto mb-4" />
+                <h3 className="font-semibold mb-2 text-foreground">Access to Lawyers</h3>
                 <p className="text-sm text-muted-foreground">
                   Network of qualified lawyers who accept insurance coverage for their services.
                 </p>
               </div>
               
               <div className="text-center">
-                <Shield className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">Peace of Mind</h3>
+                <Shield className="h-12 w-12 text-success mx-auto mb-4" />
+                <h3 className="font-semibold mb-2 text-foreground">Peace of Mind</h3>
                 <p className="text-sm text-muted-foreground">
                   Know that you're protected against unexpected legal costs and disputes.
                 </p>
@@ -184,11 +184,11 @@ const Insurance = () => {
         </Card>
 
         {/* Call to Action */}
-        <Card className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/30 dark:to-green-900/30 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
+        <Card className="bg-card border-2 hover:shadow-xl transition-all rounded-lg p-6 text-center">
           <CardContent>
-            <h3 className="text-xl font-semibold mb-4">Ready to Get Protected?</h3>
+            <h3 className="text-xl font-semibold mb-4 text-foreground">Ready to Get Protected?</h3>
             <p className="text-muted-foreground mb-6">
-              Compare policies, check eligibility, or get personalized recommendations 
+              Compare policies, check eligibility, or get personalized recommendations
               for legal insurance coverage that fits your needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

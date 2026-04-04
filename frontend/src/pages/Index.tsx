@@ -145,8 +145,8 @@ const Index = () => {
         {isRegisteredUser ? (
           <>
             {/* Welcome Back Section */}
-            <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-md rounded-xl p-8 mb-12 shadow-lg text-left">
-              <h1 className="text-4xl font-bold mb-2">Welcome Back, User!</h1>
+            <Card className="p-8 mb-12 shadow-lg text-left border-2">
+              <h1 className="text-4xl font-bold mb-2 text-foreground">Welcome Back, User!</h1>
               <p className="text-xl text-muted-foreground mb-8">Ready to continue your legal journey?</p>
 
               {/* Active Cases */}
@@ -155,7 +155,7 @@ const Index = () => {
                 {mockCases.length > 0 ? (
                   <div className="space-y-4">
                     {mockCases.map((case_) => (
-                      <Card key={case_.id} className="bg-white/30 dark:bg-gray-800/30 rounded-lg hover:bg-white/40 dark:hover:bg-gray-800/40 transition-colors">
+                      <Card key={case_.id} className="bg-card rounded-lg hover:shadow-md transition-all border">
                         <CardContent className="p-4">
                           <div className="flex justify-between items-start mb-4">
                             <div>
@@ -185,7 +185,7 @@ const Index = () => {
                     ))}
                   </div>
                 ) : (
-                  <Card className="bg-white/30 dark:bg-gray-800/30 rounded-lg p-6 text-center">
+                  <Card className="bg-card rounded-lg p-6 text-center border">
                     <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                     <p className="text-muted-foreground mb-4">No active cases found.</p>
                     <Button asChild>
@@ -194,7 +194,7 @@ const Index = () => {
                   </Card>
                 )}
               </div>
-            </div>
+            </Card>
           </>
         ) : (
           /* New User View */
@@ -205,7 +205,7 @@ const Index = () => {
                 <img src="/logo.png" alt="fellaw Logo" className="w-full h-full object-contain" />
               </div>
 
-              <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h1 className="text-6xl font-bold mb-4 text-foreground">
                 {t('home.title')}
               </h1>
 
@@ -219,8 +219,8 @@ const Index = () => {
             {/* Success Statistics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
               {successStats.map((stat, index) => (
-                <Card key={index} className="bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 text-center shadow-lg">
-                  <stat.icon className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+                <Card key={index} className="bg-card rounded-xl p-6 text-center shadow-lg border-2 hover:shadow-xl transition-shadow">
+                  <stat.icon className="h-8 w-8 mx-auto mb-2 text-primary" />
                   <div className="text-2xl font-bold text-foreground">{stat.number}</div>
                   <div className="text-sm text-muted-foreground">{stat.label}</div>
                 </Card>
@@ -284,21 +284,21 @@ const Index = () => {
 
         {/* Separator */}
         <div className="flex items-center justify-center my-12">
-          <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+          <div className="flex-1 border-t border-border"></div>
           <div className="mx-4">
-            <Shield className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <Shield className="h-6 w-6 text-primary" />
           </div>
-          <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+          <div className="flex-1 border-t border-border"></div>
         </div>
 
         {/* SECTION 2: Dashboard Access Section */}
         <section className="mb-16">
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <Card className="bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 border-teal-200 dark:border-teal-800 hover:shadow-xl transition-all">
+            <Card className="bg-card border-2 hover:shadow-xl transition-all hover:border-accent">
               <CardHeader>
-                <UserCheck className="h-12 w-12 text-teal-600 mb-4" />
-                <CardTitle className="text-2xl">User Dashboard</CardTitle>
-                <CardDescription className="text-base">
+                <UserCheck className="h-12 w-12 text-accent mb-4" />
+                <CardTitle className="text-2xl text-foreground">User Dashboard</CardTitle>
+                <CardDescription className="text-base text-muted-foreground">
                   Manage your cases, documents, and communications in one place.
                 </CardDescription>
               </CardHeader>
@@ -309,11 +309,11 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 hover:shadow-xl transition-all">
+            <Card className="bg-card border-2 hover:shadow-xl transition-all hover:border-primary">
               <CardHeader>
-                <Briefcase className="h-12 w-12 text-blue-600 mb-4" />
-                <CardTitle className="text-2xl">{t('home.lawyerDashboard.title')}</CardTitle>
-                <CardDescription className="text-base">
+                <Briefcase className="h-12 w-12 text-primary mb-4" />
+                <CardTitle className="text-2xl text-foreground">{t('home.lawyerDashboard.title')}</CardTitle>
+                <CardDescription className="text-base text-muted-foreground">
                   {t('home.lawyerDashboard.description')}
                 </CardDescription>
               </CardHeader>
@@ -331,22 +331,22 @@ const Index = () => {
           <h2 className="text-3xl font-bold text-center mb-8">Trusted Legal Insurance Partners</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {legalInsurancePartners.map((partner) => (
-              <Card key={partner.name} className="bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm hover:bg-white/50 dark:hover:bg-gray-800/50 transition-colors shadow-lg">
+              <Card key={partner.name} className="bg-card hover:shadow-xl transition-all shadow-lg border-2 hover:border-primary">
                 <CardHeader className="text-center">
-                  <div className="w-full h-24 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                  <div className="w-full h-24 bg-secondary rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                     <img
                       src={partner.logo}
                       alt={partner.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <CardTitle className="text-xl font-bold">{partner.name}</CardTitle>
-                  <CardDescription className="text-sm">{partner.description}</CardDescription>
+                  <CardTitle className="text-xl font-bold text-foreground">{partner.name}</CardTitle>
+                  <CardDescription className="text-sm text-muted-foreground">{partner.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">
                     {partner.specialties.map((specialty, index) => (
-                      <div key={index} className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded-full inline-block mr-1 mb-1">
+                      <div key={index} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full inline-block mr-1 mb-1">
                         {specialty}
                       </div>
                     ))}
@@ -359,10 +359,10 @@ const Index = () => {
 
         {/* Testimonials */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Trusted by Professionals</h2>
+          <h2 className="text-3xl font-bold text-center mb-8 text-foreground">Trusted by Professionals</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+              <Card key={index} className="bg-card rounded-xl p-6 shadow-lg border-2 hover:shadow-xl transition-shadow">
                 <CardContent className="p-0">
                   <div className="flex items-center mb-4">
                     <img
@@ -371,18 +371,18 @@ const Index = () => {
                       className="w-12 h-12 rounded-full mr-4 object-cover"
                     />
                     <div>
-                      <div className="flex text-yellow-400 mb-1">
+                      <div className="flex text-warning mb-1">
                         {[...Array(testimonial.rating)].map((_, i) => (
                           <Star key={i} className="h-4 w-4 fill-current" />
                         ))}
                       </div>
-                      <div className="font-semibold">{testimonial.name}</div>
+                      <div className="font-semibold text-foreground">{testimonial.name}</div>
                     </div>
                   </div>
-                  <blockquote className="text-sm italic mb-4">"{testimonial.quote}"</blockquote>
+                  <blockquote className="text-sm italic mb-4 text-foreground">"{testimonial.quote}"</blockquote>
                   <div className="text-sm">
                     <div className="text-muted-foreground">{testimonial.role}, {testimonial.location}</div>
-                    <div className="text-blue-600 font-medium">Case: {testimonial.caseType}</div>
+                    <div className="text-primary font-medium">Case: {testimonial.caseType}</div>
                   </div>
                 </CardContent>
               </Card>
@@ -392,7 +392,7 @@ const Index = () => {
 
         {/* Platform Description */}
         <section className="mb-16 text-center">
-          <h2 className="text-3xl font-bold mb-4">A Horizontal Intelligent Research-Based Platform</h2>
+          <h2 className="text-3xl font-bold mb-4 text-foreground">A Horizontal Intelligent Research-Based Platform</h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Our AI-powered platform combines legal expertise with intelligent automation to provide comprehensive legal solutions across Germany, supporting multiple languages and specialized workflows.
           </p>
@@ -400,15 +400,15 @@ const Index = () => {
 
         {/* Quick Access Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Quick Access & Tailor Your Workflow</h2>
+          <h2 className="text-3xl font-bold text-center mb-8 text-foreground">Quick Access & Tailor Your Workflow</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {quickAccessCards.map((card, index) => (
               <Link key={index} to={card.href}>
-                <Card className="bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm hover:bg-white/40 dark:hover:bg-gray-800/40 transition-colors cursor-pointer h-full">
+                <Card className="bg-card hover:shadow-lg transition-all cursor-pointer h-full border-2 hover:border-primary">
                   <CardHeader>
-                    <card.icon className="h-8 w-8 text-blue-600 mb-2" />
-                    <CardTitle className="text-lg">{card.title}</CardTitle>
-                    <CardDescription>{card.description}</CardDescription>
+                    <card.icon className="h-8 w-8 text-primary mb-2" />
+                    <CardTitle className="text-lg text-foreground">{card.title}</CardTitle>
+                    <CardDescription className="text-muted-foreground">{card.description}</CardDescription>
                   </CardHeader>
                 </Card>
               </Link>
@@ -417,18 +417,18 @@ const Index = () => {
             {/* Modular Platform Card */}
             <Dialog>
               <DialogTrigger asChild>
-                <Card className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-200 dark:border-purple-800 hover:shadow-lg transition-all cursor-pointer">
+                <Card className="bg-card border-2 hover:shadow-lg transition-all cursor-pointer hover:border-accent">
                   <CardHeader>
-                    <Settings className="h-8 w-8 text-purple-600 mb-2" />
-                    <CardTitle className="text-lg">Tailor Your Legal Workflow</CardTitle>
-                    <CardDescription>Customize features to your specific needs</CardDescription>
+                    <Settings className="h-8 w-8 text-accent mb-2" />
+                    <CardTitle className="text-lg text-foreground">Tailor Your Legal Workflow</CardTitle>
+                    <CardDescription className="text-muted-foreground">Customize features to your specific needs</CardDescription>
                   </CardHeader>
                 </Card>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Modular Legal Platform</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-foreground">Modular Legal Platform</DialogTitle>
+                  <DialogDescription className="text-muted-foreground">
                     Our modular platform allows you to build your own office and workflows, customizing features to your specific legal needs and practice. You can configure automated document generation, client communication workflows, case tracking systems, and specialized tools for different areas of law.
                   </DialogDescription>
                 </DialogHeader>
@@ -438,23 +438,23 @@ const Index = () => {
         </section>
 
         {/* Serving All of Germany */}
-        <section className="text-center bg-white/20 dark:bg-gray-800/20 backdrop-blur-md rounded-xl p-8">
-          <h2 className="text-3xl font-bold mb-6">Serving All of Germany</h2>
+        <Card className="text-center p-8 border-2">
+          <h2 className="text-3xl font-bold mb-6 text-foreground">Serving All of Germany</h2>
           <div className="flex justify-center items-center space-x-8">
             <div className="flex items-center space-x-2">
-              <Globe className="h-6 w-6 text-blue-600" />
-              <span>Nationwide Coverage</span>
+              <Globe className="h-6 w-6 text-primary" />
+              <span className="text-foreground">Nationwide Coverage</span>
             </div>
             <div className="flex items-center space-x-2">
-              <MapPin className="h-6 w-6 text-green-600" />
-              <span>Local Expertise</span>
+              <MapPin className="h-6 w-6 text-success" />
+              <span className="text-foreground">Local Expertise</span>
             </div>
             <div className="flex items-center space-x-2">
-              <Users className="h-6 w-6 text-purple-600" />
-              <span>Multilingual Support</span>
+              <Users className="h-6 w-6 text-accent" />
+              <span className="text-foreground">Multilingual Support</span>
             </div>
           </div>
-        </section>
+        </Card>
       </div>
     </div>
   );

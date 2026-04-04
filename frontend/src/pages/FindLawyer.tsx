@@ -111,11 +111,11 @@ const FindLawyer = () => {
         </div>
 
         {/* Student Legal Services Card */}
-        <Card className="bg-blue-50/80 dark:bg-blue-900/30 backdrop-blur-sm border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-6 shadow-md">
+        <Card className="bg-card border-2 border-primary rounded-lg p-6 mb-6 shadow-md">
           <CardHeader>
             <div className="flex items-center space-x-3">
-              <GraduationCap className="h-6 w-6 text-blue-600" />
-              <CardTitle className="text-xl">Student Legal Services</CardTitle>
+              <GraduationCap className="h-6 w-6 text-primary" />
+              <CardTitle className="text-xl text-foreground">Student Legal Services</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -156,11 +156,11 @@ const FindLawyer = () => {
         </Card>
 
         {/* Legal Insurance Coverage Card */}
-        <Card className="bg-green-50/80 dark:bg-green-900/30 backdrop-blur-sm border-2 border-green-200 dark:border-green-800 rounded-lg p-6 mb-6 shadow-md">
+        <Card className="bg-card border-2 border-success rounded-lg p-6 mb-6 shadow-md">
           <CardHeader>
             <div className="flex items-center space-x-3">
-              <Shield className="h-6 w-6 text-green-600" />
-              <CardTitle className="text-xl">Legal Insurance Coverage</CardTitle>
+              <Shield className="h-6 w-6 text-success" />
+              <CardTitle className="text-xl text-foreground">Legal Insurance Coverage</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -206,13 +206,13 @@ const FindLawyer = () => {
         </Card>
 
         {/* Find Lawyers Search Filters Card */}
-        <Card className="bg-background border rounded-lg p-6 mb-6 shadow-md">
+        <Card className="bg-card border-2 rounded-lg p-6 mb-6 shadow-md">
           <CardHeader>
             <div className="flex items-center space-x-3">
-              <Search className="h-6 w-6" />
-              <CardTitle>Find Lawyers</CardTitle>
+              <Search className="h-6 w-6 text-foreground" />
+              <CardTitle className="text-foreground">Find Lawyers</CardTitle>
             </div>
-            <CardDescription>Filter lawyers by location, language, specialty, and availability.</CardDescription>
+            <CardDescription className="text-muted-foreground">Filter lawyers by location, language, specialty, and availability.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -269,11 +269,11 @@ const FindLawyer = () => {
         </Card>
 
         {/* Graybeard AI Mediation Integration */}
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-6 text-center shadow-md">
+        <Card className="bg-card border-2 border-accent rounded-lg p-6 mb-6 text-center shadow-md">
           <CardHeader>
             <div className="flex items-center justify-center space-x-3">
-              <Handshake className="h-6 w-6 text-blue-600" />
-              <CardTitle>Explore AI-Assisted Mediation (Graybeard)</CardTitle>
+              <Handshake className="h-6 w-6 text-accent" />
+              <CardTitle className="text-foreground">Explore AI-Assisted Mediation (Graybeard)</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -291,18 +291,18 @@ const FindLawyer = () => {
 
         {/* Available Lawyers Section */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-6">Available Lawyers ({mockLawyers.length})</h2>
-          
+          <h2 className="text-2xl font-bold mb-6 text-foreground">Available Lawyers ({mockLawyers.length})</h2>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {mockLawyers.map((lawyer) => (
-              <Card key={lawyer.id} className="hover:shadow-lg transition-shadow">
+              <Card key={lawyer.id} className="bg-card border-2 hover:shadow-lg hover:border-primary transition-all">
                 <CardHeader>
                   <div className="flex items-center space-x-3">
                     <span className="text-4xl">{lawyer.photo}</span>
                     <div>
-                      <CardTitle className="text-lg">{lawyer.name}</CardTitle>
+                      <CardTitle className="text-lg text-foreground">{lawyer.name}</CardTitle>
                       <div className="flex items-center space-x-1 mt-1">
-                        <Award className="h-4 w-4 text-yellow-500" />
+                        <Award className="h-4 w-4 text-warning" />
                         <span className="text-sm font-medium">{lawyer.rating}</span>
                         <span className="text-sm text-muted-foreground">({lawyer.reviews} reviews)</span>
                       </div>
@@ -355,8 +355,8 @@ const FindLawyer = () => {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Book Consultation with {lawyer.name}</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-foreground">Book Consultation with {lawyer.name}</DialogTitle>
+                        <DialogDescription className="text-muted-foreground">
                           Choose your preferred consultation type and schedule a time.
                         </DialogDescription>
                       </DialogHeader>
@@ -375,9 +375,9 @@ const FindLawyer = () => {
                             <span className="text-sm">In-Person</span>
                           </Button>
                         </div>
-                        
-                        <div className="p-4 bg-gray-50 rounded">
-                          <p className="text-sm font-medium mb-2">Next Available:</p>
+
+                        <div className="p-4 bg-muted rounded">
+                          <p className="text-sm font-medium mb-2 text-foreground">Next Available:</p>
                           <p className="text-sm">{lawyer.nextAvailability}</p>
                         </div>
                         
