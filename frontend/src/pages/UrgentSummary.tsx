@@ -1,292 +1,324 @@
-import { useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import {
-  Download,
-  Send,
-  Check,
+
+import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { 
+  CheckCircle, 
+  GraduationCap, 
+  Shield, 
+  DollarSign, 
+  Upload, 
+  Mail, 
+  Download, 
+  AlertTriangle,
   FileText,
-  Printer,
-  Share2,
-  ArrowLeft,
-  AlertCircle,
-  Calendar,
-  Clock,
   MapPin,
-  User
-} from 'lucide-react'
+  Clock
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const UrgentSummary = () => {
-  const { type } = useParams<{ type: string }>()
-  const navigate = useNavigate()
-  const [saving, setSaving] = useState(false)
+  const { type } = useParams<{ type: string }>();
+  const [selectedDecision, setSelectedDecision] = useState<string>('');
 
-  const emergencyTitles: Record<string, string> = {
-    'police-interaction': 'Polizeikontrolle',
-    'car-accident': 'Verkehrsunfall',
-    'assault-violence': 'Körperverletzung',
-    'workplace-harassment': 'Mobbing am Arbeitsplatz',
-    'housing-eviction': 'Wohnungsrecht',
-    'child-custody': 'Sorgerecht',
-    'immigration-detention': 'Ausländerrecht',
-    'wrongful-arrest': 'Rechtswidrige Festnahme',
-    'cyber-harassment': 'Cybermobbing'
-  }
+  const getPageTitle = (type: string) => {
+    const titles: { [key: string]: string } = {
+      'police-interaction': 'Police Encounter Documentation Complete',
+      'car-accident': 'Car Accident Documentation Complete',
+      'assault-violence': 'Assault Documentation Complete',
+      'workplace-harassment': 'Workplace Incident Documentation Complete',
+      'housing-eviction': 'Housing Rights Documentation Complete',
+      'child-custody': 'Child Custody Documentation Complete',
+      'immigration-detention': 'Immigration Rights Documentation Complete',
+      'wrongful-arrest': 'Arrest Rights Documentation Complete',
+      'cyber-harassment': 'Cyber Crime Documentation Complete',
+      'voice': 'AI Situation Documentation Complete'
+    };
+    return titles[type] || 'Emergency Documentation Complete';
+  };
 
-  const handleSaveCase = async () => {
-    setSaving(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setSaving(false)
-    navigate('/cases')
-  }
+  const isAccidentCase = type === 'car-accident';
 
-  const handleDownloadPDF = () => {
-    alert('PDF-Bericht wird generiert...')
-  }
+  // Mock documentation data
+  const collectedDocuments = [
+    {
+      name: 'Audio Recording',
+      status: 'Complete',
+      detail: '4:32 minutes, HD quality',
+      icon: FileText,
+      statusColor: 'text-green-600'
+    },
+    {
+      name: 'GPS Location Data',
+      status: 'Complete',
+      detail: 'Precise coordinates + timestamp',
+      icon: MapPin,
+      statusColor: 'text-green-600'
+    },
+    {
+      name: 'Timeline Documentation',
+      status: 'Complete',
+      detail: '8 events logged with timestamps',
+      icon: Clock,
+      statusColor: 'text-green-600'
+    },
+    {
+      name: 'Photo Evidence',
+      status: 'Missing',
+      detail: 'No photos captured',
+      icon: Upload,
+      statusColor: 'text-orange-600'
+    }
+  ];
 
-  const handleShareReport = () => {
-    alert('Bericht-Link kopiert')
-  }
+  const estimatedCost = '€450 - €1,200';
+  const costDescription = 'Based on case complexity and representation level chosen';
+
+  const handleDecision = (decision: string) => {
+    setSelectedDecision(decision);
+    if (decision === 'download') {
+      // Simulate download
+      alert('Downloading encrypted documentation package...');
+      setTimeout(() => {
+        alert('Download complete! All files are encrypted and ready for legal use.');
+      }, 2000);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <Link
-            to="/urgent/select"
-            className="inline-flex items-center text-slate-400 hover:text-white transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Zurück zur Notfallauswahl
-          </Link>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-green-600/20 rounded-lg">
-              <Check className="h-6 w-6 text-green-400" />
-            </div>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        {/* Page Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-4">{getPageTitle(type || '')}</h1>
+        </div>
+
+        {/* Emergency Status */}
+        <Card className="bg-green-50/80 backdrop-blur-sm border border-green-200 rounded-lg p-6 mb-8">
+          <div className="flex items-center justify-center space-x-3">
+            <CheckCircle className="h-8 w-8 text-green-600" />
             <div>
-              <h1 className="text-3xl font-bold text-white">Dokumentation abgeschlossen</h1>
-              <p className="text-slate-400 mt-1">Ihre Notfalldokumentation wurde erfasst</p>
+              <h2 className="text-xl font-semibold text-green-800">Emergency Response Complete</h2>
+              <p className="text-green-700">Your situation has been documented and you have taken appropriate protective actions.</p>
             </div>
           </div>
-        </motion.div>
+        </Card>
 
-        {/* Success Message */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-green-600/20 border border-green-600/30 rounded-xl p-6 mb-8"
-        >
-          <div className="flex items-start gap-4">
-            <Check className="h-6 w-6 text-green-400 mt-1" />
-            <div>
-              <h3 className="font-semibold text-white mb-2">Alle Schritte dokumentiert</h3>
-              <p className="text-slate-300">
-                Ihre Notfalldokumentation wurde erfolgreich erfasst und gespeichert.
-                Sie können diese Dokumentation jetzt als Fall speichern oder als PDF herunterladen.
+        {/* Status & Legal Options for Accident Cases */}
+        {isAccidentCase && (
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6 mb-8">
+            <CardHeader>
+              <CardTitle>Your Status & Legal Options</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-4">
+                <Link to="/find-lawyer" className="block">
+                  <Card className="bg-blue-50 border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer">
+                    <CardContent className="p-4 flex items-center space-x-3">
+                      <GraduationCap className="h-6 w-6 text-blue-600" />
+                      <div>
+                        <div className="font-medium">I'm a Student</div>
+                        <div className="text-sm text-muted-foreground">Access student legal aid</div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+                
+                <Link to="/find-lawyer" className="block">
+                  <Card className="bg-green-50 border-green-200 hover:bg-green-100 transition-colors cursor-pointer">
+                    <CardContent className="p-4 flex items-center space-x-3">
+                      <Shield className="h-6 w-6 text-green-600" />
+                      <div>
+                        <div className="font-medium">I Have Legal Insurance</div>
+                        <div className="text-sm text-muted-foreground">Check coverage options</div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </div>
+
+              <div className="border-t pt-6">
+                <div className="flex items-start space-x-3 mb-4">
+                  <DollarSign className="h-6 w-6 text-orange-600 mt-1" />
+                  <div>
+                    <div className="font-medium">Estimated Cost</div>
+                    <div className="text-lg font-semibold text-orange-600">{estimatedCost}</div>
+                    <div className="text-sm text-muted-foreground">{costDescription}</div>
+                  </div>
+                </div>
+                
+                <Button asChild>
+                  <Link to="/case-assessment/initial-review">
+                    Explore Detailed Legal Options
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Further Incident Details for Accident Cases */}
+        {isAccidentCase && (
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6 mb-8">
+            <CardHeader>
+              <CardTitle>Further Incident Details (Optional)</CardTitle>
+              <CardDescription>
+                Adding more evidence can strengthen your case and insurance claim.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-3 gap-4">
+                <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+                  <Upload className="h-6 w-6 mb-2" />
+                  Add Photos
+                </Button>
+                <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+                  <Upload className="h-6 w-6 mb-2" />
+                  Add Video
+                </Button>
+                <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+                  <Upload className="h-6 w-6 mb-2" />
+                  Add Audio
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Captured Documentation Summary */}
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6 mb-8">
+          <CardHeader>
+            <CardTitle>Documentation Summary</CardTitle>
+            <CardDescription>
+              Review all collected evidence and documentation from your emergency response.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {collectedDocuments.map((doc, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <doc.icon className="h-5 w-5 text-gray-600" />
+                    <div>
+                      <div className="font-medium">{doc.name}</div>
+                      <div className="text-sm text-muted-foreground">{doc.detail}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={`text-sm font-medium ${doc.statusColor}`}>
+                      {doc.status}
+                    </span>
+                    {doc.status === 'Complete' ? (
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-orange-600" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Important Missing Details */}
+        <Card className="bg-orange-50/80 dark:bg-orange-900/30 backdrop-blur-sm border-2 border-orange-200 dark:border-orange-800 rounded-lg p-6 mb-8">
+          <CardHeader>
+            <CardTitle className="text-orange-800">Important Missing Details</CardTitle>
+            <CardDescription className="text-orange-700">
+              These items could strengthen your case if added now.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex space-x-4">
+              <Button variant="outline" className="flex items-center space-x-2">
+                <Upload className="h-4 w-4" />
+                <span>Add Missing Documents Now</span>
+              </Button>
+              <Button variant="outline" className="flex items-center space-x-2">
+                <Mail className="h-4 w-4" />
+                <span>Request Official Records</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Decision Point */}
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-6">
+          <CardHeader>
+            <CardTitle>What would you like to do next?</CardTitle>
+            <CardDescription>
+              Choose how you want to proceed with your documented case.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Create Full Legal Case */}
+              <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors cursor-pointer">
+                <CardHeader>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className="h-6 w-6 text-blue-600" />
+                    <CardTitle className="text-lg">Create Full Legal Case</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="mb-4">
+                    Get comprehensive AI analysis, lawyer matching, and full legal support for your situation. 
+                    This includes case strategy, document preparation, and potential representation.
+                  </CardDescription>
+                  <Button 
+                    className="w-full" 
+                    asChild
+                    onClick={() => setSelectedDecision('case')}
+                  >
+                    <Link to={`/case-assessment/emergency-${type}-${Date.now()}`}>
+                      Yes, Create My Case
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Download Files Only */}
+              <Card className="border-2 border-gray-200 hover:border-gray-400 transition-colors cursor-pointer">
+                <CardHeader>
+                  <div className="flex items-center space-x-3">
+                    <Download className="h-6 w-6 text-gray-600" />
+                    <CardTitle className="text-lg">Download Files Only</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="mb-4">
+                    Download your collected data and documentation for personal records or to share 
+                    with your own legal representation. All files are encrypted and legally admissible.
+                  </CardDescription>
+                  <Button 
+                    variant="secondary" 
+                    className="w-full"
+                    onClick={() => handleDecision('download')}
+                  >
+                    No, Just Download Data
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
+
+        {selectedDecision === 'download' && (
+          <Card className="bg-green-50/80 backdrop-blur-sm border border-green-200 rounded-lg p-6 mt-6">
+            <CardContent className="text-center">
+              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-green-800 mb-2">Download Complete</h3>
+              <p className="text-green-700">
+                Your emergency documentation has been securely packaged and downloaded. 
+                All files are encrypted and can be used as legal evidence if needed.
               </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Summary Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 mb-8"
-        >
-          <h2 className="text-xl font-semibold text-white mb-6">Zusammenfassung</h2>
-
-          <div className="space-y-4">
-            {/* Emergency Type */}
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-slate-400 mt-0.5" />
-              <div className="flex-1">
-                <div className="text-sm text-slate-400 mb-1">Notfalltyp</div>
-                <div className="text-white font-medium">{emergencyTitles[type || ''] || 'Unbekannt'}</div>
-              </div>
-            </div>
-
-            {/* Timestamp */}
-            <div className="flex items-start gap-3">
-              <Clock className="h-5 w-5 text-slate-400 mt-0.5" />
-              <div className="flex-1">
-                <div className="text-sm text-slate-400 mb-1">Zeitstempel</div>
-                <div className="text-white font-medium">
-                  {new Date().toLocaleDateString('de-DE', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Location */}
-            <div className="flex items-start gap-3">
-              <MapPin className="h-5 w-5 text-slate-400 mt-0.5" />
-              <div className="flex-1">
-                <div className="text-sm text-slate-400 mb-1">Standort</div>
-                <div className="text-white font-medium">GPS-Koordinaten gespeichert</div>
-                <div className="text-sm text-slate-400 mt-1">Berlin, Deutschland (Beispiel)</div>
-              </div>
-            </div>
-
-            {/* Evidence Collected */}
-            <div className="flex items-start gap-3">
-              <FileText className="h-5 w-5 text-slate-400 mt-0.5" />
-              <div className="flex-1">
-                <div className="text-sm text-slate-400 mb-1">Gesammelte Beweise</div>
-                <div className="space-y-2 mt-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-green-400" />
-                    <span className="text-slate-300">Zeitstempel und GPS-Daten</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-green-400" />
-                    <span className="text-slate-300">Detaillierte Vorfallsbeschreibung</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-green-400" />
-                    <span className="text-slate-300">KI-generierte Empfehlungen</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Next Steps */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 mb-8"
-        >
-          <h2 className="text-xl font-semibold text-white mb-4">Nächste Schritte</h2>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                1
-              </div>
-              <div>
-                <h3 className="font-medium text-white">Dokumentation überprüfen</h3>
-                <p className="text-sm text-slate-400 mt-1">
-                  Prüfen Sie alle gesammelten Informationen auf Vollständigkeit
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                2
-              </div>
-              <div>
-                <h3 className="font-medium text-white">Als Fall speichern</h3>
-                <p className="text-sm text-slate-400 mt-1">
-                  Erstellen Sie einen neuen Fall für weitere Nachverfolgung
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                3
-              </div>
-              <div>
-                <h3 className="font-medium text-white">Rechtsberatung einholen</h3>
-                <p className="text-sm text-slate-400 mt-1">
-                  Kontaktieren Sie einen Anwalt für professionelle Beratung
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="grid md:grid-cols-2 gap-4"
-        >
-          <button
-            onClick={handleSaveCase}
-            disabled={saving}
-            className="flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-xl font-semibold transition-colors"
-          >
-            {saving ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Wird gespeichert...
-              </>
-            ) : (
-              <>
-                <Send className="h-5 w-5" />
-                Als Fall speichern
-              </>
-            )}
-          </button>
-
-          <button
-            onClick={handleDownloadPDF}
-            className="flex items-center justify-center gap-2 px-6 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-xl font-semibold transition-colors"
-          >
-            <Download className="h-5 w-5" />
-            PDF herunterladen
-          </button>
-        </motion.div>
-
-        {/* Additional Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="grid grid-cols-2 gap-4 mt-4"
-        >
-          <button
-            onClick={handleShareReport}
-            className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-white rounded-lg font-medium transition-colors"
-          >
-            <Share2 className="h-4 w-4" />
-            Teilen
-          </button>
-          <button
-            onClick={() => window.print()}
-            className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-white rounded-lg font-medium transition-colors"
-          >
-            <Printer className="h-4 w-4" />
-            Drucken
-          </button>
-        </motion.div>
-
-        {/* Legal Disclaimer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-8 p-4 bg-yellow-600/10 border border-yellow-600/30 rounded-lg"
-        >
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-yellow-200/80">
-              <strong className="text-yellow-200">Wichtiger Hinweis:</strong> Diese Dokumentation ersetzt keine
-              professionelle Rechtsberatung. Bitte konsultieren Sie einen zugelassenen Rechtsanwalt für
-              verbindliche rechtliche Beratung gemäß § 3 RDG.
-            </div>
-          </div>
-        </motion.div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UrgentSummary
+export default UrgentSummary;

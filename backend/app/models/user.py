@@ -53,6 +53,24 @@ class User(Base):
         cascade="all, delete-orphan",
         lazy="select",
     )
+    insurance_policies: Mapped[list] = relationship(
+        "InsuranceCoverage",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    generated_documents: Mapped[list] = relationship(
+        "GeneratedDocument",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    notifications: Mapped[list] = relationship(
+        "Notification",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
 
     def __repr__(self) -> str:
         return f"<User id={self.id} email={self.email!r}>"

@@ -1,330 +1,308 @@
-import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import {
-  Clock,
-  Mic,
-  Eye,
-  Car,
-  AlertTriangle,
-  Phone,
-  Camera,
-  Users,
-  MapPin,
-  Globe,
-  EyeOff,
-  FileText,
-  Shield,
-  Check,
-  ArrowRight,
-  AlertCircle
-} from 'lucide-react'
+
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { 
+  Clock, 
+  Mic, 
+  Eye, 
+  Car, 
+  AlertTriangle, 
+  Phone, 
+  Camera, 
+  Users, 
+  MapPin, 
+  Globe, 
+  EyeOff, 
+  FileText, 
+  Shield 
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const UrgentAction = () => {
-  const { type } = useParams<{ type: string }>()
-  const [elapsedTime, setElapsedTime] = useState(0)
-  const [completedActions, setCompletedActions] = useState<string[]>([])
-  const [showGuidance, setShowGuidance] = useState(true)
+  const { type } = useParams<{ type: string }>();
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [disclaimerAcknowledged, setDisclaimerAcknowledged] = useState(false);
+  const [completedActions, setCompletedActions] = useState<string[]>([]);
 
   // Timer for elapsed time
   useEffect(() => {
     const timer = setInterval(() => {
-      setElapsedTime(prev => prev + 1)
-    }, 1000)
+      setElapsedTime(prev => prev + 1);
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [])
+    // Show disclaimer after 5 seconds
+    const disclaimerTimer = setTimeout(() => {
+      setShowDisclaimer(true);
+    }, 5000);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(disclaimerTimer);
+    };
+  }, []);
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
-  const emergencyConfig: Record<string, {
-    title: string
-    titleEn: string
-    aiGuidance: string
-    smartActions: Array<{ id: string; label: string; detail: string; icon: any }>
-    quickActions: Array<{ id: string; label: string; icon: any; variant: string }>
-  }> = {
-    'police-interaction': {
-      title: 'Polizeikontrolle - Rechtsschutz',
-      titleEn: 'Police Encounter Protection',
-      aiGuidance: 'Bleiben Sie ruhig und halten Sie Ihre Hände sichtbar. Sie haben das Recht zu schweigen und das Recht auf einen Anwalt. Stimmen Sie keinen Durchsuchungen ohne Durchsuchungsbefehl zu.',
-      smartActions: [
-        { id: 'stay-calm', label: 'Ruhig bleiben & Hände sichtbar', detail: 'Keine plötzlichen Bewegungen, Hände auf Lenkrad', icon: Eye },
-        { id: 'rights-card', label: 'Rechtskarte zeigen', detail: 'Digitale Karte mit Rechtsformulierungen anzeigen', icon: FileText },
-        { id: 'log-officer', label: 'Beamteninformationen erfassen', detail: 'Dienstnummer, Kennzeichen, Uhrzeit dokumentieren', icon: Shield },
-        { id: 'location', label: 'Standort speichern', detail: 'GPS-Koordinaten und Adresse dokumentieren', icon: MapPin }
-      ],
-      quickActions: [
-        { id: 'call-assist', label: 'Notruf-Assistent', icon: Phone, variant: 'destructive' },
-        { id: 'record', label: 'Foto/Video aufnehmen', icon: Camera, variant: 'default' },
-        { id: 'translation', label: 'Sofort-Übersetzung', icon: Globe, variant: 'default' },
-        { id: 'auto-report', label: 'Bericht erstellen', icon: FileText, variant: 'default' }
-      ]
-    },
-    'car-accident': {
-      title: 'Verkehrsunfall - Sofortmaßnahmen',
-      titleEn: 'Car Accident Response',
-      aiGuidance: 'Sicherheit geht vor. Bewegen Sie sich an einen sicheren Ort, wenn möglich. Prüfen Sie auf Verletzungen und rufen Sie ggf. Rettungsdienste. Geben Sie keine Schuld zu.',
-      smartActions: [
-        { id: 'safe-location', label: 'Sicheren Ort aufsuchen', detail: 'Warnblinker aktivieren, Fahrzeug bewegen', icon: Car },
-        { id: 'log-injuries', label: 'Verletzungen dokumentieren', detail: 'Checkliste zur Selbsteinschätzung', icon: AlertTriangle },
-        { id: 'exchange-info', label: 'Informationen austauschen', detail: 'Kontaktdaten und Zeugenaussagen', icon: Users },
-        { id: 'tell-side', label: 'Hergang schildern', detail: 'Vorfall für Dokumentation beschreiben', icon: Mic }
-      ],
-      quickActions: [
-        { id: 'call-assist', label: 'Notruf 112', icon: Phone, variant: 'destructive' },
-        { id: 'record', label: 'Unfallstelle fotografieren', icon: Camera, variant: 'default' },
-        { id: 'alert-contacts', label: 'Kontakte benachrichtigen', icon: Users, variant: 'default' },
-        { id: 'auto-report', label: 'Unfallbericht', icon: FileText, variant: 'default' }
-      ]
-    },
-    'assault-violence': {
-      title: 'Körperverletzung - Schutzprotokoll',
-      titleEn: 'Assault Protection Protocol',
-      aiGuidance: 'Ihre Sicherheit hat Priorität. Wenn Sie in unmittelbarer Gefahr sind, rufen Sie 110. Dokumentieren Sie alles, wenn es sicher ist.',
-      smartActions: [
-        { id: 'document', label: 'Beweise dokumentieren', detail: 'Fotos von Verletzungen und Umgebung', icon: Camera },
-        { id: 'describe-attacker', label: 'Täter beschreiben', detail: 'Physische Merkmale und Kennzeichen', icon: Eye },
-        { id: 'witnesses', label: 'Zeugen erfassen', detail: 'Kontaktinformationen von Zeugen', icon: Users },
-        { id: 'safe-location', label: 'Sicheren Ort finden', detail: 'Nächste Polizeistation oder öffentlicher Ort', icon: MapPin }
-      ],
-      quickActions: [
-        { id: 'call-assist', label: 'Polizei 110', icon: Phone, variant: 'destructive' },
-        { id: 'record', label: 'Beweise sichern', icon: Camera, variant: 'default' },
-        { id: 'safe-zone', label: 'Sichere Zone', icon: MapPin, variant: 'default' },
-        { id: 'hidden-mode', label: 'Versteckter Modus', icon: EyeOff, variant: 'default' }
-      ]
-    },
-    'workplace-harassment': {
-      title: 'Mobbing am Arbeitsplatz',
-      titleEn: 'Workplace Harassment',
-      aiGuidance: 'Dokumentieren Sie den Vorfall sofort mit konkreten Details: Datum, Uhrzeit, Ort und Zeugen. Bewahren Sie alle Kommunikationen auf.',
-      smartActions: [
-        { id: 'incident-log', label: 'Vorfall protokollieren', detail: 'Detaillierte Beschreibung mit Datum/Uhrzeit', icon: FileText },
-        { id: 'witnesses', label: 'Zeugen dokumentieren', detail: 'Namen und Kontakte von Anwesenden', icon: Users },
-        { id: 'evidence', label: 'Beweise sammeln', detail: 'E-Mails, Nachrichten, Fotos sichern', icon: Camera },
-        { id: 'hr-contact', label: 'HR-Kommunikation', detail: 'Offizieller Meldeweg vorbereiten', icon: AlertCircle }
-      ],
-      quickActions: [
-        { id: 'record', label: 'Dokumentieren', icon: Camera, variant: 'default' },
-        { id: 'auto-report', label: 'Beschwerde erstellen', icon: FileText, variant: 'default' }
-      ]
-    },
-    'housing-eviction': {
-      title: 'Wohnungsrecht / Kündigung',
-      titleEn: 'Housing Rights Protection',
-      aiGuidance: 'Das deutsche Mietrecht bietet starken Schutz. Dokumentieren Sie alle Kündigungen und Kommunikation. Sie haben auch während einer Räumung Rechte.',
-      smartActions: [
-        { id: 'check-notice', label: 'Kündigung prüfen', detail: 'Rechtmäßigkeit und Fristen analysieren', icon: FileText },
-        { id: 'document-condition', label: 'Zustand dokumentieren', detail: 'Fotos der Wohnung erstellen', icon: Camera },
-        { id: 'tenant-rights', label: 'Mieterrechte', detail: 'Ihre Rechte nach BGB prüfen', icon: Shield },
-        { id: 'find-help', label: 'Hilfe finden', detail: 'Mieterverein oder Beratungsstelle', icon: Users }
-      ],
-      quickActions: [
-        { id: 'record', label: 'Dokumentieren', icon: Camera, variant: 'default' },
-        { id: 'auto-report', label: 'Widerspruch erstellen', icon: FileText, variant: 'default' }
-      ]
-    },
-    voice: {
-      title: 'KI-Situationsanalyse',
-      titleEn: 'AI Situation Analysis',
-      aiGuidance: 'Ich verstehe Ihre Situation. Beschreiben Sie mir bitte, was passiert ist. Ich werde Ihnen spezifische Hilfe und Anleitung geben.',
-      smartActions: [
-        { id: 'voice-input', label: 'Situation beschreiben', detail: 'Mit Sprache oder Text eingeben', icon: Mic },
-        { id: 'ai-analysis', label: 'KI-Analyse', detail: 'Automatische Kategorisierung und Empfehlungen', icon: AlertCircle },
-        { id: 'action-plan', label: 'Aktionsplan', detail: 'Schrittweise Anleitung basierend auf Ihrer Situation', icon: FileText }
-      ],
-      quickActions: [
-        { id: 'voice-record', label: 'Sprachaufnahme', icon: Mic, variant: 'default' },
-        { id: 'translate', label: 'Übersetzen', icon: Globe, variant: 'default' }
-      ]
-    }
-  }
+  const getEmergencyTitle = (type: string) => {
+    const titles: { [key: string]: string } = {
+      'police-interaction': 'Police Encounter Protection',
+      'car-accident': 'Car Accident Response',
+      'assault-violence': 'Assault Protection Protocol',
+      'workplace-harassment': 'Workplace Incident Documentation',
+      'housing-eviction': 'Housing Rights Protection',
+      'child-custody': 'Child Custody Emergency',
+      'immigration-detention': 'Immigration Rights Protection',
+      'wrongful-arrest': 'Arrest Rights Protection',
+      'cyber-harassment': 'Cyber Crime Documentation',
+      'voice': 'AI Situation Analysis'
+    };
+    return titles[type] || 'Emergency Legal Response';
+  };
 
-  const config = emergencyConfig[type || ''] || emergencyConfig.voice
-  const progress = (completedActions.length / config.smartActions.length) * 100
+  const getAIGuidance = (type: string) => {
+    const guidance: { [key: string]: string } = {
+      'police-interaction': 'Stay calm and keep your hands visible. You have the right to remain silent and the right to an attorney. Do not consent to searches without a warrant.',
+      'car-accident': 'First, ensure your safety and move to a safe location if possible. Check for injuries and call emergency services if needed. Do not admit fault.',
+      'assault-violence': 'Your safety is the priority. If you are in immediate danger, call 110. Document everything when it is safe to do so.',
+      'workplace-harassment': 'Document the incident immediately with specific details including date, time, location, and witnesses. Keep records of all communications.',
+      'housing-eviction': 'German tenant law provides strong protections. Document all notices and communications. You have rights even during eviction proceedings.',
+      'child-custody': 'Child welfare is paramount. Document all interactions and ensure any custody agreements are followed strictly.',
+      'immigration-detention': 'You have rights regardless of your immigration status. You can request an interpreter and contact your embassy.',
+      'wrongful-arrest': 'Clearly state you do not consent to searches. Ask if you are free to leave. Request a lawyer immediately.',
+      'cyber-harassment': 'Preserve all digital evidence immediately. Take screenshots before the content can be deleted or modified.',
+      'voice': 'I understand your situation. Let me provide specific guidance based on what you\'ve described. Tap the microphone to continue our conversation.'
+    };
+    return guidance[type] || 'AI legal assistant is analyzing your situation and will provide specific guidance momentarily.';
+  };
+
+  const getSmartActions = (type: string) => {
+    const actions: { [key: string]: Array<{id: string, label: string, detail: string, icon: any}> } = {
+      'police-interaction': [
+        { id: 'stay-calm', label: 'Stay Calm & Hands Visible', detail: 'Avoid sudden movements, place hands on steering wheel', icon: Eye },
+        { id: 'rights-card', label: 'Show Rights Card', detail: 'Display digital card with legal phrasing in multiple languages', icon: FileText },
+        { id: 'log-officer', label: 'Log Officer Info', detail: 'Quick input of badge #, vehicle plate, and time', icon: Shield },
+        { id: 'calendar', label: 'Adjust My Calendar', detail: 'Add interaction details to personal calendar', icon: Clock }
+      ],
+      'car-accident': [
+        { id: 'safe-location', label: 'Move to Safe Location', detail: 'Safety assessment, move vehicle, activate hazards', icon: Car },
+        { id: 'log-injuries', label: 'Log Injuries', detail: 'Self-assessment checklist for documentation', icon: AlertTriangle },
+        { id: 'exchange-info', label: 'Exchange Info (If Safe)', detail: 'Contact details and witness statements', icon: Users },
+        { id: 'tell-side', label: 'Tell My Side', detail: 'Narrate incident for comprehensive documentation', icon: Mic }
+      ],
+      'assault-violence': [
+        { id: 'document', label: 'Document Details', detail: 'Photo capture of injuries and environment', icon: Camera },
+        { id: 'describe-attacker', label: 'Describe Attacker', detail: 'Physical descriptions and identifying features', icon: Eye },
+        { id: 'witnesses', label: 'Collect Witness Info', detail: 'Contact information of potential witnesses', icon: Users }
+      ]
+    };
+    return actions[type] || [];
+  };
+
+  const getQuickActions = (type: string) => {
+    const baseActions = [
+      { id: 'call-assist', label: 'Smart Call Assist', icon: Phone, variant: 'destructive' as const },
+      { id: 'record', label: 'Record Photo/Video', icon: Camera, variant: 'default' as const }
+    ];
+
+    const typeSpecificActions: { [key: string]: Array<{id: string, label: string, icon: any, variant: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost'}> } = {
+      'police-interaction': [
+        { id: 'translation', label: 'Instant Translation', icon: Globe, variant: 'default' },
+        { id: 'auto-report', label: 'Auto-Generate Report', icon: FileText, variant: 'default' }
+      ],
+      'car-accident': [
+        { id: 'alert-contacts', label: 'Alert My Contacts', icon: Users, variant: 'destructive' },
+        { id: 'auto-report', label: 'Auto-Generate Report', icon: FileText, variant: 'default' }
+      ],
+      'assault-violence': [
+        { id: 'safe-zone', label: 'Safe Zone Finder', icon: MapPin, variant: 'default' },
+        { id: 'hidden-mode', label: 'Hidden Emergency Mode', icon: EyeOff, variant: 'default' }
+      ]
+    };
+
+    return [...baseActions, ...(typeSpecificActions[type] || [])];
+  };
 
   const handleActionComplete = (actionId: string) => {
     if (!completedActions.includes(actionId)) {
-      setCompletedActions([...completedActions, actionId])
+      setCompletedActions([...completedActions, actionId]);
     }
-  }
+  };
+
+  const handleQuickAction = (actionId: string) => {
+    switch (actionId) {
+      case 'call-assist':
+        // This would open the call assist modal
+        alert('Smart Call Assist: AI-guided emergency services call initiated');
+        break;
+      case 'record':
+        alert('Recording mode activated');
+        break;
+      case 'alert-contacts':
+        alert('Emergency contacts notified with current location');
+        break;
+      case 'safe-zone':
+        alert('Locating nearest safe public areas and police stations');
+        break;
+      case 'translation':
+        alert('Real-time translation activated');
+        break;
+      case 'hidden-mode':
+        alert('Silent emergency mode activated');
+        break;
+      case 'auto-report':
+        alert('Generating preliminary report from collected data');
+        break;
+      default:
+        alert(`${actionId} activated`);
+    }
+  };
+
+  const smartActions = getSmartActions(type || '');
+  const quickActions = getQuickActions(type || '');
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-background">
       {/* Emergency Header */}
-      <div className="bg-gradient-to-r from-orange-600 to-red-600 text-white sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
+      <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white p-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               <Clock className="h-5 w-5" />
-              <span className="font-mono text-lg font-bold">{formatTime(elapsedTime)}</span>
+              <span className="font-mono">{formatTime(elapsedTime)}</span>
             </div>
-            <div className="bg-white/20 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-              NOTFALL AKTIV
+            <div className="bg-white/20 dark:bg-gray-800/20 dark:bg-gray-800/20 px-3 py-1 rounded-full text-sm font-medium">
+              EMERGENCY ACTIVE
             </div>
-          </div>
-          <div className="text-sm">
-            {completedActions.length} / {config.smartActions.length} Schritte
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-3xl font-bold text-white mb-2">{config.title}</h1>
-          <p className="text-slate-400">{config.titleEn}</p>
-        </motion.div>
-
-        {/* AI Guidance */}
-        {showGuidance && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-blue-600/20 border border-blue-600/30 rounded-xl p-6 mb-8"
-          >
-            <div className="flex items-start gap-4">
-              <div className="p-2 bg-blue-600/30 rounded-lg">
-                <Mic className="h-6 w-6 text-blue-400" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32">
+        {/* Emergency Title & AI Guidance */}
+        <Card className="bg-orange-50/80 dark:bg-orange-900/30 backdrop-blur-sm border-2 border-orange-200 dark:border-orange-800 rounded-lg p-6 mb-8">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-2xl font-bold text-orange-800">
+              {getEmergencyTitle(type || '')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-border rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <Mic className="h-6 w-6 text-blue-600 mt-1 flex-shrink-0" />
+                <div>
+                  <div className="font-medium text-sm text-blue-600 mb-2">AI LEGAL ASSISTANT</div>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {getAIGuidance(type || '')}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    🎤 Tap microphone in Quick Action bar to speak with AI assistant
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <div className="text-sm font-medium text-blue-400 mb-2 uppercase">KI Rechtsassistent</div>
-                <p className="text-white leading-relaxed">{config.aiGuidance}</p>
-              </div>
-              <button
-                onClick={() => setShowGuidance(false)}
-                className="text-slate-400 hover:text-white"
-              >
-                ×
-              </button>
-            </div>
-          </motion.div>
-        )}
+            </Card>
+          </CardContent>
+        </Card>
 
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-slate-400">Fortschritt</span>
-            <span className="text-sm font-medium text-white">{Math.round(progress)}%</span>
-          </div>
-          <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-green-600 to-blue-600"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Smart Actions */}
-          <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-xl font-semibold text-white mb-4">Empfohlene Schritte</h2>
-            {config.smartActions.map((action, idx) => {
-              const isCompleted = completedActions.includes(action.id)
-              return (
-                <motion.div
+        {/* Smart Action Plan */}
+        {smartActions.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-6">Smart Action Plan</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {smartActions.map((action) => (
+                <Button
                   key={action.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  className={`bg-slate-800/50 border rounded-xl p-4 transition-all ${
-                    isCompleted ? 'border-green-600/50 bg-green-600/10' : 'border-slate-700/50'
-                  }`}
+                  size="lg"
+                  variant={completedActions.includes(action.id) ? "secondary" : "default"}
+                  className="w-full h-auto py-6 flex flex-col items-center justify-center text-center leading-tight hover:shadow-lg"
+                  onClick={() => handleActionComplete(action.id)}
+                  disabled={completedActions.includes(action.id)}
                 >
-                  <div className="flex items-start gap-4">
-                    <div className={`p-2 rounded-lg ${isCompleted ? 'bg-green-600/20' : 'bg-slate-700/50'}`}>
-                      <action.icon className={`h-6 w-6 ${isCompleted ? 'text-green-400' : 'text-slate-400'}`} />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-white mb-1">{action.label}</h3>
-                      <p className="text-sm text-slate-400">{action.detail}</p>
-                    </div>
-                    {isCompleted ? (
-                      <div className="p-2 bg-green-600/20 rounded-lg">
-                        <Check className="h-5 w-5 text-green-400" />
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleActionComplete(action.id)}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
-                      >
-                        Erledigt
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
-
-          {/* Quick Actions Sidebar */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-white mb-4">Schnellaktionen</h2>
-            {config.quickActions.map((action, idx) => (
-              <motion.button
-                key={action.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className={`w-full flex items-center gap-3 p-4 rounded-xl font-medium transition-all ${
-                  action.variant === 'destructive'
-                    ? 'bg-red-600 hover:bg-red-500 text-white'
-                    : 'bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-white'
-                }`}
-              >
-                <action.icon className="h-5 w-5" />
-                <span className="flex-1 text-left">{action.label}</span>
-              </motion.button>
-            ))}
-
-            {/* Emergency Contact */}
-            <div className="bg-red-600/20 border border-red-600/30 rounded-xl p-4 mt-6">
-              <h3 className="font-semibold text-white mb-2">Notruf</h3>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-400">Polizei</span>
-                  <span className="text-2xl font-bold text-white">110</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-400">Rettungsdienst</span>
-                  <span className="text-2xl font-bold text-white">112</span>
-                </div>
-              </div>
+                  <action.icon className="h-8 w-8 mb-2" />
+                  <span className="font-medium">{action.label}</span>
+                  {completedActions.includes(action.id) && (
+                    <span className="text-xs mt-1">✓ Completed</span>
+                  )}
+                </Button>
+              ))}
             </div>
           </div>
-        </div>
-
-        {/* Continue Button */}
-        {completedActions.length >= config.smartActions.length && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8 text-center"
-          >
-            <Link
-              to={`/urgent/summary/${type}`}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 hover:bg-green-500 text-white rounded-xl font-semibold text-lg transition-colors"
-            >
-              Zusammenfassung anzeigen
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-          </motion.div>
         )}
-      </div>
-    </div>
-  )
-}
 
-export default UrgentAction
+        {/* Complete Emergency Response Button */}
+        <div className="text-center">
+          <Button 
+            size="lg" 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4"
+            asChild
+          >
+            <a href={`/urgent/summary/${type}`}>
+              Complete Emergency Response & Document
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      {/* Fixed Bottom Quick Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-t border-border p-4 z-30 shadow-2xl">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {quickActions.map((action) => (
+              <Button
+                key={action.id}
+                variant={action.variant}
+                size="sm"
+                className="flex flex-col items-center py-3 px-2 h-auto"
+                onClick={() => handleQuickAction(action.id)}
+              >
+                <action.icon className="h-5 w-5 mb-1" />
+                <span className="text-xs leading-tight">{action.label}</span>
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Legal Disclaimer Modal */}
+      <AlertDialog open={showDisclaimer && !disclaimerAcknowledged} onOpenChange={() => {}}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Important Legal Disclaimer</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>
+                <strong>You have the right to remain silent and the right to an attorney.</strong> 
+                This app provides general legal guidance and does not constitute legal advice.
+              </p>
+              <p>
+                In Germany, you have specific constitutional rights during police interactions, 
+                including the right to refuse searches without a warrant and the right to contact a lawyer.
+              </p>
+              <p>
+                This app is designed to help you document events and understand your rights, 
+                but always follow the instructions of law enforcement for your safety.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction 
+              onClick={() => {
+                setDisclaimerAcknowledged(true);
+                setShowDisclaimer(false);
+              }}
+            >
+              I Understand & Acknowledge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+};
+
+export default UrgentAction;

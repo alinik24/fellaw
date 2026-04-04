@@ -1,148 +1,81 @@
-import { lazy, Suspense } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
-import Layout from '@/components/Layout'
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import Layout from "./components/Layout";
+import Index from "./pages/Index";
+import UrgentSelect from "./pages/UrgentSelect";
+import UrgentAction from "./pages/UrgentAction";
+import UrgentSummary from "./pages/UrgentSummary";
+import NewCase from "./pages/NewCase";
+import NewCaseTrafficViolation from "./pages/NewCaseTrafficViolation";
+import NewCaseConsumerDispute from "./pages/NewCaseConsumerDispute";
+import NewCaseFamilyInquiry from "./pages/NewCaseFamilyInquiry";
+import NewCaseEmploymentInquiry from "./pages/NewCaseEmploymentInquiry";
+import NewCaseVisaImmigration from "./pages/NewCaseVisaImmigration";
+import CaseAssessment from "./pages/CaseAssessment";
+import SelfService from "./pages/SelfService";
+import FindLawyer from "./pages/FindLawyer";
+import OngoingCases from "./pages/OngoingCases";
+import GraybeardMediation from "./pages/GraybeardMediation";
+import LawyerOnboarding from "./pages/LawyerOnboarding";
+import LawyerDashboard from "./pages/LawyerDashboard";
+import LawFirms from "./pages/LawFirms";
+import Insurance from "./pages/Insurance";
+import Careers from "./pages/Careers";
+import UserLogin from "./pages/auth/UserLogin";
+import LawyerLogin from "./pages/auth/LawyerLogin";
+import UserDashboard from "./pages/UserDashboard";
+import NotFound from "./pages/NotFound";
 
-// ─── Lazy-loaded pages ────────────────────────────────────────────────────────
-// Public
-const DualPortalLanding = lazy(() => import('@/pages/DualPortalLanding'))
-const Login             = lazy(() => import('@/pages/Login'))
-const Register          = lazy(() => import('@/pages/Register'))
+const queryClient = new QueryClient();
 
-// Citizen Portal
-const Dashboard   = lazy(() => import('@/pages/Dashboard'))
-const Cases       = lazy(() => import('@/pages/Cases'))
-const NewCase     = lazy(() => import('@/pages/NewCase'))
-const CaseDetail  = lazy(() => import('@/pages/CaseDetail'))
-const Chat        = lazy(() => import('@/pages/Chat'))
-const LawLibrary  = lazy(() => import('@/pages/LawLibrary'))
-const Documents   = lazy(() => import('@/pages/Documents'))
-const FindLawyer  = lazy(() => import('@/pages/FindLawyer'))
-const MyReferrals = lazy(() => import('@/pages/MyReferrals'))
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Layout>
+              <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/urgent/select" element={<UrgentSelect />} />
+            <Route path="/urgent/action/:type" element={<UrgentAction />} />
+            <Route path="/urgent/summary/:type" element={<UrgentSummary />} />
+            <Route path="/new-case" element={<NewCase />} />
+            <Route path="/new-case/traffic-violation" element={<NewCaseTrafficViolation />} />
+            <Route path="/new-case/consumer-dispute" element={<NewCaseConsumerDispute />} />
+            <Route path="/new-case/family-inquiry" element={<NewCaseFamilyInquiry />} />
+            <Route path="/new-case/employment-inquiry" element={<NewCaseEmploymentInquiry />} />
+            <Route path="/new-case/visa-immigration" element={<NewCaseVisaImmigration />} />
+            <Route path="/case-assessment/:caseId" element={<CaseAssessment />} />
+            <Route path="/self-service" element={<SelfService />} />
+            <Route path="/find-lawyer" element={<FindLawyer />} />
+            <Route path="/ongoing-cases" element={<OngoingCases />} />
+            <Route path="/graybeard-mediation" element={<GraybeardMediation />} />
+            <Route path="/law-firms" element={<LawFirms />} />
+            <Route path="/insurance" element={<Insurance />} />
+            <Route path="/work-with-us/professionals" element={<LawyerOnboarding />} />
+            <Route path="/work-with-us/careers" element={<Careers />} />
+            <Route path="/dashboard" element={<LawyerDashboard />} />
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+            {/* Authentication Routes */}
+            <Route path="/auth/user/login" element={<UserLogin />} />
+            <Route path="/auth/lawyer/login" element={<LawyerLogin />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </TooltipProvider>
+      </LanguageProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
+);
 
-// Urgent Legal Help
-const UrgentSelect  = lazy(() => import('@/pages/UrgentSelect'))
-const UrgentAction  = lazy(() => import('@/pages/UrgentAction'))
-const UrgentSummary = lazy(() => import('@/pages/UrgentSummary'))
-
-// Case Type-Specific Forms
-const CaseTypeSelector    = lazy(() => import('@/pages/CaseTypeSelector'))
-const NewCaseEmployment   = lazy(() => import('@/pages/NewCaseEmployment'))
-const NewCaseFamily       = lazy(() => import('@/pages/NewCaseFamily'))
-const NewCaseImmigration  = lazy(() => import('@/pages/NewCaseImmigration'))
-const NewCaseConsumer     = lazy(() => import('@/pages/NewCaseConsumer'))
-const NewCaseTraffic      = lazy(() => import('@/pages/NewCaseTraffic'))
-const NewCaseHousing      = lazy(() => import('@/pages/NewCaseHousing'))
-
-// Professional Portal
-const LawyerDashboard   = lazy(() => import('@/pages/pro/LawyerDashboard'))
-const LawyerOnboarding  = lazy(() => import('@/pages/pro/LawyerOnboarding'))
-const IncomingReferrals = lazy(() => import('@/pages/pro/IncomingReferrals'))
-
-// ─── Full-screen loader ───────────────────────────────────────────────────────
-function PageLoader() {
-  return (
-    <div className="flex h-screen items-center justify-center bg-slate-950">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
-        <p className="text-slate-400 text-sm">Laden…</p>
-      </div>
-    </div>
-  )
-}
-
-// ─── Protected route guard ────────────────────────────────────────────────────
-function RequireAuth({ children }: { children: React.ReactNode }) {
-  const token = localStorage.getItem('access_token')
-  const location = useLocation()
-
-  if (!token) {
-    return <Navigate to="/login" state={{ from: location }} replace />
-  }
-
-  return <>{children}</>
-}
-
-// ─── Role guard for professional routes ──────────────────────────────────────
-function RequirePro({ children }: { children: React.ReactNode }) {
-  const token = localStorage.getItem('access_token')
-  const role  = localStorage.getItem('user_role')
-  const location = useLocation()
-
-  if (!token) {
-    return <Navigate to="/login" state={{ from: location }} replace />
-  }
-  if (role && role !== 'lawyer' && role !== 'firm') {
-    return <Navigate to="/dashboard" replace />
-  }
-
-  return <>{children}</>
-}
-
-// ─── App ──────────────────────────────────────────────────────────────────────
-export default function App() {
-  useAuth() // warm up the auth query cache
-
-  return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-        {/* ── Public ── */}
-        <Route path="/" element={<DualPortalLanding />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        {/* ── Citizen Portal (protected, citizen layout) ── */}
-        <Route
-          element={
-            <RequireAuth>
-              <Layout portalRole="citizen" />
-            </RequireAuth>
-          }
-        >
-          <Route path="/dashboard"   element={<Dashboard />} />
-          <Route path="/cases"       element={<Cases />} />
-          <Route path="/cases/new"   element={<CaseTypeSelector />} />
-          <Route path="/cases/new/employment"   element={<NewCaseEmployment />} />
-          <Route path="/cases/new/family"       element={<NewCaseFamily />} />
-          <Route path="/cases/new/immigration"  element={<NewCaseImmigration />} />
-          <Route path="/cases/new/consumer"     element={<NewCaseConsumer />} />
-          <Route path="/cases/new/traffic"      element={<NewCaseTraffic />} />
-          <Route path="/cases/new/housing"      element={<NewCaseHousing />} />
-          <Route path="/cases/new/general"      element={<NewCase />} />
-          <Route path="/cases/:id"   element={<CaseDetail />} />
-          <Route path="/chat"        element={<Chat />} />
-          <Route path="/chat/:conversationId" element={<Chat />} />
-          <Route path="/laws"        element={<LawLibrary />} />
-          <Route path="/documents"   element={<Documents />} />
-          <Route path="/find-lawyer" element={<FindLawyer />} />
-          <Route path="/referrals"   element={<MyReferrals />} />
-          {/* Urgent Legal Help */}
-          <Route path="/urgent/select" element={<UrgentSelect />} />
-          <Route path="/urgent/action/:type" element={<UrgentAction />} />
-          <Route path="/urgent/summary/:type" element={<UrgentSummary />} />
-        </Route>
-
-        {/* ── Professional Portal (protected, pro layout) ── */}
-        <Route
-          element={
-            <RequirePro>
-              <Layout portalRole="lawyer" />
-            </RequirePro>
-          }
-        >
-          <Route path="/pro/dashboard"   element={<LawyerDashboard />} />
-          <Route path="/pro/onboarding"  element={<LawyerOnboarding />} />
-          <Route path="/pro/referrals"   element={<IncomingReferrals />} />
-          {/* Additional pro routes reuse citizen pages with lawyer context */}
-          <Route path="/pro/cases"       element={<Cases />} />
-          <Route path="/pro/clients"     element={<Cases />} />
-          <Route path="/pro/calendar"    element={<Dashboard />} />
-          <Route path="/pro/profile"     element={<Dashboard />} />
-        </Route>
-
-        {/* ── Fallback ── */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Suspense>
-  )
-}
+export default App;

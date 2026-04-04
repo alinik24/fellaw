@@ -116,12 +116,19 @@ app.add_middleware(
 
 from app.api.auth import router as auth_router
 from app.api.cases import router as cases_router
+from app.api.careers import router as careers_router
 from app.api.chat import router as chat_router
 from app.api.documents import router as documents_router
+from app.api.document_upload import router as document_upload_router
+from app.api.emergency import router as emergency_router
 from app.api.evidence import router as evidence_router
+from app.api.insurance import router as insurance_router
 from app.api.laws import router as laws_router
+from app.api.mediation import router as mediation_router
+from app.api.notifications import router as notifications_router
 from app.api.professionals import router as professionals_router
 from app.api.referrals import router as referrals_router
+from app.api.templates import router as templates_router
 
 _API_PREFIX = "/api/v1"
 
@@ -129,10 +136,17 @@ app.include_router(auth_router, prefix=_API_PREFIX)
 app.include_router(cases_router, prefix=_API_PREFIX)
 app.include_router(evidence_router, prefix=_API_PREFIX)
 app.include_router(documents_router, prefix=_API_PREFIX)
+app.include_router(document_upload_router, prefix=_API_PREFIX)
 app.include_router(chat_router, prefix=_API_PREFIX)
 app.include_router(laws_router, prefix=_API_PREFIX)
 app.include_router(professionals_router, prefix=_API_PREFIX)
 app.include_router(referrals_router, prefix=_API_PREFIX)
+app.include_router(emergency_router, prefix=_API_PREFIX)
+app.include_router(insurance_router, prefix=_API_PREFIX)
+app.include_router(mediation_router, prefix=_API_PREFIX)
+app.include_router(careers_router, prefix=_API_PREFIX)
+app.include_router(templates_router, prefix=_API_PREFIX)
+app.include_router(notifications_router, prefix=_API_PREFIX)
 
 # ---------------------------------------------------------------------------
 # Static files – serve uploaded documents

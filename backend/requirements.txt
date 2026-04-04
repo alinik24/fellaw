@@ -17,6 +17,7 @@ pgvector==0.3.6
 # ── Validation & Configuration ───────────────────────────────────────────────
 pydantic==2.10.3
 pydantic-settings==2.7.0
+email-validator==2.2.0
 
 # ── Authentication ───────────────────────────────────────────────────────────
 python-jose[cryptography]==3.3.0
@@ -40,6 +41,7 @@ aiofiles==24.1.0
 Pillow==11.0.0
 pypdf==5.1.0
 python-docx==1.1.2
+azure-ai-formrecognizer==3.3.3  # Azure Document Intelligence for OCR and document analysis
 
 # ── Web Scraping ─────────────────────────────────────────────────────────────
 beautifulsoup4==4.12.3
@@ -49,6 +51,7 @@ lxml==5.3.0
 tenacity==9.0.0  # Retry logic
 structlog==24.4.0  # Structured logging
 rich==13.9.4  # Rich terminal output
+jinja2==3.1.4  # Template rendering for document generation
 
 # ── Background Tasks (Optional) ──────────────────────────────────────────────
 # Uncomment if using Celery for async tasks
