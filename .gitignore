@@ -39,5 +39,5 @@ backend/uploads/*
 build/
 *.pyc
 
-# Claude
-.claude/settings.local.json
+# Claude - exclude entire folder
+.claude/
