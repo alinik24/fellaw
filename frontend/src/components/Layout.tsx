@@ -7,10 +7,7 @@ import {
   EyeOff,
   Users,
   Briefcase,
-  Building2,
   UserCheck,
-  Shield,
-  BookOpen,
   Phone,
   Globe,
   X,
@@ -56,6 +53,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   }, [location.pathname, isEmergencyMode]);
 
+  useEffect(() => {
+    const openAssistant = () => setIsChatOpen(true);
+    window.addEventListener('open-fellaw-assistant', openAssistant);
+    return () => window.removeEventListener('open-fellaw-assistant', openAssistant);
+  }, []);
+
   const toggleIdentity = () => {
     const newState = !isAnonymous;
     setIsAnonymous(newState);
@@ -71,12 +74,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   const navigationLinks = [
-    { name: 'My Cases', icon: Briefcase, href: '/ongoing-cases', requiresAuth: true },
-    { name: 'Law Firms Network', icon: Building2, href: '/law-firms', requiresAuth: false },
-    { name: 'Find Lawyers', icon: UserCheck, href: '/find-lawyer', requiresAuth: false },
-    { name: 'Legal Insurance', icon: Shield, href: '/insurance', requiresAuth: false },
-    { name: 'Self-Service Legal Tools', icon: BookOpen, href: '/self-service', requiresAuth: false },
-    { name: 'Contact & Support', icon: Phone, href: '/contact', requiresAuth: false }
+    // PR-01: fabricated/frozen areas (law firms, insurance, self-service) are unrouted.
+    { name: t('nav.myCases'), icon: Briefcase, href: '/user/dashboard', requiresAuth: true },
+    { name: t('nav.findLawyers'), icon: UserCheck, href: '/find-lawyer', requiresAuth: false },
+    { name: t('nav.contact'), icon: Phone, href: '/contact', requiresAuth: false }
   ];
 
   const handleNavClick = (e: React.MouseEvent, link: typeof navigationLinks[0]) => {
@@ -87,21 +88,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-background relative">
-      {/* Dynamic Background Elements */}
-      <div className="legal-stripe-pattern fixed inset-0 pointer-events-none opacity-10" />
-      <div className="floating-shapes fixed inset-0 pointer-events-none" />
+    <div className="min-h-screen w-full bg-background relative fellow-shell">
       
       {/* Fixed Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-border">
+      <nav className="fixed top-0 left-0 right-0 z-50 fellow-nav">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2 hover:scale-105 transition-transform">
-              <div className="w-8 h-8">
+            <Link to="/" className="flex items-center space-x-2 fellow-brand">
+              <div className="fellow-brand__mark">
                 <img src="/logo.png" alt="fellaw" className="w-full h-full object-contain" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="fellow-brand__name">
                 fellaw
               </span>
             </Link>
@@ -225,7 +223,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {!isChatOpen && !isEmergencyMode && (
         <Button
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg hover:scale-110 transition-transform"
+          className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg fellow-chat-trigger"
           size="icon"
         >
           <MessageCircle className="h-6 w-6" />

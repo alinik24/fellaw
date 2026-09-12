@@ -1,0 +1,192 @@
+{
+  "label": "post-title-repair",
+  "timestamp": "2026-09-06T23:41:50.672926+00:00",
+  "base_url": "http://127.0.0.1:8004",
+  "corpus": {
+    "sections": 33
+  },
+  "smoke": {
+    "health": 200,
+    "capabilities": 200,
+    "openapi": 200
+  },
+  "retrieval": {
+    "recall_at_5": 0.95,
+    "mrr": 0.7167,
+    "per_query": [
+      {
+        "query": "Muss mein Vermieter die Wohnung instand halten?",
+        "ok": true,
+        "found": true,
+        "rank": 4,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Darf der Vermieter wegen Zahlungsverzug fristlos kündigen?",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Welche Frist gilt für die ordentliche Kündigung durch den Vermieter?",
+        "ok": true,
+        "found": true,
+        "rank": 4,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Was kann ich bei Mängeln der Mietsache tun?",
+        "ok": true,
+        "found": true,
+        "rank": 2,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Ich wurde wegen meiner Herkunft benachteiligt, was gilt?",
+        "ok": true,
+        "found": true,
+        "rank": 2,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Welcher Anspruch besteht bei Benachteiligung?",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Ich wurde bei der Polizei beschuldigt, welche Rechte habe ich bei der Vernehmung?",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Wann bekomme ich einen Pflichtverteidiger?",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Wann endet mein Arbeitsverhältnis durch Kündigungsschutz?",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Wann gilt eine Kündigung als zugegangen?",
+        "ok": true,
+        "found": true,
+        "rank": 3,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Kann ich nach einer Tat strafbefreit werden?",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Was ist der Unterschied zwischen Mord und Totschlag?",
+        "ok": true,
+        "found": true,
+        "rank": 2,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Darf ich als Mieter die Kaution vom Konto abziehen bei Mängeln?",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Was ist bei verbotener Eigenmacht des Vermieters zu beachten?",
+        "ok": true,
+        "found": true,
+        "rank": 2,
+        "mode": "fts_or"
+      },
+      {
+        "query": "Kann ich ohne Zustimmung des Vermieters die Miete mindern?",
+        "ok": true,
+        "found": false,
+        "rank": null,
+        "mode": "fts_or"
+      },
+      {
+        "query": "§535 BGB Instandhaltungspflicht",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "lexical"
+      },
+      {
+        "query": "§573 BGB Kündigung Wohnraum",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "§136 StPO Rechte bei der Vernehmung",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      },
+      {
+        "query": "§1 AGG Benachteiligung",
+        "ok": true,
+        "found": true,
+        "rank": 2,
+        "mode": "fts_or"
+      },
+      {
+        "query": "§569 BGB fristlose Kündigung Zahlungsverzug",
+        "ok": true,
+        "found": true,
+        "rank": 1,
+        "mode": "fts_or"
+      }
+    ]
+  },
+  "chat": {
+    "citation_rate": 1.0,
+    "grounding_rate": 1.0,
+    "disclaimer_rate": 0.6,
+    "per_query": [
+      {
+        "query": "Muss mein Vermieter die Wohnung instand halten?",
+        "ok": true,
+        "citations": 5
+      },
+      {
+        "query": "Darf der Vermieter wegen Zahlungsverzug fristlos kündigen?",
+        "ok": true,
+        "citations": 5
+      },
+      {
+        "query": "Welche Frist gilt für die ordentliche Kündigung durch den Vermieter?",
+        "ok": true,
+        "citations": 5
+      },
+      {
+        "query": "Was kann ich bei Mängeln der Mietsache tun?",
+        "ok": true,
+        "citations": 5
+      },
+      {
+        "query": "Ich wurde wegen meiner Herkunft benachteiligt, was gilt?",
+        "ok": true,
+        "citations": 5
+      }
+    ]
+  },
+  "golden_set_size": 20
+}

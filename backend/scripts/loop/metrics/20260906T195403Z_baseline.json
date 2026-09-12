@@ -1,0 +1,101 @@
+{
+  "label": "baseline",
+  "timestamp": "2026-09-06T19:54:02.471080+00:00",
+  "base_url": "http://127.0.0.1:8002",
+  "corpus": {
+    "sections": 30
+  },
+  "smoke": {
+    "health": 200,
+    "capabilities": 200,
+    "openapi": 200
+  },
+  "retrieval": {
+    "recall_at_5": 0.0,
+    "mrr": 0.0,
+    "per_query": [
+      {
+        "query": "Muss mein Vermieter die Wohnung instand halten?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Darf der Vermieter wegen Zahlungsverzug fristlos kündigen?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Welche Frist gilt für die ordentliche Kündigung durch den Vermieter?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Was kann ich bei Mängeln der Mietsache tun?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Ich wurde wegen meiner Herkunft benachteiligt, was gilt?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Welcher Anspruch besteht bei Benachteiligung?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Ich wurde bei der Polizei beschuldigt, welche Rechte habe ich bei der Vernehmung?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Wann bekomme ich einen Pflichtverteidiger?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Wann endet mein Arbeitsverhältnis durch Kündigungsschutz?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Wann gilt eine Kündigung als zugegangen?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Kann ich nach einer Tat strafbefreit werden?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Was ist der Unterschied zwischen Mord und Totschlag?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Darf ich als Mieter die Kaution vom Konto abziehen bei Mängeln?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Was ist bei verbotener Eigenmacht des Vermieters zu beachten?",
+        "ok": false,
+        "status": 401
+      },
+      {
+        "query": "Kann ich ohne Zustimmung des Vermieters die Miete mindern?",
+        "ok": false,
+        "status": 401
+      }
+    ]
+  },
+  "chat": {
+    "citation_rate": null,
+    "grounding_rate": null,
+    "disclaimer_rate": null,
+    "reason": "no authenticated user token available"
+  },
+  "golden_set_size": 15
+}

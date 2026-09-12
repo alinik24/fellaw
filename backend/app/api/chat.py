@@ -119,7 +119,18 @@ async def send_message(
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> MessageResponse:
-    from app.services.ai_service import SYSTEM_PROMPT_DE, chat_completion
+    from app.services.legal_boundary import require_executable
+
+    # PR-02C Finding 1: the generic generative chat path is the
+    # "arbitrary generative legal conversation" B-path. The user's message
+    # text IS the concrete facts; removing server-side case_context was not
+    # sufficient because the facts arrive in the message itself. Gate the
+    # generative path (REVIEW_REQUIRED) until a bounded behavioral contract
+    # is demonstrated. The bounded A-path (laws_search / bot ask) carries
+    # statute/source lookup with citations and stays APPROVED.
+    require_executable("generic_legal_chat")
+
+    from app.services.ai_service import chat_completion, system_prompt_for
     from app.services.rag_service import format_citations, get_context_for_chat, search_laws
 
     # Get or create conversation
@@ -135,9 +146,13 @@ async def send_message(
     history = await _load_conversation_history(conv.id, db)
 
     # Build case context if a case is linked
+    # PR-02 boundary: the case-specific facts block is NOT injected into the
+    # system prompt. Injecting the user's concrete case facts pushes the
+    # grounded general-information chat (L0/L1) toward individualized legal
+    # assessment (L3). General legal information must not be based on applying
+    # law to the user's concrete facts. The user's own message text still
+    # flows verbatim; RAG retrieval stays general/source-backed.
     case_context: str | None = None
-    if body.case_id:
-        case_context = await _get_case_context(body.case_id, current_user.id, db)
 
     # RAG: retrieve relevant law snippets
     law_context = ""
@@ -150,16 +165,14 @@ async def send_message(
         )
         law_context = await get_context_for_chat(
             query=body.message,
-            case_context=case_context,
+            case_context=None,
             db=db,
         )
     except Exception as exc:
         log.warning("send_message.rag_failed", error=str(exc))
 
     # Assemble system prompt
-    system_content = SYSTEM_PROMPT_DE
-    if case_context:
-        system_content += f"\n\n**Aktueller Fall des Nutzers:**\n{case_context}"
+    system_content = system_prompt_for(body.language)
     if law_context:
         system_content += f"\n\n{law_context}"
 
@@ -175,6 +188,16 @@ async def send_message(
         max_tokens=4096,
     )
     assert isinstance(ai_response, str)
+
+    # RDG compliance is a hard requirement, not a model preference: if the
+    # model omitted the disclaimer, append it deterministically.
+    _DISCLAIMER_MARKERS = ("Rechtsberatung", "legal advice", "RDG")
+    if not any(m in ai_response for m in _DISCLAIMER_MARKERS):
+        ai_response += (
+            "\n\n_Hinweis: Rechtsinformation, keine Rechtsberatung (RDG)._"
+            if (body.language or "").lower().startswith("en") is False
+            else "\n\n_Note: legal information, not legal advice (RDG)._"
+        )
 
     # Format citations
     citations = format_citations(raw_law_docs) if raw_law_docs else []
@@ -195,7 +218,7 @@ async def send_message(
         role="assistant",
         content=ai_response,
         citations=citations,
-        metadata_={"model": settings.AZURE_CHAT_MODEL, "rag_docs": len(raw_law_docs)},
+        metadata_={"model": settings.get_chat_client_config()["model"], "provider": settings.AI_PROVIDER, "rag_docs": len(raw_law_docs)},
     )
     db.add(assistant_msg)
     await db.flush()
@@ -216,13 +239,20 @@ async def send_message(
 
 @router.get("/stream")
 async def stream_chat(
+    current_user: CurrentUser,
+    db: Annotated[AsyncSession, Depends(get_db)],
     message: str = Query(..., min_length=1),
     conversation_id: uuid.UUID | None = Query(None),
     case_id: uuid.UUID | None = Query(None),
-    current_user: Annotated[Any, Depends(get_current_user)] = None,
-    db: Annotated[AsyncSession, Depends(get_db)] = None,
+    language: str | None = Query(None, max_length=10),
 ) -> StreamingResponse:
-    from app.services.ai_service import SYSTEM_PROMPT_DE, chat_completion
+    from app.services.legal_boundary import require_executable
+
+    # PR-02C Finding 1: generic generative streaming is the same B-path as
+    # POST /chat/message — gate it (REVIEW_REQUIRED) for the same reason.
+    require_executable("generic_legal_chat")
+
+    from app.services.ai_service import chat_completion, system_prompt_for
     from app.services.rag_service import get_context_for_chat
 
     # Get or create conversation
@@ -236,19 +266,18 @@ async def stream_chat(
 
     history = await _load_conversation_history(conv.id, db)
 
+    # PR-02 boundary: same as POST /chat/message — the case-specific facts
+    # block is not injected into the prompt so grounded general-information
+    # chat stays L0/L1 (not individualized legal assessment).
     case_context: str | None = None
-    if case_id:
-        case_context = await _get_case_context(case_id, current_user.id, db)
 
     law_context = ""
     try:
-        law_context = await get_context_for_chat(query=message, case_context=case_context, db=db)
+        law_context = await get_context_for_chat(query=message, case_context=None, db=db)
     except Exception as exc:
         log.warning("stream_chat.rag_failed", error=str(exc))
 
-    system_content = SYSTEM_PROMPT_DE
-    if case_context:
-        system_content += f"\n\n**Aktueller Fall:**\n{case_context}"
+    system_content = system_prompt_for(language)
     if law_context:
         system_content += f"\n\n{law_context}"
 
@@ -276,6 +305,16 @@ async def stream_chat(
                 # SSE format: "data: <chunk>\n\n"
                 yield f"data: {json.dumps({'content': chunk})}\n\n"
 
+            # RDG disclaimer appended deterministically when the model omitted it
+            if not any(m in full_response for m in ("Rechtsberatung", "legal advice", "RDG")):
+                note = (
+                    "\n\n_Hinweis: Rechtsinformation, keine Rechtsberatung (RDG)._"
+                    if not (language or "").lower().startswith("en")
+                    else "\n\n_Note: legal information, not legal advice (RDG)._"
+                )
+                yield f"data: {json.dumps({'content': note})}\n\n"
+                full_response += note
+
             # Persist assistant message after streaming completes
             async with db:
                 assistant_msg = Message(
@@ -283,7 +322,7 @@ async def stream_chat(
                     role="assistant",
                     content=full_response,
                     citations=[],
-                    metadata_={"model": settings.AZURE_CHAT_MODEL, "streaming": True},
+                    metadata_={"model": settings.get_chat_client_config()["model"], "provider": settings.AI_PROVIDER, "streaming": True},
                 )
                 db.add(assistant_msg)
                 await db.commit()
@@ -394,8 +433,12 @@ async def generate_narrative_chat(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> MessageResponse:
     """Generate a legal narrative and return it as a chat message."""
+    from app.services.legal_boundary import require_executable
     from app.services.narrative_service import build_narrative
     from sqlalchemy.orm import selectinload
+
+    # PR-02 quarantine: fail closed BEFORE any LLM call or persistence.
+    require_executable("narrative_generation")
 
     stmt = (
         select(Case)
@@ -445,7 +488,11 @@ async def generate_roadmap_chat(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> MessageResponse:
     """Generate a legal roadmap and return it as a formatted chat message."""
+    from app.services.legal_boundary import require_executable
     from app.services.roadmap_service import generate_roadmap
+
+    # PR-02 quarantine: fail closed BEFORE any LLM call or persistence.
+    require_executable("roadmap_generation")
 
     stmt = select(Case).where(Case.id == body.case_id, Case.user_id == current_user.id)
     case = (await db.execute(stmt)).scalars().first()
@@ -504,7 +551,11 @@ async def analyze_counterargument(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> MessageResponse:
     """Analyse opponent claims and return counterarguments as a chat message."""
+    from app.services.legal_boundary import require_executable
     from app.services.counterargument_service import analyze_opponent_claims
+
+    # PR-02 quarantine: fail closed BEFORE any LLM call or persistence.
+    require_executable("counterargument_analysis")
 
     stmt = select(Case).where(Case.id == body.case_id, Case.user_id == current_user.id)
     case = (await db.execute(stmt)).scalars().first()
@@ -584,7 +635,13 @@ async def analyze_document_chat(
     case_id: uuid.UUID | None = Query(None),
 ) -> MessageResponse:
     """Analyze provided document text and return AI analysis as a chat message."""
+    from app.services.legal_boundary import require_executable
     from app.services.document_service import analyze_document_with_ai
+
+    # PR-02 quarantine: this chat endpoint emits individualized legal
+    # implications for the user's concrete document. Fail closed before the
+    # LLM call; the L1 extraction pipeline (upload) remains separate.
+    require_executable("analyze_document")
 
     case_context: str | None = None
     if case_id:

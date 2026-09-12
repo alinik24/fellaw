@@ -20,10 +20,10 @@ from app.schemas.case import (
     CaseCreate,
     CaseResponse,
     CaseUpdate,
-    NarrativeCreate,
+    NarrativeLifecycleUpdate,
     NarrativeResponse,
+    RoadmapStepLifecycleUpdate,
     RoadmapStepResponse,
-    RoadmapStepUpdate,
     TimelineEventCreate,
     TimelineEventResponse,
 )
@@ -231,6 +231,11 @@ async def generate_roadmap(
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> list[RoadmapStepResponse]:
+    from app.services.legal_boundary import require_executable
+
+    # PR-02 quarantine: fail closed BEFORE any LLM call or persistence.
+    require_executable("roadmap_generation")
+
     from app.services.roadmap_service import generate_roadmap as svc_generate_roadmap
 
     case = await _get_case(case_id, current_user.id, db, load_relations=True)
@@ -285,10 +290,15 @@ async def get_roadmap(
 async def update_roadmap_step(
     case_id: uuid.UUID,
     step_id: uuid.UUID,
-    body: RoadmapStepUpdate,
+    body: RoadmapStepLifecycleUpdate,
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> RoadmapStepResponse:
+    # PR-02C Finding 5: PUT must not bypass the legal boundary. The narrowed
+    # schema accepts only the neutral workflow `status` field; substantive
+    # legal mutation (title/description/action_items/deadline/priority/
+    # resources) is rejected at the schema level, so no boundary gate is
+    # needed here — the schema is the gate.
     await _get_case(case_id, current_user.id, db)
     stmt = select(RoadmapStep).where(
         RoadmapStep.id == step_id, RoadmapStep.case_id == case_id
@@ -296,8 +306,7 @@ async def update_roadmap_step(
     step = (await db.execute(stmt)).scalars().first()
     if step is None:
         raise HTTPException(status_code=404, detail="Schritt nicht gefunden.")
-    for field, value in body.model_dump(exclude_none=True).items():
-        setattr(step, field, value)
+    step.status = body.status
     await db.flush()
     await db.refresh(step)
     return RoadmapStepResponse.model_validate(step)
@@ -335,7 +344,11 @@ async def generate_narrative(
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> NarrativeResponse:
+    from app.services.legal_boundary import require_executable
     from app.services.narrative_service import build_narrative
+
+    # PR-02 quarantine: fail closed BEFORE any LLM call or persistence.
+    require_executable("narrative_generation")
 
     case = await _get_case(case_id, current_user.id, db, load_relations=True)
 
@@ -375,10 +388,13 @@ async def generate_narrative(
 async def update_narrative(
     case_id: uuid.UUID,
     narrative_id: uuid.UUID,
-    body: NarrativeCreate,
+    body: NarrativeLifecycleUpdate,
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> NarrativeResponse:
+    # PR-02C Finding 5: narrowed schema accepts only the neutral `is_final`
+    # flag; substantive mutation (narrative_type/content/language/version) is
+    # rejected at the schema level — the schema is the gate.
     await _get_case(case_id, current_user.id, db)
     stmt = select(Narrative).where(
         Narrative.id == narrative_id, Narrative.case_id == case_id
@@ -386,8 +402,7 @@ async def update_narrative(
     narrative = (await db.execute(stmt)).scalars().first()
     if narrative is None:
         raise HTTPException(status_code=404, detail="Narrativ nicht gefunden.")
-    for field, value in body.model_dump(exclude_none=True).items():
-        setattr(narrative, field, value)
+    narrative.is_final = body.is_final
     await db.flush()
     await db.refresh(narrative)
     return NarrativeResponse.model_validate(narrative)

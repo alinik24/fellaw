@@ -113,7 +113,7 @@ async def fetch_law_toc(law_code: str) -> list[dict[str, str]]:
             log.warning("fetch_law_toc.http_error", law_code=law_code, error=str(exc))
             return []
 
-    soup = BeautifulSoup(resp.text, "lxml")
+    soup = BeautifulSoup(resp.content, "lxml")
     toc_items: list[dict[str, str]] = []
 
     # gesetze-im-internet uses <a> links in a TOC table
@@ -192,7 +192,7 @@ async def _try_gesetze(
     except httpx.HTTPError:
         return None
 
-    soup = BeautifulSoup(resp.text, "lxml")
+    soup = BeautifulSoup(resp.content, "lxml")
 
     # Extract title from <h2> or <h3>
     heading = soup.find("h2") or soup.find("h3") or soup.find("h1")
@@ -241,7 +241,7 @@ async def _try_dejure(
     except httpx.HTTPError:
         return None
 
-    soup = BeautifulSoup(resp.text, "lxml")
+    soup = BeautifulSoup(resp.content, "lxml")
 
     heading = soup.find("h1") or soup.find("h2")
     title = heading.get_text(strip=True) if heading else f"{law_code} {section}"

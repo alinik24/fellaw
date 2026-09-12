@@ -1,326 +1,114 @@
-
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Mic, 
-  FileText, 
-  Image, 
-  Video, 
-  Upload,
-  Lock,
-  Car,
-  ShoppingCart,
-  Heart,
-  Briefcase,
-  Globe
-} from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Check, FileText, LockKeyhole, Mic, Paperclip, UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { createCase } from '@/lib/api/platform';
+
+const DRAFT_KEY = 'fellaw-case-draft';
 
 const NewCase = () => {
-  const [caseDescription, setCaseDescription] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
-  const [isAnonymous, setIsAnonymous] = useState(true);
+  const navigate = useNavigate();
+  const { language } = useLanguage();
+  const de = language === 'de';
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [description, setDescription] = useState('');
+  const [files, setFiles] = useState<string[]>([]);
+  const [recording, setRecording] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleVoiceInput = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      // Simulate voice recording
-      setTimeout(() => {
-        setCaseDescription(prev => prev + ' [Voice input: I received a notice from my landlord about a rent increase, and I believe it might not comply with local regulations in Paderborn.]');
-        setIsRecording(false);
-      }, 3000);
+  useEffect(() => {
+    try {
+      const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+      if (typeof draft.description === 'string') setDescription(draft.description);
+      if (Array.isArray(draft.files)) setFiles(draft.files);
+    } catch {
+      // Ignore an invalid old draft and start clean.
     }
+  }, []);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ description, files, updatedAt: new Date().toISOString() }));
+      setSaved(true);
+    }, 500);
+    return () => window.clearTimeout(timeout);
+  }, [description, files]);
+
+  const chooseFiles = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(event.target.files || []).map((file) => file.name);
+    setFiles((current) => [...new Set([...current, ...selected])]);
+    event.target.value = '';
   };
 
-  const handleFileUpload = (type: string) => {
-    // Simulate file upload
-    const fileName = `${type}_${Date.now()}.pdf`;
-    setUploadedFiles(prev => [...prev, fileName]);
-    
-    // Simulate AI document parsing
-    if (type === 'document') {
-      setTimeout(() => {
-        setCaseDescription(prev => prev + '\n\n[AI Extracted from document: Mahnung #12345, Amount: €150, Due Date: 2024-06-20, Creditor: Example GmbH]');
-      }, 1500);
-    }
+  const toggleRecording = () => {
+    // The browser speech adapter is intentionally not faked. Show the state,
+    // but leave the user in control until a real speech service is configured.
+    setRecording((current) => !current);
   };
 
-  const examplePrompts = [
-    "I received a Mahnung (dunning letter) for an alleged unpaid bill. I believe it's a mistake.",
-    "My landlord increased my rent, and I think it's not compliant with the Mietpreisbremse (rent brake) regulations in Paderborn.",
-    "I'm buying an apartment in Paderborn and need a legal review of the Kaufvertrag (purchase contract).",
-    "I want to apply for a Blue Card visa, and I'm unsure about the necessary documents for the Ausländerbehörde (Foreigners' Office).",
-    "I took out a small loan, and now I'm struggling with the repayment terms.",
-    "I had a conflict with my neighbor about noise complaints after 10 PM. I live in a shared apartment in Paderborn and the Hausordnung (house rules) mentions quiet hours.",
-    "I need help understanding a clause in my employment contract regarding remote work from Paderborn."
-  ];
+  const canContinue = description.trim().length > 10 || files.length > 0;
 
-  const canSubmit = caseDescription.trim().length > 10 || uploadedFiles.length > 0;
+  const submitCase = async () => {
+    if (!canContinue || submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await createCase({
+        title: description.trim().slice(0, 120) || (de ? 'Neuer Fall' : 'New case'),
+        case_type: 'civil',
+        description: description.trim() || null,
+      });
+      localStorage.removeItem(DRAFT_KEY);
+      navigate('/user/dashboard');
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : (de ? 'Fall konnte nicht gespeichert werden.' : 'The case could not be saved.'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
-        {/* Back Button */}
-        <div className="flex items-center mb-8">
-          <Button variant="ghost" asChild className="mr-4">
-            <Link to="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Link>
-          </Button>
-        </div>
+    <main className="fellow-page fellow-intake" aria-labelledby="intake-title">
+      <div className="fellow-intake__back"><Button variant="ghost" asChild><Link to="/"><ArrowLeft aria-hidden="true" />{de ? 'Zurück' : 'Back'}</Link></Button></div>
+      <header className="fellow-page-header fellow-intake__header">
+        <div><p className="fellow-eyebrow">{de ? 'Geführter Start' : 'Guided start'}</p><h1 id="intake-title">{de ? 'Was ist passiert?' : 'What happened?'}</h1><p>{de ? 'Beginnen Sie mit Ihren eigenen Worten. Wir helfen Ihnen danach, die Situation zu ordnen.' : 'Start in your own words. We will help you organise the situation afterwards.'}</p></div>
+        <div className="fellow-draft-status" aria-live="polite"><span className="fellow-draft-status__dot" />{saved ? (de ? 'Entwurf gespeichert' : 'Draft saved') : (de ? 'Speichert…' : 'Saving…')}</div>
+      </header>
 
-        {/* Screen Title */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">What's Your Situation?</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Describe your legal situation in detail. Our AI will analyze your case and provide tailored recommendations for the best path forward.
-          </p>
-        </div>
+      <div className="fellow-intake__layout">
+        <section className="fellow-intake__main">
+          <div className="fellow-intake-panel">
+            <div className="fellow-intake-panel__heading"><div><p className="fellow-eyebrow">01 / 03</p><h2>{de ? 'Ihre Schilderung' : 'Your account'}</h2></div><span className="fellow-intake-progress">{de ? 'Start' : 'Start'}</span></div>
+            <Label htmlFor="case-description">{de ? 'Beschreiben Sie kurz, was passiert ist' : 'Briefly describe what happened'}</Label>
+            <Textarea id="case-description" value={description} onChange={(event) => setDescription(event.target.value)} placeholder={de ? 'Zum Beispiel: Ich habe am … ein Schreiben erhalten. Darin steht …' : 'For example: I received a letter on … It says …'} className="fellow-intake-textarea" />
+            <div className="fellow-intake-panel__footer"><span>{de ? 'Daten wie Datum, Absender und Frist helfen später.' : 'Dates, sender and deadlines will help later.'}</span><button type="button" className={`fellow-voice-button ${recording ? 'is-recording' : ''}`} onClick={toggleRecording}><Mic aria-hidden="true" />{recording ? (de ? 'Aufnahme stoppen' : 'Stop recording') : (de ? 'Spracheingabe' : 'Use voice')}</button></div>
+            {recording && <p className="fellow-inline-notice" role="status">{de ? 'Spracheingabe ist noch nicht verbunden. Bitte nutzen Sie das Textfeld.' : 'Voice input is not connected yet. Please use the text field.'}</p>}
+          </div>
 
-        {/* Quick Access to Common Non-Urgent Cases */}
-        <Card className="bg-card border-2 rounded-lg p-6 mb-8">
-          <CardHeader>
-            <CardTitle className="text-foreground">Quick Access - Common Case Types</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Get specialized guidance for common legal situations with tailored intake forms.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <Button
-                asChild
-                variant="outline"
-                className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-primary/10 hover:border-primary"
-              >
-                <Link to="/new-case/traffic-violation">
-                  <Car className="h-8 w-8 text-primary" />
-                  <span className="text-sm text-center">Traffic Violation</span>
-                </Link>
-              </Button>
+          <div className="fellow-intake-panel">
+            <div className="fellow-intake-panel__heading"><div><p className="fellow-eyebrow">02 / 03</p><h2>{de ? 'Unterlagen (optional)' : 'Documents (optional)'}</h2></div><Paperclip aria-hidden="true" /></div>
+            <p className="fellow-intake-help">{de ? 'Wählen Sie Dateien von Ihrem Gerät aus. Sie werden erst im nächsten Schritt an FelLaw übermittelt.' : 'Choose files from your device. They are not sent to FelLaw until the next step.'}</p>
+            <input ref={inputRef} type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt" onChange={chooseFiles} className="sr-only" aria-label={de ? 'Unterlagen auswählen' : 'Choose documents'} />
+            <button type="button" className="fellow-upload-zone" onClick={() => inputRef.current?.click()}><UploadCloud aria-hidden="true" /><strong>{de ? 'Dateien auswählen' : 'Choose files'}</strong><span>PDF, DOC, JPG, PNG, TXT</span></button>
+            {files.length > 0 && <ul className="fellow-file-list" aria-label={de ? 'Ausgewählte Dateien' : 'Selected files'}>{files.map((file) => <li key={file}><FileText aria-hidden="true" /><span>{file}</span><Check aria-hidden="true" /></li>)}</ul>}
+          </div>
 
-              <Button
-                asChild
-                variant="outline"
-                className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-success/10 hover:border-success"
-              >
-                <Link to="/new-case/consumer-dispute">
-                  <ShoppingCart className="h-8 w-8 text-success" />
-                  <span className="text-sm text-center">Consumer Dispute</span>
-                </Link>
-              </Button>
+          <div className="fellow-intake-panel fellow-intake-panel--privacy"><LockKeyhole aria-hidden="true" /><div><h2>{de ? 'Sie behalten die Kontrolle' : 'You stay in control'}</h2><p>{de ? 'Der Entwurf wird lokal in diesem Browser gespeichert. Teilen Sie nur, was für Ihre Orientierung nötig ist.' : 'The draft is saved locally in this browser. Share only what is needed for your orientation.'}</p></div></div>
 
-              <Button
-                asChild
-                variant="outline"
-                className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-destructive/10 hover:border-destructive"
-              >
-                <Link to="/new-case/family-inquiry">
-                  <Heart className="h-8 w-8 text-destructive" />
-                  <span className="text-sm text-center">Family Law</span>
-                </Link>
-              </Button>
+          <div className="fellow-intake-submit">
+            <p className="fellow-intake-privacy-note" role="note"><LockKeyhole aria-hidden="true" />{de ? 'Mit „Weiter“ wird Ihre Schilderung im FelLaw-Entwicklungssystem in Ihrem Konto gespeichert. Ausgewählte Dateien bleiben bis zur nächsten Upload-Funktion lokal. Zugriff haben nur Sie und die FelLaw-Betreuenden. Eine Löschfrist ist noch nicht eingerichtet — löschen Sie nicht mehr benötigte Fälle selbst.' : 'By continuing, your description is saved in your FelLaw development account. Selected files remain local until document upload is connected. Only you and the FelLaw operators can access the case. A deletion schedule is not configured yet — delete cases you no longer need yourself.'}</p>
+            {submitError && <p className="fellow-inline-notice" role="alert">{submitError}</p>}
+            <Button size="lg" disabled={!canContinue || submitting} onClick={submitCase} className="fellow-primary-action">{submitting ? (de ? 'Wird gespeichert…' : 'Saving…') : (de ? 'Fall speichern und weiter' : 'Save case and continue')} <ArrowLeft aria-hidden="true" className="rotate-180" /></Button><p>{canContinue ? (de ? 'Der Fall wird jetzt sicher in Ihrem Konto angelegt.' : 'The case will now be created in your account.') : (de ? 'Fügen Sie eine kurze Schilderung oder Unterlage hinzu.' : 'Add a short description or a document to continue.')}</p></div>
+        </section>
 
-              <Button
-                asChild
-                variant="outline"
-                className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-accent/10 hover:border-accent"
-              >
-                <Link to="/new-case/employment-inquiry">
-                  <Briefcase className="h-8 w-8 text-accent" />
-                  <span className="text-sm text-center">Employment Law</span>
-                </Link>
-              </Button>
-
-              <Button
-                asChild
-                variant="outline"
-                className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-info/10 hover:border-info"
-              >
-                <Link to="/new-case/visa-immigration">
-                  <Globe className="h-8 w-8 text-info" />
-                  <span className="text-sm text-center">Visa & Immigration</span>
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tell Us Your Story */}
-        <Card className="bg-card border-2 rounded-lg p-6 mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-foreground">Tell Us Your Story</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Provide as much detail as possible about your situation. Include dates, parties involved, 
-              and any relevant background information.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <Label htmlFor="case-description">Case Description</Label>
-              <Textarea
-                id="case-description"
-                placeholder={`Example scenarios:\n\n${examplePrompts.slice(0, 3).join('\n\n')}`}
-                value={caseDescription}
-                onChange={(e) => setCaseDescription(e.target.value)}
-                className="min-h-[200px] mt-2"
-              />
-            </div>
-            
-            <div className="flex justify-center">
-              <Button
-                variant={isRecording ? "destructive" : "outline"}
-                onClick={handleVoiceInput}
-                className="flex items-center space-x-2"
-              >
-                <Mic className={`h-5 w-5 ${isRecording ? 'animate-pulse' : ''}`} />
-                <span>{isRecording ? 'Recording... (Click to stop)' : 'Speak Your Story'}</span>
-              </Button>
-            </div>
-            
-            {isRecording && (
-              <div className="text-center text-sm text-muted-foreground">
-                🔴 Recording in progress... Speak clearly about your legal situation.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Direct Upload Area */}
-        <Card className="bg-card border-2 rounded-lg p-6 mb-8">
-          <CardHeader>
-            <CardTitle className="text-foreground">Supporting Documents & Evidence</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Upload any relevant documents, photos, or media that support your case. 
-              Our AI will analyze and extract key information automatically.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              <Button
-                variant="outline"
-                onClick={() => handleFileUpload('document')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
-              >
-                <FileText className="h-8 w-8" />
-                <div className="text-center">
-                  <div className="font-medium">Upload Document / Letter</div>
-                  <div className="text-xs text-muted-foreground">PDF, DOC, contracts, notices</div>
-                </div>
-              </Button>
-
-              <Button
-                variant="outline"
-                onClick={() => handleFileUpload('photo')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
-              >
-                <Image className="h-8 w-8" />
-                <div className="text-center">
-                  <div className="font-medium">Upload Photos</div>
-                  <div className="text-xs text-muted-foreground">Evidence, damages, documents</div>
-                </div>
-              </Button>
-
-              <Button
-                variant="outline"
-                onClick={() => handleFileUpload('media')}
-                className="h-32 flex flex-col items-center justify-center space-y-3 hover:bg-muted"
-              >
-                <Video className="h-8 w-8" />
-                <div className="text-center">
-                  <div className="font-medium">Upload Audio/Video</div>
-                  <div className="text-xs text-muted-foreground">Recordings, statements</div>
-                </div>
-              </Button>
-            </div>
-
-            {/* Uploaded Files */}
-            {uploadedFiles.length > 0 && (
-              <div className="space-y-2">
-                <Label>Uploaded Files:</Label>
-                <div className="space-y-2">
-                  {uploadedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-2 bg-success/10 rounded border border-success">
-                      <Upload className="h-4 w-4 text-success" />
-                      <span className="text-sm font-medium text-foreground">{file}</span>
-                      <span className="text-xs text-success">✓ Uploaded & Analyzed</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* AI Enhancement Notice */}
-            {(caseDescription.includes('[AI Extracted') || uploadedFiles.length > 0) && (
-              <div className="mt-4 p-3 bg-info/10 border border-info rounded">
-                <div className="text-sm text-info">
-                  <strong>AI Enhancement:</strong> Your documents have been analyzed and key information 
-                  has been automatically extracted and added to your case description.
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Privacy Setting */}
-        <Card className="bg-card border-2 rounded-lg p-6 mb-8">
-          <CardContent className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Lock className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <div className="font-medium">Privacy Mode</div>
-                <div className="text-sm text-muted-foreground">
-                  {isAnonymous ? 'Anonymous Mode: ON - Personal data protected' : 'Identified Mode: ON - Personalized features enabled'}
-                </div>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsAnonymous(!isAnonymous)}
-            >
-              {isAnonymous ? 'Switch to Identified' : 'Switch to Anonymous'}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Submission */}
-        <Card className="bg-card border-2 border-primary rounded-lg p-6">
-          <CardContent className="text-center">
-            <h3 className="text-xl font-semibold mb-4 text-foreground">Ready for AI Analysis?</h3>
-            <p className="text-muted-foreground mb-6">
-              Our AI will analyze your case, identify relevant German laws, assess your options, 
-              and recommend the best legal pathway forward.
-            </p>
-            <Button
-              size="lg"
-              disabled={!canSubmit}
-              asChild={canSubmit}
-            >
-              {canSubmit ? (
-                <Link to={`/case-assessment/case-${Date.now()}`}>
-                  Analyze My Case
-                </Link>
-              ) : (
-                <span>Please provide case details or upload documents</span>
-              )}
-            </Button>
-            
-            {canSubmit && (
-              <p className="text-xs text-muted-foreground mt-3">
-                Analysis typically takes 2-3 minutes. You'll receive a comprehensive assessment with legal options.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+        <aside className="fellow-intake__aside"><p className="fellow-eyebrow">{de ? 'Soforthilfe' : 'Urgent help'}</p><h2>{de ? 'Ist es dringend?' : 'Is it urgent?'}</h2><p>{de ? 'Bei unmittelbaren Fristen oder drohendem Nachteil öffnen Sie zuerst die Soforthilfe.' : 'If a deadline is imminent or a disadvantage is looming, open urgent help first.'}</p><Link to="/urgent/select" className="fellow-intake-urgent"><strong>{de ? 'Ist es dringend?' : 'Is it urgent?'}</strong><span>{de ? 'Soforthilfe öffnen' : 'Open urgent help'} <ArrowLeft aria-hidden="true" className="rotate-180" /></span></Link></aside>
       </div>
-    </div>
+    </main>
   );
 };
 

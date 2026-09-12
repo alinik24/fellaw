@@ -4,135 +4,133 @@
 @tailwind utilities;
 
 /*
- * FelLaw Design System
- * Professional Legal Tech Color Palette with WCAG AA Compliance
- * All colors maintain 4.5:1 contrast ratio for normal text, 3:1 for large text
+ * FelLaw design tokens — unified semantic layer.
+ * One palette for shadcn ui components AND the fellow-* editorial layer
+ * (App.css consumes the same values via --fellow-* aliases).
+ * Warm paper light mode / deep navy-ink dark mode, teal action accent,
+ * amber attention, red danger only for urgent. WCAG AA targets.
+ * Methodology: startup-product-studio token scaffold (docs/05).
  */
 
 @layer base {
   :root {
-    /* Background Colors - Clean and Professional */
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    /* Canvas & text */
+    --background: 40 33% 96%;            /* warm paper #f7f5f0 */
+    --foreground: 211 44% 21%;           /* ink #102a43 */
 
-    /* Card & Surface Colors - Subtle elevation */
+    /* Surfaces */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-
-    /* Popover Colors */
+    --card-foreground: 211 44% 21%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 211 44% 21%;
 
-    /* Primary Brand Colors - Professional Blue for Trust & Authority */
-    --primary: 217 91% 45%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary = the teal action accent (not generic SaaS blue) */
+    --primary: 175 84% 26%;              /* #0f766e */
+    --primary-foreground: 40 33% 97%;
 
-    /* Secondary Colors - Sophisticated Slate */
-    --secondary: 215 16% 95%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary = quiet paper tint */
+    --secondary: 40 25% 92%;
+    --secondary-foreground: 211 44% 21%;
 
-    /* Muted Colors - Subtle Grays */
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
+    /* Muted */
+    --muted: 40 20% 92%;
+    --muted-foreground: 207 35% 39%;     /* #486581 */
 
-    /* Accent Colors - Teal for CTAs and Highlights */
-    --accent: 173 80% 40%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent = teal hover state */
+    --accent: 173 65% 21%;               /* #115e59 */
+    --accent-foreground: 40 33% 97%;
 
-    /* Destructive/Error Colors - Clear Red */
-    --destructive: 0 84% 60%;
+    /* Destructive = urgent red, reserved */
+    --destructive: 5 77% 40%;            /* #b42318 */
     --destructive-foreground: 0 0% 100%;
 
-    /* Success Colors - Trustworthy Green */
-    --success: 142 71% 45%;
+    /* Success / warning / info (semantic, restrained) */
+    --success: 160 84% 24%;
     --success-foreground: 0 0% 100%;
-
-    /* Warning Colors - Amber for Attention */
-    --warning: 38 92% 50%;
+    --warning: 38 92% 42%;
     --warning-foreground: 0 0% 100%;
-
-    /* Info Colors - Blue for Information */
-    --info: 199 89% 48%;
+    --info: 207 60% 35%;
     --info-foreground: 0 0% 100%;
 
-    /* Border & Input Colors */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 217 91% 45%;
+    /* Border, input, ring */
+    --border: 210 22% 86%;
+    --input: 210 22% 86%;
+    --ring: 175 84% 26%;
 
-    /* Border Radius */
+    /* Radius */
     --radius: 0.5rem;
 
-    /* Sidebar Colors */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 217 91% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 217 91% 45%;
+    /* Sidebar */
+    --sidebar-background: 40 30% 96%;
+    --sidebar-foreground: 211 44% 21%;
+    --sidebar-primary: 175 84% 26%;
+    --sidebar-primary-foreground: 40 33% 97%;
+    --sidebar-accent: 40 25% 92%;
+    --sidebar-accent-foreground: 211 44% 21%;
+    --sidebar-border: 210 22% 86%;
+    --sidebar-ring: 175 84% 26%;
+
+    /* Motion tokens (studio scaffold) */
+    --motion-instant: 90ms;
+    --motion-quick: 150ms;
+    --motion-standard: 240ms;
+    --motion-deliberate: 420ms;
+    --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .dark {
-    /* Background Colors - Dark Blue-Gray (reduces eye strain vs pure black) */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Canvas & text — deep navy ink mode */
+    --background: 200 46% 10%;           /* #0e2028 */
+    --foreground: 194 30% 93%;           /* #e8f0f2 */
 
-    /* Card & Surface Colors - Slightly elevated from background */
-    --card: 217 33% 17%;
-    --card-foreground: 210 40% 98%;
+    /* Surfaces */
+    --card: 199 44% 15%;                 /* #162f38 */
+    --card-foreground: 194 30% 93%;
+    --popover: 199 44% 15%;
+    --popover-foreground: 194 30% 93%;
 
-    /* Popover Colors */
-    --popover: 217 33% 17%;
-    --popover-foreground: 210 40% 98%;
+    /* Primary teal, brightened for dark canvas */
+    --primary: 174 40% 58%;              /* #53b7ad */
+    --primary-foreground: 200 46% 10%;
 
-    /* Primary Brand Colors - Brighter blue for dark mode visibility */
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
+    /* Secondary */
+    --secondary: 199 35% 18%;
+    --secondary-foreground: 194 30% 93%;
 
-    /* Secondary Colors - Elevated Dark Slate */
-    --secondary: 217 33% 20%;
-    --secondary-foreground: 210 40% 98%;
+    /* Muted */
+    --muted: 199 35% 18%;
+    --muted-foreground: 194 16% 74%;     /* #b4c5c8 */
 
-    /* Muted Colors - Medium Grays */
-    --muted: 217 33% 20%;
-    --muted-foreground: 215 20% 65%;
+    /* Accent */
+    --accent: 172 45% 70%;               /* #8bd5cc */
+    --accent-foreground: 200 46% 10%;
 
-    /* Accent Colors - Vibrant Teal */
-    --accent: 173 80% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    /* Destructive/Error Colors */
-    --destructive: 0 84% 65%;
+    /* Destructive */
+    --destructive: 4 70% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success Colors */
-    --success: 142 71% 50%;
-    --success-foreground: 0 0% 100%;
-
-    /* Warning Colors */
+    /* Success / warning / info */
+    --success: 160 50% 45%;
+    --success-foreground: 200 46% 10%;
     --warning: 38 92% 55%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 200 46% 10%;
+    --info: 207 55% 60%;
+    --info-foreground: 200 46% 10%;
 
-    /* Info Colors */
-    --info: 199 89% 55%;
-    --info-foreground: 0 0% 100%;
+    /* Border, input, ring */
+    --border: 197 26% 24%;
+    --input: 197 26% 24%;
+    --ring: 174 40% 58%;
 
-    /* Border & Input Colors */
-    --border: 217 33% 25%;
-    --input: 217 33% 25%;
-    --ring: 217 91% 60%;
-
-    /* Sidebar Colors */
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 217 33% 20%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 25%;
-    --sidebar-ring: 217 91% 60%;
+    /* Sidebar */
+    --sidebar-background: 200 46% 10%;
+    --sidebar-foreground: 194 30% 93%;
+    --sidebar-primary: 174 40% 58%;
+    --sidebar-primary-foreground: 200 46% 10%;
+    --sidebar-accent: 199 35% 18%;
+    --sidebar-accent-foreground: 194 30% 93%;
+    --sidebar-border: 197 26% 24%;
+    --sidebar-ring: 174 40% 58%;
   }
 }
 
@@ -144,47 +142,20 @@
   body {
     @apply bg-background text-foreground;
   }
-}
 
-/* Dynamic Background Patterns */
-.legal-stripe-pattern {
-  background: repeating-linear-gradient(
-    90deg,
-    rgba(59, 130, 246, 0.05) 0px,
-    rgba(59, 130, 246, 0.05) 1px,
-    transparent 1px,
-    transparent 20px
-  );
-}
-
-.floating-shapes {
-  background: radial-gradient(circle at 20% 80%, rgba(120, 113, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(255, 113, 123, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 40% 40%, rgba(255, 206, 84, 0.15) 0%, transparent 50%);
-  animation: float 20s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translate(0px, 0px) rotate(0deg);
+  html {
+    color-scheme: light;
   }
-  33% {
-    transform: translate(30px, -30px) rotate(120deg);
-  }
-  66% {
-    transform: translate(-20px, 20px) rotate(240deg);
+  html.dark {
+    color-scheme: dark;
   }
 }
 
-@keyframes emergency-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-instant: 0ms;
+    --motion-quick: 0ms;
+    --motion-standard: 0ms;
+    --motion-deliberate: 0ms;
   }
-  50% {
-    box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
-  }
-}
-
-.emergency-pulse {
-  animation: emergency-pulse 2s infinite;
 }

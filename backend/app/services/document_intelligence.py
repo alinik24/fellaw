@@ -6,9 +6,17 @@ Handles OCR, document analysis, and data extraction from images and PDFs
 import os
 import logging
 from typing import Dict, List, Any, Optional
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
+
+try:  # Azure SDK is OPTIONAL. Policy: local-first OCR; cloud DocIntel only if explicitly configured.
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.ai.formrecognizer import AnalyzeResult
+    _AZURE_AVAILABLE = True
+except ImportError:  # pragma: no cover - depends on environment
+    AzureKeyCredential = None  # type: ignore[assignment]
+    DocumentAnalysisClient = None  # type: ignore[assignment]
+    AnalyzeResult = Any  # type: ignore[assignment,misc]
+    _AZURE_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +28,12 @@ class DocumentIntelligenceService:
         endpoint = os.getenv("DOCINTEL_ENDPOINT")
         api_key = os.getenv("DOCINTEL_API_KEY")
 
-        if not endpoint or not api_key:
+        if not _AZURE_AVAILABLE:
+            logger.info(
+                "Azure Document Intelligence SDK not installed; cloud OCR disabled (local-first policy)."
+            )
+            self.client = None
+        elif not endpoint or not api_key:
             logger.warning(
                 "Azure Document Intelligence not configured. "
                 "Set DOCINTEL_ENDPOINT and DOCINTEL_API_KEY environment variables."

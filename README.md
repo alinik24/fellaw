@@ -68,6 +68,19 @@ fellaw/
 ├── docker-compose.yml   # Docker orchestration
 ├── .env.example        # Environment variables template
 └── README.md           # This file
+```
+
+## Continuity and integration artifacts
+
+- `DEV_STATE.md` — verified state, blockers, and exact resume point.
+- `SESSION_HANDOFF.md` — concise continuation handoff for switching models.
+- `docs/LEAN_CANVAS_2026-09-06.md` — product hypotheses and next experiments.
+- `docs/SCOUT_COMPETITORS_2026-09-06.md` — competitor evidence and limitations.
+- `docs/SCOUT_DATA_REGULATION_2026-09-06.md` — legal data, RDG/GDPR, model, and OSS notes.
+- `backend/app/services/platform_capabilities.py` — shared web/bot capability source of truth.
+- `skills/fellaw-platform/SKILL.md` — OpenClaw/Telegram API contract and safety rules.
+
+The web assistant and future Telegram handler must use the same platform registry and profile-scoped overview. Do not implement bot-specific mutations; route through the authenticated application API.
 ---
 ```
 ## 🏗️ Architecture

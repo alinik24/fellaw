@@ -86,6 +86,7 @@ async def search_laws(
             content=r["content"],
             url=r.get("url"),
             relevance_score=r.get("relevance_score", 0.0),
+            mode=r.get("mode"),
         )
         for r in results
     ]

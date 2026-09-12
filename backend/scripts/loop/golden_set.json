@@ -1,0 +1,102 @@
+[
+  {
+    "query": "Muss mein Vermieter die Wohnung instand halten?",
+    "law_code": "BGB",
+    "section": "§535"
+  },
+  {
+    "query": "Darf der Vermieter wegen Zahlungsverzug fristlos kündigen?",
+    "law_code": "BGB",
+    "section": "§569"
+  },
+  {
+    "query": "Welche Frist gilt für die ordentliche Kündigung durch den Vermieter?",
+    "law_code": "BGB",
+    "section": "§573"
+  },
+  {
+    "query": "Was kann ich bei Mängeln der Mietsache tun?",
+    "law_code": "BGB",
+    "section": "§536"
+  },
+  {
+    "query": "Ich wurde wegen meiner Herkunft benachteiligt, was gilt?",
+    "law_code": "AGG",
+    "section": "§1"
+  },
+  {
+    "query": "Welcher Anspruch besteht bei Benachteiligung?",
+    "law_code": "AGG",
+    "section": "§15"
+  },
+  {
+    "query": "Ich wurde bei der Polizei beschuldigt, welche Rechte habe ich bei der Vernehmung?",
+    "law_code": "StPO",
+    "section": "§136"
+  },
+  {
+    "query": "Wann bekomme ich einen Pflichtverteidiger?",
+    "law_code": "StPO",
+    "section": "§141"
+  },
+  {
+    "query": "Wann endet mein Arbeitsverhältnis durch Kündigungsschutz?",
+    "law_code": "KSchG",
+    "section": "§1"
+  },
+  {
+    "query": "Wann gilt eine Kündigung als zugegangen?",
+    "law_code": "KSchG",
+    "section": "§4"
+  },
+  {
+    "query": "Kann ich nach einer Tat strafbefreit werden?",
+    "law_code": "StGB",
+    "section": "§32"
+  },
+  {
+    "query": "Was ist der Unterschied zwischen Mord und Totschlag?",
+    "law_code": "StGB",
+    "section": "§211"
+  },
+  {
+    "query": "Darf ich als Mieter die Kaution vom Konto abziehen bei Mängeln?",
+    "law_code": "BGB",
+    "section": "§551"
+  },
+  {
+    "query": "Was ist bei verbotener Eigenmacht des Vermieters zu beachten?",
+    "law_code": "BGB",
+    "section": "§858"
+  },
+  {
+    "query": "Kann ich ohne Zustimmung des Vermieters die Miete mindern?",
+    "law_code": "BGB",
+    "section": "§536"
+  },
+  {
+    "query": "§535 BGB Instandhaltungspflicht",
+    "law_code": "BGB",
+    "section": "§535"
+  },
+  {
+    "query": "§573 BGB Kündigung Wohnraum",
+    "law_code": "BGB",
+    "section": "§573"
+  },
+  {
+    "query": "§136 StPO Rechte bei der Vernehmung",
+    "law_code": "StPO",
+    "section": "§136"
+  },
+  {
+    "query": "§1 AGG Benachteiligung",
+    "law_code": "AGG",
+    "section": "§1"
+  },
+  {
+    "query": "§569 BGB fristlose Kündigung Zahlungsverzug",
+    "law_code": "BGB",
+    "section": "§569"
+  }
+]

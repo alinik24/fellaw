@@ -13,9 +13,11 @@ from app.models.professional import LawFirm, LawyerProfile, Referral, LawyerRevi
 from app.models.emergency import EmergencyCase, EmergencyContact  # noqa: F401
 from app.models.insurance import InsurancePartner, InsuranceCoverage, InsuranceQuery  # noqa: F401
 from app.models.mediation import Mediator, MediationRequest, MediationSession, MediationReview  # noqa: F401
+from app.models.bot_identity import BotIdentity
 from app.models.careers import JobPosting, JobApplication  # noqa: F401
 from app.models.templates import DocumentTemplate, GeneratedDocument, TemplateReview  # noqa: F401
 from app.models.notifications import Notification, UserActivity  # noqa: F401
+from app.models.first_response_state import (Fact, FirstResponseClock, FirstResponseReminder, ProductEvent, HandoffDossier)  # noqa: F401
 
 __all__ = [
     "User",
@@ -49,4 +51,9 @@ __all__ = [
     "TemplateReview",
     "Notification",
     "UserActivity",
+    "Fact",
+    "FirstResponseClock",
+    "FirstResponseReminder",
+    "ProductEvent",
+    "HandoffDossier",
 ]
