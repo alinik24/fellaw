@@ -19,6 +19,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
+from app.services.legal_boundary import BoundaryDisabled
 
 # ---------------------------------------------------------------------------
 # Structured logging configuration
@@ -87,9 +88,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="fellaw API",
     description=(
-        "AI-powered German legal assistance system. "
-        "Provides RAG-based legal information, case management, "
-        "narrative generation, and counterargument analysis."
+        "First-response infrastructure for consequential German letters and "
+        "legal/administrative events: RAG-grounded general legal information, "
+        "document extraction, process navigation, case intake, and referrals. "
+        "Individualized legal assessment and strategic drafting capabilities "
+        "are review-required and are not available for normal public use."
     ),
     version=settings.APP_VERSION,
     lifespan=lifespan,
@@ -126,6 +129,8 @@ from app.api.insurance import router as insurance_router
 from app.api.laws import router as laws_router
 from app.api.mediation import router as mediation_router
 from app.api.notifications import router as notifications_router
+from app.api.platform import router as platform_router
+from app.api.platform_bot import router as platform_bot_router
 from app.api.professionals import router as professionals_router
 from app.api.referrals import router as referrals_router
 from app.api.templates import router as templates_router
@@ -147,6 +152,8 @@ app.include_router(mediation_router, prefix=_API_PREFIX)
 app.include_router(careers_router, prefix=_API_PREFIX)
 app.include_router(templates_router, prefix=_API_PREFIX)
 app.include_router(notifications_router, prefix=_API_PREFIX)
+app.include_router(platform_router, prefix=_API_PREFIX)
+app.include_router(platform_bot_router, prefix=_API_PREFIX)
 
 # ---------------------------------------------------------------------------
 # Static files – serve uploaded documents
@@ -178,6 +185,33 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
         status_code=exc.status_code,
         content={"detail": exc.detail},
         headers=exc.headers or {},
+    )
+
+
+@app.exception_handler(BoundaryDisabled)
+async def boundary_disabled_handler(request: Request, exc: BoundaryDisabled) -> JSONResponse:
+    """Deterministic typed response for quarantine-gated capabilities.
+
+    The 403 body carries the canonical capability id, class, approval state,
+    and safe human handoff paths. No LLM call and no persistence ever happen
+    for a gated capability (the gate raises before those code paths).
+    """
+    log.warning(
+        "legal_boundary.blocked_request",
+        path=request.url.path,
+        capability_id=exc.capability_id,
+        approval=exc.policy.approval_state.value if exc.policy else "NO_POLICY",
+    )
+    from app.services.legal_boundary import disabled_response
+
+    lang = "de"
+    # Prefer the caller's Accept-Language if present and German/English.
+    al = request.headers.get("accept-language", "")
+    if al.lower().startswith("en"):
+        lang = "en"
+    return JSONResponse(
+        status_code=status.HTTP_403_FORBIDDEN,
+        content=disabled_response(exc.capability_id, lang),
     )
 
 

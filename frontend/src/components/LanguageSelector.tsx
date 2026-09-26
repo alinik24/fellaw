@@ -10,24 +10,23 @@ import {
 import { Button } from '@/components/ui/button';
 
 export const LanguageSelector: React.FC = () => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Globe className="h-[1.2rem] w-[1.2rem]" />
-          <span className="sr-only">Change language</span>
+        <Button variant="outline" size="icon" aria-label={t('nav.language')}>
+          <Globe className="h-[1.2rem] w-[1.2rem]" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setLanguage('en')} className="cursor-pointer">
-          <span>🇬🇧 English</span>
-          {language === 'en' && <span className="ml-auto">✓</span>}
+        <DropdownMenuItem onClick={() => setLanguage('en')} className="cursor-pointer" aria-checked={language === 'en'} role="menuitemradio">
+          <span>English</span>
+          {language === 'en' && <span className="ml-auto" aria-hidden="true">✓</span>}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLanguage('de')} className="cursor-pointer">
-          <span>🇩🇪 Deutsch</span>
-          {language === 'de' && <span className="ml-auto">✓</span>}
+        <DropdownMenuItem onClick={() => setLanguage('de')} className="cursor-pointer" aria-checked={language === 'de'} role="menuitemradio">
+          <span>Deutsch</span>
+          {language === 'de' && <span className="ml-auto" aria-hidden="true">✓</span>}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

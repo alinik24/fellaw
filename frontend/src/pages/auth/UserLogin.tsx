@@ -45,7 +45,7 @@ const UserLogin = () => {
           description: 'Welcome back!',
         });
 
-        navigate('/ongoing-cases');
+        navigate('/user/dashboard');
       } else {
         toast({
           title: 'Login Failed',

@@ -44,7 +44,7 @@ const LawyerLogin = () => {
           description: 'Welcome to your dashboard!',
         });
 
-        navigate('/lawyer/dashboard');
+        navigate('/');
       } else {
         toast({
           title: 'Login Failed',
@@ -129,7 +129,7 @@ const LawyerLogin = () => {
                 {t('auth.noAccount')}{' '}
               </span>
               <Link
-                to="/work-with-us/professionals"
+                to="/contact"
                 className="text-primary hover:text-primary/80 font-medium"
               >
                 {t('auth.registerAsLawyer')}

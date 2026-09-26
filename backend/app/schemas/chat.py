@@ -76,6 +76,7 @@ class ChatRequest(BaseModel):
     message: str = Field(min_length=1)
     conversation_id: uuid.UUID | None = None
     case_id: uuid.UUID | None = None
+    language: str | None = Field(default=None, max_length=10, description="UI language hint ('de' | 'en') for the assistant's reply language")
     conversation_type: str = Field(
         default="legal_chat",
         max_length=50,
@@ -111,6 +112,10 @@ class LawDocumentResponse(BaseModel):
     relevance_score: float = Field(
         default=0.0,
         description="Cosine similarity score from vector search (0–1).",
+    )
+    mode: str | None = Field(
+        default=None,
+        description="Which retrieval stage produced this result: 'vector', 'fts_and', 'fts_or', or 'lexical' (trigram). Honest provenance — never pretend a semantic search happened when it was lexical.",
     )
 
     model_config = {"from_attributes": True}

@@ -1,0 +1,96 @@
+{
+  "role": "anonymous",
+  "summary": {
+    "total": 4,
+    "by_status": {
+      "implemented": 4
+    }
+  },
+  "capabilities": [
+    {
+      "id": "urgent_help",
+      "label_de": "Sofortige Hilfe (Krisensituation)",
+      "label_en": "Urgent legal help (crisis now)",
+      "kind": "navigation",
+      "status": "implemented",
+      "roles": [
+        "anonymous",
+        "citizen",
+        "lawyer",
+        "admin"
+      ],
+      "web_route": "/urgent/select",
+      "bot_intent": "urgent",
+      "owner": "frontend/pages/Urgent*, api/emergency.py",
+      "api_path": "/api/v1/emergency",
+      "requires_confirmation": false,
+      "note": "",
+      "tags": [
+        "crisis",
+        "police",
+        "accident"
+      ]
+    },
+    {
+      "id": "start_case_intake",
+      "label_de": "Neuen Fall anlegen (Intake-Formular)",
+      "label_en": "Start a new case (guided intake)",
+      "kind": "navigation",
+      "status": "implemented",
+      "roles": [
+        "anonymous",
+        "citizen",
+        "lawyer",
+        "admin"
+      ],
+      "web_route": "/new-case",
+      "bot_intent": "new_case",
+      "owner": "frontend/pages/NewCase*.tsx, api/cases.py",
+      "api_path": "/api/v1/cases",
+      "requires_confirmation": false,
+      "note": "Six case-type forms exist (traffic, consumer, family, employment, visa, generic).",
+      "tags": []
+    },
+    {
+      "id": "find_lawyer",
+      "label_de": "Anwalt finden",
+      "label_en": "Find a lawyer",
+      "kind": "read",
+      "status": "implemented",
+      "roles": [
+        "anonymous",
+        "citizen",
+        "lawyer",
+        "admin"
+      ],
+      "web_route": "/find-lawyer",
+      "bot_intent": "find_lawyer",
+      "owner": "api/professionals.py",
+      "api_path": "/api/v1/professionals/lawyers",
+      "requires_confirmation": false,
+      "note": "",
+      "tags": []
+    },
+    {
+      "id": "contact",
+      "label_de": "Kontakt",
+      "label_en": "Contact",
+      "kind": "navigation",
+      "status": "implemented",
+      "roles": [
+        "anonymous",
+        "citizen",
+        "lawyer",
+        "admin"
+      ],
+      "web_route": "/contact",
+      "bot_intent": "contact",
+      "owner": "frontend/pages/Contact.tsx",
+      "api_path": null,
+      "requires_confirmation": false,
+      "note": "",
+      "tags": []
+    }
+  ],
+  "disclaimer": "Rechtsinformation, keine Rechtsberatung (RDG)."
+}

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { translations } from '@/lib/translations';
 
 type Language = 'en' | 'de';
@@ -11,14 +11,23 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+/** First-visit detection: German-market product, but respect explicit choice. */
+const detectLanguage = (): Language => {
+  const stored = localStorage.getItem('language');
+  if (stored === 'de' || stored === 'en') return stored;
+  const nav = (navigator.language || '').toLowerCase();
+  return nav.startsWith('de') ? 'de' : 'en';
+};
+
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>(() => {
-    const stored = localStorage.getItem('language') as Language;
-    return stored || 'en';
-  });
+  const [language, setLanguageState] = useState<Language>(detectLanguage);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang);
+    setLanguageState(lang);
     localStorage.setItem('language', lang);
   };
 

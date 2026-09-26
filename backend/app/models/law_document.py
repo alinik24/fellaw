@@ -32,9 +32,9 @@ class LawDocument(Base):
     subsection: Mapped[str | None] = mapped_column(String(50), nullable=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
-    # 1536-dimensional vector for text-embedding-3-large
+    # 4096-dimensional vector for KIT qwen3-embedding-8b (R1)
     embedding: Mapped[list[float] | None] = mapped_column(
-        Vector(1536), nullable=True
+        Vector(4096), nullable=True
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     metadata_: Mapped[dict] = mapped_column(

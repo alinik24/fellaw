@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,6 +17,43 @@
     <meta name="twitter:title" content="fellaw - Your Legal Rights, Simplified" />
     <meta name="twitter:description" content="Access affordable, stress-free legal assistance across Germany" />
     <meta name="twitter:image" content="/fellaw-og-image.png" />
+
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f5f0" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e2028" />
+
+    <script>
+      /* Apply theme before first paint — no flash of wrong theme. */
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var dark =
+            stored === 'dark' ||
+            ((stored === null || stored === 'system') &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.add(dark ? 'dark' : 'light');
+          if (stored === null || stored === 'system') {
+            document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          } else {
+            document.documentElement.style.colorScheme = stored;
+          }
+        } catch (e) {
+          document.documentElement.classList.add('light');
+        }
+      })();
+      /* Adapt document language before paint (German-market product). */
+      (function () {
+        try {
+          var stored = localStorage.getItem('language');
+          var lang =
+            stored === 'de' || stored === 'en'
+              ? stored
+              : navigator.language && navigator.language.toLowerCase().indexOf('de') === 0
+                ? 'de'
+                : 'en';
+          document.documentElement.lang = lang;
+        } catch (e) { /* keep server default */ }
+      })();
+    </script>
   </head>
 
   <body>

@@ -41,3 +41,6 @@ build/
 
 # Claude - exclude entire folder
 .claude/
+
+# Loop artifacts (metrics archive IS committed; tokens never)
+.loop_metrics_token

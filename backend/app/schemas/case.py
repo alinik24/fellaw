@@ -4,7 +4,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ---------------------------------------------------------------------------
@@ -60,6 +60,20 @@ class NarrativeCreate(BaseModel):
     is_final: bool = False
 
 
+class NarrativeLifecycleUpdate(BaseModel):
+    """Narrowed PUT schema (PR-02C Finding 5).
+
+    Only the NEUTRAL WORKFLOW STATE is mutable through this path:
+    `is_final`. Substantive legal content (narrative_type, content, language,
+    version) is NOT accepted here — mutating it would bypass the legal
+    boundary (narrative_generation is REVIEW_REQUIRED).
+    """
+
+    is_final: bool
+
+    model_config = ConfigDict(extra="forbid")
+
+
 class NarrativeResponse(BaseModel):
     id: uuid.UUID
     case_id: uuid.UUID
@@ -106,6 +120,26 @@ class RoadmapStepUpdate(BaseModel):
     status: str | None = Field(default=None, max_length=20)
     priority: str | None = Field(default=None, max_length=20)
     resources: list[dict[str, Any]] | None = None
+
+
+class RoadmapStepLifecycleUpdate(BaseModel):
+    """Narrowed PUT schema (PR-02C Finding 5).
+
+    Only the NEUTRAL WORKFLOW STATE is mutable through this path:
+    `status` (pending | in_progress | completed | skipped). Substantive
+    legal content (title, description, action_items, deadline, priority,
+    resources) is NOT accepted here — mutating it would bypass the legal
+    boundary (roadmap_generation is REVIEW_REQUIRED). PR-03 owns the actual
+    deadline model; this PR only quarantines the safe lifecycle operation.
+    """
+
+    status: str = Field(
+        ...,
+        max_length=20,
+        description="pending | in_progress | completed | skipped",
+    )
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class RoadmapStepResponse(BaseModel):

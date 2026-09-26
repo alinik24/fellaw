@@ -59,6 +59,42 @@ Weise immer darauf hin, dass wichtige Entscheidungen von einem zugelassenen Rech
 Bei dringenden strafrechtlichen Angelegenheiten empfehle sofortige anwaltliche Beratung.
 """
 
+SYSTEM_PROMPT_EN = """You are fellaw, an AI assistant for legal orientation in Germany.
+
+**Your task:**
+You help users understand the German legal system and assess their legal situation.
+You do **not** provide formal legal advice and do not replace a licensed lawyer (§ 3 RDG).
+
+**Areas of law:**
+- Criminal law (StGB, StPO): offences, police questioning, criminal proceedings
+- Civil law (BGB, ZPO): contracts, damages, lawsuits
+- Administrative law (VwGO): objections to administrative decisions
+- Tenancy law: defects, termination, deposit
+- Employment law (AGG, KSchG): dismissal, discrimination, warnings
+- Social law (SGB II, SGB XII): citizen's allowance, social assistance
+- Immigration law (AufenthG, AsylG): residence permits, asylum, deportation
+
+**Procedural guidance:**
+- Explain deadlines (1-month objection period, statutes of limitations, etc.)
+- Explain jurisdictions (local court, regional court, administrative court)
+- Point to free help: Rechtsantragstelle, legal aid (BerHG), court fee aid (PKH)
+- Explain file access (§ 147 StPO, § 29 VwVfG)
+
+**Language:**
+Respond in English, unless the user writes in German. You may mix both languages when helpful.
+
+**Important notice:**
+Always point out that important decisions should be reviewed by a licensed lawyer.
+For urgent criminal matters, recommend immediate consultation with a lawyer.
+"""
+
+
+def system_prompt_for(language: str | None) -> str:
+    """Return the system prompt for the requested UI language ('de' default)."""
+    if (language or "").lower().startswith("en"):
+        return SYSTEM_PROMPT_EN
+    return SYSTEM_PROMPT_DE
+
 # ---------------------------------------------------------------------------
 # Client initialization
 # ---------------------------------------------------------------------------
@@ -111,9 +147,14 @@ def _get_chat_client():
             raise
     elif provider == "local":
         from openai import AsyncOpenAI
+        base_url = config["base_url"]
+        # Ollama (and most OpenAI-compatible servers) serve chat completions
+        # under /v1; the OpenAI SDK does not append it automatically.
+        if not base_url.rstrip("/").endswith("/v1"):
+            base_url = base_url.rstrip("/") + "/v1"
         _chat_client = AsyncOpenAI(
             api_key="local",  # Ollama doesn't need auth
-            base_url=config["base_url"],
+            base_url=base_url,
         )
     else:
         raise ValueError(f"Unsupported AI provider: {provider}")
@@ -163,6 +204,13 @@ def _get_embedding_client():
         from openai import AsyncOpenAI
         _embed_client = AsyncOpenAI(
             api_key="local",
+            base_url=config["base_url"],
+        )
+    elif provider == "kit":
+        # KIT Toolbox is OpenAI-compatible (async embeddings endpoint).
+        from openai import AsyncOpenAI
+        _embed_client = AsyncOpenAI(
+            api_key=config["api_key"],
             base_url=config["base_url"],
         )
     else:
@@ -332,7 +380,7 @@ async def create_embedding(text: str) -> list[float]:
     log.info("create_embedding.start", provider=provider, text_len=len(text))
 
     try:
-        if provider in ("openai", "azure", "local"):
+        if provider in ("openai", "azure", "local", "kit"):
             model = config.get("deployment") or config.get("model")
             response = await client.embeddings.create(
                 model=model,
@@ -381,7 +429,7 @@ async def create_embeddings_batch(texts: list[str]) -> list[list[float]]:
     log.info("create_embeddings_batch.start", provider=provider, count=len(texts))
 
     try:
-        if provider in ("openai", "azure", "local"):
+        if provider in ("openai", "azure", "local", "kit"):
             model = config.get("deployment") or config.get("model")
             response = await client.embeddings.create(
                 model=model,

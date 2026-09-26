@@ -78,7 +78,17 @@ async def generate_document(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    """Generate a document from a template."""
+    """Generate a document from a template.
+
+    PR-02C Finding 3: classified by OUTPUT, not implementation technology.
+    The repository contains no template bodies/seeds and live DB template
+    bodies cannot be verified in this environment, so generation FAILS CLOSED
+    (REVIEW_REQUIRED). Listing/metadata endpoints remain functional.
+    """
+    from app.services.legal_boundary import require_executable
+
+    require_executable("document_templates")
+
     # Get template
     template_result = await db.execute(
         select(DocumentTemplate).where(DocumentTemplate.id == data.template_id)

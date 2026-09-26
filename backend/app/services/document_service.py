@@ -133,13 +133,113 @@ async def extract_text_from_image(file_path: str) -> str:
 # ---------------------------------------------------------------------------
 
 
+# L1 extraction-only schema. PR-02C Finding 4: the ordinary upload pipeline
+# must NOT request legal_implications / action_required / urgency from the
+# model. Only visible extraction data is asked for.
+EXTRACTION_ALLOWED_FIELDS: tuple[str, ...] = (
+    "summary",
+    "key_dates",
+    "key_persons",
+    "document_category",
+    "reference_numbers",
+)
+
+EXTRACTION_PROMPT_SCHEMA: str = """Gib ein JSON-Objekt mit GENAU diesen Feldern zurück:
+{
+  "summary": "Kurze Zusammenfassung des Dokuments (2-4 Sätze, rein beschreibend)",
+  "key_dates": [
+    {"date": "TT.MM.JJJJ oder Beschreibung", "significance": "Was an diesem Datum im Dokument steht"}
+  ],
+  "key_persons": [
+    {"name": "Name/Institution", "role": "Rolle im Dokument"}
+  ],
+  "document_category": "police_report|court_letter|contract|id_document|medical|financial|correspondence|other",
+  "reference_numbers": ["Aktenzeichen, Vertragsnummern oder Referenznummern aus dem Dokument"]
+}
+
+Verboten: KEINE rechtliche Bewertung, KEINE Rechtsfolgen, KEINE Handlungsanweisungen,
+KEINE Dringlichkeitseinschätzung, KEINE Strategieempfehlung. Extrahiere nur, was im
+Dokument sichtbar steht."""
+
+
+async def analyze_document_extraction(
+    text: str,
+    doc_type: str,
+) -> dict[str, Any]:
+    """
+    L1 extraction-only document analysis (PR-02C Finding 4).
+
+    Requests ONLY the allowed extraction surface: plain summary, visible
+    dates, persons/organizations, document category/type, reference numbers.
+    The prompt/schema explicitly forbids legal_implications, individualized
+    action_required, legal urgency, strategy, and merits. Used by the ordinary
+    upload pipeline. This is the ROOT contract fix: the model is never asked
+    to produce L3 fields, so there is nothing to pop() afterward.
+    """
+    log.info(
+        "analyze_document_extraction.start",
+        doc_type=doc_type,
+        text_len=len(text),
+    )
+
+    system = (
+        "Du bist ein Dokument-Extraktionsassistent. Du extrahierst nur sichtbare "
+        "Informationen (Zusammenfassung, Daten, Personen, Kategorie, Referenzen). "
+        "Du gibst KEINE rechtliche Bewertung oder Handlungsanweisungen ab. "
+        "Antworte ausschließlich als valides JSON-Objekt ohne Markdown-Codeblöcke."
+    )
+
+    user_prompt = f"""Analysiere das folgende {doc_type}-Dokument.
+
+{EXTRACTION_PROMPT_SCHEMA}
+
+**Dokumenttext:**
+\"\"\"{text[:6000]}\"\"\"
+"""
+
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user_prompt},
+    ]
+
+    raw = await chat_completion(messages, temperature=0.1, max_tokens=1200)
+    assert isinstance(raw, str)
+
+    try:
+        cleaned = _strip_fences(raw)
+        result = json.loads(cleaned)
+        # Fail closed: only allowed fields are kept; anything else is dropped.
+        result = {k: v for k, v in result.items() if k in EXTRACTION_ALLOWED_FIELDS}
+        log.info("analyze_document_extraction.done", keys=sorted(result.keys()))
+        return result
+    except (json.JSONDecodeError, Exception) as exc:
+        log.warning(
+            "analyze_document_extraction.json_failed",
+            error=str(exc),
+            raw=raw[:300],
+        )
+        return {
+            "summary": raw[:500],
+            "key_dates": [],
+            "key_persons": [],
+            "document_category": "other",
+            "reference_numbers": [],
+        }
+
+
 async def analyze_document_with_ai(
     text: str,
     doc_type: str,
     case_context: str | None = None,
 ) -> dict[str, Any]:
     """
-    Perform AI analysis on extracted document text.
+    Rich document analysis — GATED REVIEW_REQUIRED (PR-02C Finding 4).
+
+    This analyzer additionally emits legal_implications, action_required, and
+    urgency for the user's concrete document (L3 leakage). It is NOT used by
+    the ordinary upload pipeline; it is only reachable through the gated chat
+    endpoint (POST /api/v1/chat/analyze-document -> require_executable
+    "analyze_document" -> blocked) and is kept for future value behind review.
 
     Returns a structured dict:
         {summary, key_dates, key_persons, legal_implications,
@@ -262,23 +362,28 @@ async def process_uploaded_document(
 
         document.extracted_text = extracted_text
 
-        # 2. AI analysis (only if we have text)
+        # 2. L1 extraction-only AI analysis (only if we have text)
+        # PR-02C Finding 4: the ordinary upload pipeline uses the extraction-
+        # only operation. The model is never asked for legal_implications /
+        # action_required / urgency, so there is nothing to strip afterwards.
         if extracted_text.strip():
-            analysis_result = await analyze_document_with_ai(
+            analysis_result = await analyze_document_extraction(
                 text=extracted_text,
                 doc_type=document.document_category,
             )
 
-            # Store as JSON string in the ai_analysis column
+            # Store as JSON string in the ai_analysis column (L1 surface only)
             document.ai_analysis = json.dumps(analysis_result, ensure_ascii=False)
 
-            # Update category if AI detected a better one
+            # Update category if extraction detected a better one
             detected_category = analysis_result.get("document_category")
             if detected_category and detected_category != "other":
                 document.document_category = detected_category
         else:
             document.ai_analysis = json.dumps(
-                {"summary": "Kein Text extrahiert.", "urgency": "low"},
+                # PR-02 quarantine: no-text fallback persists only the L1
+                # summary — no urgency/legal-implications judgment.
+                {"summary": "Kein Text extrahiert."},
                 ensure_ascii=False,
             )
 

@@ -93,6 +93,18 @@ class Settings(BaseSettings):
     LOCAL_EMBEDDING_MODEL: str = "nomic-embed-text"
 
     # ------------------------------------------------------------------ #
+    # KIT Toolbox (OpenAI-compatible; embeddings only — chat stays local)
+    # ------------------------------------------------------------------ #
+    # EMBEDDING_PROVIDER is decoupled from AI_PROVIDER so chat can run on
+    # local Ollama while embeddings use the KIT-hosted qwen3 model.
+    # Values: openai | azure | cohere | google | local | kit | (empty = AI_PROVIDER)
+    EMBEDDING_PROVIDER: str = ""  # empty -> derive from AI_PROVIDER
+    KIT_API_KEY: str = ""  # read from KIT_API_KEY env var; never hardcode
+    KIT_BASE_URL: str = "https://ki-toolbox.scc.kit.edu/api/v1"
+    KIT_EMBEDDING_MODEL: str = "kit.qwen3-embedding-8b"
+    KIT_EMBEDDING_DIMENSIONS: int = 4096
+
+    # ------------------------------------------------------------------ #
     # Azure Document Intelligence
     # ------------------------------------------------------------------ #
     DOCINTEL_ENDPOINT: str = ""
@@ -215,8 +227,22 @@ class Settings(BaseSettings):
             raise ValueError(f"Unsupported AI provider: {self.AI_PROVIDER}")
 
     def get_embedding_client_config(self) -> dict:
-        """Get configuration for embedding client based on AI_PROVIDER."""
-        if self.AI_PROVIDER == "openai":
+        """Get configuration for embedding client.
+
+        EMBEDDING_PROVIDER (when set) wins over AI_PROVIDER so embeddings can
+        run on a different backend than chat (e.g. chat=local Ollama,
+        embeddings=KIT Toolbox qwen3-embedding-8b).
+        """
+        provider = self.EMBEDDING_PROVIDER or self.AI_PROVIDER
+        if provider == "kit":
+            return {
+                "provider": "kit",
+                "api_key": self.KIT_API_KEY,
+                "base_url": self.KIT_BASE_URL,
+                "model": self.KIT_EMBEDDING_MODEL,
+                "dimensions": self.KIT_EMBEDDING_DIMENSIONS,
+            }
+        if provider == "openai":
             return {
                 "provider": "openai",
                 "api_key": self.OPENAI_API_KEY,
@@ -224,7 +250,7 @@ class Settings(BaseSettings):
                 "model": self.EMBEDDING_MODEL,
                 "dimensions": self.EMBEDDING_DIMENSIONS,
             }
-        elif self.AI_PROVIDER == "azure":
+        elif provider == "azure":
             return {
                 "provider": "azure",
                 "api_key": self.AZURE_EMBEDDING_API_KEY,
@@ -233,21 +259,21 @@ class Settings(BaseSettings):
                 "deployment": self.AZURE_EMBEDDING_DEPLOYMENT,
                 "dimensions": self.EMBEDDING_DIMENSIONS,
             }
-        elif self.AI_PROVIDER == "cohere":
+        elif provider == "cohere":
             return {
                 "provider": "cohere",
                 "api_key": self.COHERE_API_KEY,
                 "model": self.EMBEDDING_MODEL,
                 "dimensions": self.EMBEDDING_DIMENSIONS,
             }
-        elif self.AI_PROVIDER == "google":
+        elif provider == "google":
             return {
                 "provider": "google",
                 "api_key": self.GOOGLE_API_KEY,
                 "model": self.EMBEDDING_MODEL,
                 "dimensions": self.EMBEDDING_DIMENSIONS,
             }
-        elif self.AI_PROVIDER == "local":
+        elif provider == "local":
             return {
                 "provider": "local",
                 "base_url": self.LOCAL_MODEL_URL,
@@ -255,7 +281,7 @@ class Settings(BaseSettings):
                 "dimensions": self.EMBEDDING_DIMENSIONS,
             }
         else:
-            raise ValueError(f"Unsupported AI provider for embeddings: {self.AI_PROVIDER}")
+            raise ValueError(f"Unsupported embedding provider: {provider}")
 
 
 settings = Settings()

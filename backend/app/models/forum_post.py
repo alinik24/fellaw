@@ -61,7 +61,7 @@ class ForumPost(Base):
     language: Mapped[str] = mapped_column(String(10), nullable=False, default="de")
 
     # 1536-dimensional embedding from text-embedding-3-large
-    embedding: Mapped[list[float] | None] = mapped_column(Vector(1536), nullable=True)
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(4096), nullable=True)
 
     # Free-form keyword tags extracted during scraping
     tags: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
