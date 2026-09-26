@@ -211,10 +211,15 @@ it; no hand-count drift.
 | RIG-PROC-02 external skill mutation | CLOSED (none performed this run) | No writes outside `Legal_Aid/fellaw`; filesystem/git scope check clean. |
 | route-count drift | CLOSED | Single derived `BOUNDARY_ROUTE_MAP` (12 routes -> 7 policies); tests iterate it; no hand-count. |
 | RIG-PR02C-06 public/boundary id disconnect | CLOSED | Registry capability id unified to `laws_search` (== boundary policy id) in platform_capabilities.py, bot_contract.py ask-fallback, ChatAssistant.tsx, tests. Old id `chat_legal_question` gone (negative asserts). New transition test: flipping `laws_search` to REVIEW_REQUIRED removes the capability from every role's advertisement. |
+| RIG-PR02C-07 is_executable unknown fail-open | CLOSED (PR-02D) | `is_executable(unknown)` now `False` (was `True`); `require_executable(unknown)` raises `BoundaryDisabled`; `registry_legal_execution_status(no-policy)` stays True for nav display. Only production caller (`bot_contract.render_capability`) guarded by `policy is not None` — no behavior change. `test_is_executable_fail_closed_contract` pins the contract. |
+| RIG-TEST-02 adversarial behavioral evidence | CLOSED (PR-02D) | Static policy-table test REPLACED by behavioral proofs: 4A real POST /chat/message × 4 adversarial prompts with exploding-DB/-LLM spies -> BoundaryDisabled before any DB/LLM/persist; 4B real bot_turn ask with bounded fixture -> source retrieval or safe handoff; 4C grounded §4 KSchG with resolved user -> citation + RDG disclaimer. |
+| RIG-PROC-03 dirty-checkout isolation | CLOSED (PR-02D) | All PR-02D work in sibling worktree `Legal_Aid/fellaw-pr02d` (branch `pr02d-boundary-consistency`) from recorded HEAD; PR-owned cumulative changes transferred byte-verified; PRE-EXISTING/OTHER (`UrgentSelect.tsx`) excluded; source checkout untouched. |
+| entry-point contradiction (laws_search claims POST /chat/message) | CLOSED (PR-02D) | `laws_search` policy entry_points now only `GET /api/v1/laws/search` + bot ask (bounded); `generic_legal_chat` exclusively owns POST /chat/message + GET /chat/stream. `test_route_map_each_route_one_policy` proves route->policy uniqueness. |
 
 ## Verification status
 
-- Backend non-live: `59 passed, 10 skipped` (10 = live-DB integration, NOT executed — reported separately).
-- Boundary contract suite: `29 passed` (incl. adversarial, unknown-policy, template, extraction-schema, PUT narrowing, route-map).
+- Backend non-live (PR-02D, worktree): `66 passed, 10 skipped` (10 = live-DB integration, NOT executed — reported separately).
+- Boundary contract suite: `36 passed` (incl. adversarial BEHAVIORAL 4A/4B/4C, unknown-policy incl. is_executable contract, template, extraction-schema, PUT narrowing, route-map uniqueness, transition propagation).
+- Capability/overview/bot suites: `28 passed`; live integration `10 skipped`.
 - Frontend: vitest `46/46`, `tsc --noEmit` clean, `build` OK, `check:fabricated` OK.
 - Live DB tests: **LIVE INTEGRATION BLOCKED** (not executed; no DB credentials solved/rotated).

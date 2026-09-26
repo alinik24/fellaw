@@ -15,6 +15,7 @@ import json
 from typing import Any, AsyncIterator
 
 import structlog
+import httpx
 from tenacity import (
     retry,
     retry_if_exception_type,
@@ -25,6 +26,15 @@ from tenacity import (
 from app.config import settings
 
 log = structlog.get_logger(__name__)
+
+
+class AIProviderUnavailable(Exception):
+    """The optional AI/model provider could not be reached or answered.
+
+    Only this failure may degrade document processing to the bounded
+    non-generative 'text extracted, AI enrichment unavailable' state.
+    Any other error keeps its real failure semantics.
+    """
 
 # ---------------------------------------------------------------------------
 # System prompt
@@ -359,6 +369,18 @@ async def chat_completion(
 
     except Exception as exc:
         log.error("chat_completion.error", provider=provider, error=str(exc))
+        unavailable = isinstance(exc, (httpx.HTTPError, ConnectionError, TimeoutError))
+        if not unavailable:
+            # OpenAI-SDK / httpx-based connection errors surface as
+            # APIConnectionError (not a plain httpx.HTTPError in this SDK).
+            try:
+                from openai import APIConnectionError, APIStatusError
+
+                unavailable = isinstance(exc, (APIConnectionError, APIStatusError))
+            except ImportError:
+                unavailable = False
+        if unavailable:
+            raise AIProviderUnavailable(str(exc)) from exc
         raise
 
 

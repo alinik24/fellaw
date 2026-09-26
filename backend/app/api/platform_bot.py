@@ -104,6 +104,16 @@ async def bot_turn(
 
     user = await _resolve_user(db, req)
 
+    if intent.sensitive and req.is_group:
+        return BotTurnResponse(
+            reply="Für sensible oder akute Inhalte bitte in einer privaten Nachricht fortfahren: /urgent/select",
+            deep_link="/urgent/select",
+            should_dm=True,
+            intent=intent.name,
+            requires_auth=user is None,
+            executed=False,
+        )
+
     # Mutation intents are preview-only in every channel, for every user,
     # until confirmed execution (idempotency + audit) exists. Anonymous
     # users still see WHAT would happen and WHERE to do it — never a dead
@@ -131,7 +141,7 @@ async def bot_turn(
         return BotTurnResponse(
             reply=reply.text,
             deep_link=reply.deep_link,
-            should_dm=False,
+            should_dm=intent.sensitive and req.is_group,
             intent=intent.name,
             requires_auth=True,
         )
@@ -139,13 +149,13 @@ async def bot_turn(
     # Read intents with a resolved user -> real API data through the shared
     # contract (overview/chat), never fabricated.
     if user is not None:
-        if intent.name == "my_cases":
+        if intent.name in {"my_cases", "my_matters"}:
             ov = await load_overview(user, db)
             text = render_overview(format_overview_text(ov), req.language)
-            return BotTurnResponse(reply=text.text, deep_link=None, should_dm=False, intent="my_cases", requires_auth=False, executed=False)
+            return BotTurnResponse(reply=text.text, deep_link=None, should_dm=False, intent="my_matters", requires_auth=False, executed=False)
         if intent.name == "ask":
-            from app.api.chat import send_message as _send  # noqa: F401  (documented contract)
-            from app.schemas.chat import ChatRequest
+            # PR-02D bounded-path contract: ask is statute/source lookup via
+            # search_laws ONLY — never the generic generative send_message.
             from app.services.rag_service import format_citations, search_laws
 
             docs = await search_laws(query=req.text, limit=5, db=db)

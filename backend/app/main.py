@@ -131,6 +131,8 @@ from app.api.mediation import router as mediation_router
 from app.api.notifications import router as notifications_router
 from app.api.platform import router as platform_router
 from app.api.platform_bot import router as platform_bot_router
+from app.api.first_response import router as first_response_router
+from app.api.first_response_state import router as first_response_state_router
 from app.api.professionals import router as professionals_router
 from app.api.referrals import router as referrals_router
 from app.api.templates import router as templates_router
@@ -154,6 +156,8 @@ app.include_router(templates_router, prefix=_API_PREFIX)
 app.include_router(notifications_router, prefix=_API_PREFIX)
 app.include_router(platform_router, prefix=_API_PREFIX)
 app.include_router(platform_bot_router, prefix=_API_PREFIX)
+app.include_router(first_response_router, prefix=_API_PREFIX)
+app.include_router(first_response_state_router, prefix=_API_PREFIX)
 
 # ---------------------------------------------------------------------------
 # Static files – serve uploaded documents

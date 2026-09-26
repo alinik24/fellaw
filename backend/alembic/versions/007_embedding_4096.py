@@ -16,6 +16,7 @@ Revises: 006_bot_identities
 """
 from typing import Sequence, Union
 
+import sqlalchemy as sa
 from alembic import op
 
 revision: str = "007_embedding_4096"
@@ -23,20 +24,42 @@ down_revision: Union[str, None] = "006_bot_identities"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
-TABLES = ("law_documents", "forum_posts")
+
+def _existing_tables() -> set[str]:
+    """Inspect the live DB and return the set of tables that actually exist."""
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    return set(inspector.get_table_names())
 
 
 def upgrade() -> None:
-    for table in TABLES:
+    # law_documents is always part of the canonical chain and must be migrated.
+    # forum_posts is a legacy model present in the ORM layer (ForumPost) but is
+    # NOT created by migration 001 — it may exist in historical databases. To
+    # be safe for both fresh and historical DBs, inspect rather than assume:
+    # law_documents is always migrated; forum_posts is migrated only if the
+    # table actually exists. This replaces the previous version that still
+    # dropped an index for a table that the canonical chain never creates.
+    tables = {"law_documents"}
+    live = _existing_tables()
+    if "forum_posts" in live:
+        tables.add("forum_posts")
+
+    for table in tables:
         # Old 1536-dim hnsw index (from 001) — dropped, not recreated (see note).
-        op.execute("DROP INDEX IF EXISTS ix_law_documents_embedding_hnsw")
-        op.execute("DROP INDEX IF EXISTS ix_forum_posts_embedding_hnsw")
+        op.execute(f"DROP INDEX IF EXISTS ix_{table}_embedding_hnsw")
         op.execute(f"UPDATE {table} SET embedding = NULL")
         op.execute(f"ALTER TABLE {table} ALTER COLUMN embedding TYPE vector(4096)")
 
 
 def downgrade() -> None:
-    for table in TABLES:
+    # Mirror the upgrade's inspection so downgrade is symmetric.
+    tables = {"law_documents"}
+    live = _existing_tables()
+    if "forum_posts" in live:
+        tables.add("forum_posts")
+
+    for table in tables:
         op.execute(f"UPDATE {table} SET embedding = NULL")
         op.execute(f"ALTER TABLE {table} ALTER COLUMN embedding TYPE vector(1536)")
         op.execute(

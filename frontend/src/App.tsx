@@ -16,6 +16,7 @@ import UserLogin from "./pages/auth/UserLogin";
 import UserRegister from "./pages/auth/UserRegister";
 import LawyerLogin from "./pages/auth/LawyerLogin";
 import UserDashboard from "./pages/UserDashboard";
+import CaseJourney from "./pages/CaseJourney";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
             <Route path="/lawyer/dashboard" element={<Navigate to="/" replace />} />
             <Route path="/user/dashboard" element={<UserDashboard />} />
+            <Route path="/case/:caseId" element={<CaseJourney />} />
             <Route path="/contact" element={<Contact />} />
             {/* Authentication Routes */}
             <Route path="/auth/user/login" element={<UserLogin />} />

@@ -3,20 +3,25 @@
  * Handles file uploads and document analysis requests
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
-export interface DocumentAnalysisResponse {
-  file_id: string;
-  filename: string;
-  file_type: string;
+export interface DocumentResponse {
+  id: string;
+  case_id: string | null;
+  original_filename: string;
+  stored_filename: string;
+  file_path: string;
+  mime_type: string;
   file_size: number;
-  analysis_complete: boolean;
-  extracted_text: string;
-  key_value_pairs: Array<{ key: string; value: string }>;
-  tables: Array<any>;
-  entities: Array<any>;
-  metadata: Record<string, any>;
+  extracted_text: string | null;
+  ai_analysis: string | null;
+  document_category: string;
+  processing_status: string;
+  created_at: string;
 }
+
+/** Canonical authenticated document-ingest contract. */
+export type DocumentAnalysisResponse = DocumentResponse;
 
 export interface ImageUploadResponse {
   file_id: string;
@@ -68,15 +73,10 @@ export async function uploadDocument(
   const formData = new FormData();
   formData.append('file', file);
 
-  const url = new URL(`${API_BASE_URL}/api/v1/upload/document`);
-  if (!analyze) {
-    url.searchParams.append('analyze', 'false');
-  }
-
-  const response = await fetch(url.toString(), {
+  const response = await fetch(`${API_BASE_URL}/api/v1/documents/upload`, {
     method: 'POST',
     headers: getAuthHeader(),
-    body: formData
+    body: formData,
   });
 
   if (!response.ok) {

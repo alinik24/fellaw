@@ -15,7 +15,7 @@ dist/
 .vite/
 *.log
 bun.lockb
-package-lock.json
+*.tsbuildinfo
 
 # Environment
 .env
@@ -42,5 +42,12 @@ build/
 # Claude - exclude entire folder
 .claude/
 
-# Loop artifacts (metrics archive IS committed; tokens never)
+# Loop artifacts are reproducible run output; keep only the source golden set.
 .loop_metrics_token
+backend/scripts/loop/metrics/
+
+# Local OpenClaw/runtime state never belongs in product Git.
+openclaw/private/
+openclaw/memory/
+openclaw/sessions/
+*.sqlite*

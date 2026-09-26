@@ -26,7 +26,7 @@ class BotReply:
     should_dm: bool = False
 
 
-_AUTH_INTENTS = {"my_cases", "notifications", "lawyer_dashboard", "verify_lawyer"}
+_AUTH_INTENTS = {"upload_document", "first_response", "my_matters", "deadline_reminders", "human_handoff"}
 _SENSITIVE_TERMS = {
     # EN
     "health", "medical", "diagnosis", "criminal", "arrest", "asylum", "visa", "custody",
@@ -43,15 +43,12 @@ def classify_intent(text: str, role: str = "anonymous") -> BotIntent:
     safe_role = role if role in {"anonymous", "citizen", "lawyer", "admin"} else "anonymous"
     caps = capabilities_for_role(safe_role)
     patterns: tuple[tuple[tuple[str, ...], str], ...] = (
-        ((("urgent", "emergency", "notfall", "polizei", "arrest", "verhaftet", "festgenommen")), "urgent_help"),
-        ((("new case", "neuer fall", "fall anlegen", "intake")), "start_case_intake"),
-        ((("lawyer", "anwalt", "anwältin")), "find_lawyer"),
-        ((("my cases", "meine fälle", "meine faelle")), "my_cases"),
         ((("upload", "hochladen", "document", "dokument")), "upload_document"),
-        ((("insurance", "rechtsschutz", "versicherung")), "insurance_check"),
-        ((("mediation", "schlichtung")), "mediation"),
-        ((("book", "termin", "appointment", "buchen")), "book_consultation"),
-        ((("pay", "bezahlen", "zahlung", "preis", "kosten")), "pay_consultation"),
+        ((("first response", "erste antwort", "erstantwort")), "first_response"),
+        ((("my matters", "meine vorgänge", "meine vorgaenge", "meine fälle", "meine faelle")), "my_matters"),
+        ((("reminder", "erinnerung", "fristerinnerung")), "deadline_reminders"),
+        ((("human handoff", "mensch", "anwalt", "anwältin", "anwaltliche")), "human_handoff"),
+        ((("submit notice", "submit a notice", "notice einreichen", "schreiben einreichen", "letter upload")), "submit_notice"),
     )  # type: ignore[assignment]
     # Intent scan. Note: substring matches can misfire — "Zahlungsverzug" is
     # a rent-arrears question, not a payment request — so it is excluded
@@ -71,8 +68,7 @@ def classify_intent(text: str, role: str = "anonymous") -> BotIntent:
                     cap.kind == "mutation",
                     any(term in q for term in _SENSITIVE_TERMS),
                 )
-    cap = next((c for c in caps if c.id == "laws_search"), None)
-    return BotIntent("ask", cap, True, False)
+    return BotIntent("ask", None, True, False, any(term in q for term in _SENSITIVE_TERMS))
 
 
 def render_capability(intent: BotIntent, language: str = "de") -> BotReply:

@@ -110,7 +110,6 @@ BOUNDARY_POLICIES: tuple[BoundaryPolicy, ...] = (
         approval_state=ApprovalState.APPROVED,
         entry_points=(
             "GET /api/v1/laws/search",
-            "POST /api/v1/chat/message (bounded A-path: statute/source lookup only)",
             "bot ask intent (statute/source lookup only)",
         ),
         reason=(
@@ -278,21 +277,24 @@ def boundary_policies() -> tuple[BoundaryPolicy, ...]:
 
 
 def is_executable(capability_id: str) -> bool:
-    """True for capabilities allowed normal public execution.
+    """Fail-closed execution-status predicate (PR-02D Section 3).
 
-    Capabilities WITH a policy are executable only when APPROVED; L3/L4 and
-    REVIEW_REQUIRED/DISABLED states fail closed.
+    Contract:
+      explicit APPROVED              -> True
+      REVIEW_REQUIRED / DISABLED     -> False
+      unknown / misspelled id        -> False  (fail closed; a typo must
+                                               never look executable)
+
+    NOTE: this is NOT the registry-display filter. Ordinary navigation /
+    intake capabilities have no boundary policy and are intentionally
+    offerable; display filtering MUST use registry_legal_execution_status(),
+    which keeps no-policy -> True for that purpose. is_executable() is the
+    strict legal-execution predicate and fails closed on unknowns.
     """
     p = _BY_ID.get(capability_id)
     if p is None:
-        # Registry filtering: a capability with NO boundary policy is outside
-        # the legal-judgment surface (navigation, intake, notifications,
-        # referrals) and is not gated by this boundary. See
-        # registry_legal_execution_status() for the safe lookup used by
-        # display filtering.
-        return True
-    allowed = {ApprovalState.APPROVED}
-    return p.approval_state in allowed
+        return False
+    return p.approval_state == ApprovalState.APPROVED
 
 
 def registry_legal_execution_status(capability_id: str) -> bool:

@@ -1,5 +1,21 @@
 # FelLaw Decision Log
 
+## 2026-09-10 — PR-02D boundary identity + fail-closed cleanup + behavioral hardening + isolation
+
+### Decision
+Execute PR-02D (only) in an isolated sibling worktree without mutating the dirty `main` checkout, close the remaining narrow boundary inconsistencies, and establish a safe baseline for the next slice.
+
+1. **Isolation (RIG-PROC-03):** create `Legal_Aid/fellaw-pr02d` branch `pr02d-boundary-consistency` from the recorded source HEAD `50ea13da1c2c241c0f3b563026d4ff3d6c40bf32`; transfer ONLY PR-owned cumulative changes (byte-verified); exclude the single PRE-EXISTING/OTHER path; leave the source checkout untouched. Rationale: the active checkout carries cumulative uncommitted PR work plus unrelated pre-existing changes; product edits there would entangle provenance.
+2. **Entry-point contradiction:** `laws_search` must not claim `POST /api/v1/chat/message` (owned by `generic_legal_chat`). Entry points are `GET /api/v1/laws/search` + bot ask (bounded). Add a route→policy uniqueness test.
+3. **is_executable fail-open:** `is_executable(unknown)` was `True`. Final contract: APPROVED→True; REVIEW_REQUIRED/DISABLED→False; unknown→False. `registry_legal_execution_status(no-policy)` stays True for navigation display. `require_executable(unknown)` already raised; keep. Only production caller (`bot_contract.render_capability`) guarded — no behavior change.
+4. **Behavioral hardening (RIG-TEST-02):** replace the static adversarial test with real execution proofs: HTTP endpoint with exploding-DB/-LLM spies; real bot ask with bounded fixture; grounded L0 path with resolved user + citation assertions. Documentation may then claim "1-4 blocked/bounded, 5 grounded" on behavioral evidence.
+
+### Consequences
+- `is_executable` now fails closed on unknown ids; no production behavior change (only caller guarded).
+- `laws_search` policy entry points truthful; route map uniqueness enforced by test.
+- Adversarial claim now backed by executed handler/bot behavior, not policy-table inspection.
+- Isolated worktree = clean PR-owned baseline for the next slice; source `main` untouched.
+
 ## 2026-09-10 — PR-02C follow-up: RIG-PR02C-06 canonical capability identity
 
 ### Decision

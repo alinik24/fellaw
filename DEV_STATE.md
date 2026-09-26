@@ -50,6 +50,19 @@ PR-02C (legal capability boundary remediation — findings closure; 2026-09-10):
 - LEAN_CANVAS wording correction: replaced the absolute "general AI chat/plugins (cannot produce verified, source-backed deadlines)" claim with the narrower "general AI alone does not provide FelLaw's governed, source-provenanced, rule-versioned deadline workflow and persistent matter state".
 - Boundary contract tests: `backend/tests/test_legal_boundary.py` (17 tests) proves every legal capability has class+approval; every L3/L4 is REVIEW_REQUIRED + not executable; gated calls fail closed BEFORE LLM/persistence (endpoints raise `BoundaryDisabled` with an exploding-DB stub proving no DB/LLM path is touched); disabled response is deterministic/typed; bot never deep-links into gated execution; OpenAPI doesn't advertise gated strategy/drafting; preserved grounded L0/L1 + templates still work; PR-01 caps stay removed; real intake/dashboard not regressed.
 
+PR-02D (boundary identity + fail-closed cleanup + behavioral test hardening + safe isolation; 2026-09-10):
+- ISOLATION (RIG-PROC-03): all PR-02D work executed in a SIBLING WORKTREE `Legal_Aid/fellaw-pr02d` on branch `pr02d-boundary-consistency` from the recorded source HEAD `50ea13da1c2c241c0f3b563026d4ff3d6c40bf32`. The dirty `main` checkout was NOT mutated (no commit/push/reset/stash/clean/checkout). Only PR-owned cumulative changes were transferred (byte-verified); the single PRE-EXISTING/OTHER change (`frontend/src/pages/UrgentSelect.tsx`) was NOT transferred. Source checkout HEAD/status unchanged after the slice (81-line porcelain identical).
+- Section 1 (canonical ID): `laws_search` is the one canonical capability id across BoundaryPolicy, capability registry, capability lookup, bot intent mapping, frontend matchCapability handling, tests, and docs. `chat_legal_question` exists ONLY as intentional negative assertions (old id gone / not advertised / lookup None). Required invariant holds: public capability id == governing legal-boundary capability id. `test_laws_search_policy_transition_propagates_to_registry` proves APPROVED -> offered, REVIEW_REQUIRED -> not offered for EVERY role.
+- Section 2 (entry-point contradiction): `laws_search` boundary policy NO LONGER claims `POST /api/v1/chat/message`. Its entry points are only `GET /api/v1/laws/search` + `bot ask intent (statute/source lookup only)`. `generic_legal_chat` owns `POST /api/v1/chat/message` + `GET /api/v1/chat/stream`. New `test_route_map_each_route_one_policy`: every route in BOUNDARY_ROUTE_MAP maps to exactly one policy; entry_points across policies never duplicate an execution route.
+- Section 3 (unknown-id fail-closed): `is_executable(unknown)` is now `False` (was fail-open True). `require_executable(unknown)` raises `BoundaryDisabled` (already). `registry_legal_execution_status(no-policy)` stays True for navigation display. Only production `is_executable` caller (`bot_contract.py` render) is guarded by `policy is not None` so behavior is unchanged. New `test_is_executable_fail_closed_contract`. A misleading `from app.api.chat import send_message as _send` comment/import in `platform_bot.py` ask branch was removed (bot ask is bounded `search_laws` only).
+- Section 4 (behavioral hardening): replaced the static "prompts 1-4 blocked, 5 grounded" test with REAL behavioral proofs:
+  - 4A HTTP path: real `POST /chat/message` endpoint called with exploding-DB + exploding-LLM spies for each adversarial prompt -> `BoundaryDisabled` before ANY db/llm/persist.
+  - 4B bot path: real `bot_turn` `ask` execution with controlled bounded `search_laws` fixture + exploding-LLM spy -> source retrieval or safe auth/urgent handoff, never merits/strategy/drafting; `send_message` structurally absent from the bot.
+  - 4C grounded path: real `bot_turn` ask with a RESOLVED user for "What does §4 KSchG generally provide?" -> KSchG §4 citation returned, RDG disclaimer present, no generative LLM touched.
+  - Documentation may now claim "prompts 1-4 blocked/bounded; prompt 5 grounded" backed by behavioral execution evidence, not policy-table inspection.
+- Tests: `test_legal_boundary.py` 36 tests (was 30: +is_executable contract, +route-map uniqueness, +2 HTTP behavioral, +2 bot behavioral, +1 grounded; the old static adversarial wrapper was REPLACED by the behavioral versions). Full backend non-live: 66 passed + 10 skipped (live-DB). No frontend production change (ChatAssistant.tsx already canonical; no build artifacts touched).
+- No database migrations, new dependencies, new LLM integrations, new product features, or RDG claims added. PR-02C accepted portions preserved (generic_legal_chat/templates REVIEW_REQUIRED, extraction-only upload, roadmap/narrative lifecycle PUT schemas, L0-L4 vocabulary, APPROVED = engineering state, counsel UNKNOWN). No deadline semantics touched (PR-03 owns).
+
 No database migrations, new dependencies, new LLM integrations, new product features, or RDG-crossing claims were added in PR-00B, PR-01, PR-01C, or PR-02.
 
 PR-00 (prior, retained):
@@ -190,3 +203,17 @@ From `Legal_Aid/fellaw/backend`:
 ## Safety boundary
 
 Do not delete unrelated files under the parent `.openclaw-fellaw` workspace. Scope edits to `Legal_Aid/fellaw` and its explicitly referenced skill/config files.
+
+---
+
+## E2E FINAL ACCEPTANCE SLICE (2026-09-11) — A/B/C corrections proven
+
+Same canonical worktree `Legal_Aid/fellaw-e2e`, branch `e2e-first-response-build`, HEAD `50ea13da…` (no commit/push).
+
+Accepted-state transition: core/backend implementation was accepted as baseline (permission: correction-only). Three remaining acceptance invariants were closed:
+
+1. **Hard-reload reconstruction (A)** — `GET /first-response/{case_id}/state` persisted-read contract + CaseJourney mount reconstruction from it. Proven by actual browser hard reloads: all five elements (facts+review, semantic clocks, reminder, handoff dossier availability, north star) reconstruct from DB; north-star positive transition persists across reload #2.
+2. **Journey B (supported, no confirmed trigger)** — rendered NEEDS_CONFIRMATION/REVIEW_REQUIRED abstention, due null, no guessed date.
+3. **Journey C (unsupported)** — bounded UNKNOWN_OR_UNSUPPORTED abstention, no fabrication; plus **positive north-star domain transition** via new server-owned `POST /actions/complete` (ownership 404, incomplete 422, double 409, client forge 422; direct-ORM positive test removed).
+
+Gates: backend non-live 82 passed; combined live 14 passed 1 skipped; frontend tsc/vitest(46)/build green; OpenAPI 142 KB with new paths; git diff --check clean; quarantine scan 0. Professional release: BLOCKED_EXTERNAL_VALIDATION (counsel/rule/gold/pilot evidence absent).

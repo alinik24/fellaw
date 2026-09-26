@@ -5,7 +5,15 @@
  * The role is ALWAYS derived server-side from the bearer token.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
+/** Shared API base for pages and library clients (single source of truth).
+ * Defaults to same-origin '/api' (proxied by vite dev server or nginx); an
+ * explicit VITE_API_URL overrides it for external deployments.
+ */
+export function apiBase(): string {
+  return API_BASE_URL;
+}
 
 export type Role = 'anonymous' | 'citizen' | 'lawyer' | 'admin';
 export type CapabilityStatus = 'implemented' | 'partial' | 'planned' | 'missing' | 'removed';

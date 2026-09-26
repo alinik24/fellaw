@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from typing import AsyncGenerator
 
 from sqlalchemy import event, text
@@ -10,6 +11,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import DeclarativeBase
 
 from app.config import settings
@@ -24,9 +26,11 @@ engine: AsyncEngine = create_async_engine(
     settings.DATABASE_URL,
     echo=False,           # set True for SQL debug logging
     pool_pre_ping=True,   # recycle stale connections
-    pool_size=10,
-    max_overflow=20,
-    pool_recycle=3600,
+    **(
+        {"poolclass": NullPool}
+        if os.getenv("TESTING", "").lower() == "true" or os.getenv("FELLAW_TEST_DB")
+        else {"pool_size": 10, "max_overflow": 20, "pool_recycle": 3600}
+    ),
 )
 
 # ---------------------------------------------------------------------------

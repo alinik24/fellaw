@@ -42,7 +42,7 @@ def test_build_overview_counts_and_scoping():
     assert [c.id for c in ov.urgent_cases] == ["1"]
     assert ov.deep_links["dashboard"] == "/user/dashboard"
     assert ov.deep_links["cases"] == "/user/dashboard"  # no /ongoing-cases after PR-01
-    assert "my_cases" in ov.capabilities and "lawyer_dashboard" not in ov.capabilities
+    assert set(ov.capabilities) == {"submit_notice", "upload_document", "first_response", "my_matters", "deadline_reminders", "human_handoff"}
     assert ov.generated_at == "2026-09-06T12:00:00Z"
 
 
@@ -190,7 +190,7 @@ def test_capabilities_public_anonymous_without_db(client):
     body = r.json()
     assert body["role"] == "anonymous"
     ids = {c["id"] for c in body["capabilities"]}
-    assert "urgent_help" in ids and "my_cases" not in ids
+    assert ids == {"submit_notice"}
     assert "RDG" in body["disclaimer"]
 
 

@@ -38,6 +38,32 @@ Substantive mutation (title/description/action_items/deadline/priority/resources
 
 **RIG-PROC-02 (external skill mutation).** No writes performed outside `Legal_Aid/fellaw` this run; no skill files touched. Scope check at end of run.
 
+### PR-02D (boundary identity + fail-closed cleanup + behavioral test hardening + safe isolation; 2026-09-10)
+
+Executed in the isolated sibling worktree `Legal_Aid/fellaw-pr02d` (branch `pr02d-boundary-consistency`) from source HEAD `50ea13da1c2c241c0f3b563026d4ff3d6c40bf32`. The dirty `main` checkout was NOT mutated.
+
+**RIG-PROC-03 — dirty-checkout isolation (CLOSED).** Source preflight recorded (branch `main`, HEAD, 81-line porcelain). Worktree created from the SAME HEAD; PR-owned cumulative changes (42 modified + 24 untracked + 15 staged-deleted) transferred byte-verified; the single PRE-EXISTING/OTHER path (`frontend/src/pages/UrgentSelect.tsx`) was NOT transferred. Post-transfer: worktree status == source status minus UrgentSelect, source unchanged. No commit/push/reset/stash/clean/checkout of the active tree.
+
+**RIG-PR02C-06 — capability/policy ID mismatch (CLOSED, held).** `laws_search` remains the ONE canonical id (registry + policy + bot + frontend + tests + docs); `chat_legal_question` only in negative assertions. Transition test (`test_laws_search_policy_transition_propagates_to_registry`) proves REVIEW_REQUIRED removes it from EVERY role without permanent production state change.
+
+**RIG-PR02C-07 — is_executable unknown fail-open (CLOSED).** `is_executable(unknown)` now returns `False` (was `True`). `require_executable(unknown)` raises `BoundaryDisabled`. `registry_legal_execution_status(no-policy)` remains `True` for navigation display. `bot_contract.py`'s `render_capability` is the only production caller and is guarded by `policy is not None` — no behavior change. New `test_is_executable_fail_closed_contract` pins the final contract.
+
+**RIG-TEST-02 — adversarial behavioral evidence (CLOSED).** The static policy-table test was REPLACED by behavioral execution proofs:
+- 4A: real `POST /chat/message` endpoint × 4 adversarial prompts with exploding-DB + exploding-LLM spies → `BoundaryDisabled` before any DB/LLM/persistence.
+- 4B: real `bot_turn` ask × 4 adversarial prompts with controlled bounded `search_laws` fixture + exploding-LLM spy → source retrieval or safe auth/urgent handoff; `send_message` structurally absent from the bot module.
+- 4C: real `bot_turn` ask with resolved user for "What does §4 KSchG generally provide?" → KSchG §4 + citation + RDG disclaimer; no generative LLM touched.
+Documentation may now claim "prompts 1-4 blocked/bounded; 5 grounded" with behavioral evidence.
+
+**Entry-point contradiction (CLOSED).** `laws_search` no longer claims `POST /api/v1/chat/message`; its entry points are `GET /api/v1/laws/search` + bot ask (bounded). `generic_legal_chat` exclusively owns POST /chat/message + GET /chat/stream. `test_route_map_each_route_one_policy` proves route→policy uniqueness.
+
+**Bot cleanup (CLOSED).** Removed the misleading `from app.api.chat import send_message as _send  # noqa (documented contract)` import + comment from `platform_bot.py` — bot ask is bounded `search_laws` only; `send_message` structurally absent.
+
+**Preserved PR-02C accepted portions (per Section 5).** generic_legal_chat REVIEW_REQUIRED; template generation REVIEW_REQUIRED; extraction-only upload; roadmap PUT status-only; narrative PUT is_final-only; extra=forbid; counsel UNKNOWN; APPROVED = engineering state. No deadline semantics (PR-03 owns). No migrations/dependencies/features/LLM integrations.
+
+**Tests.** `test_legal_boundary.py` 36 (was 30); full backend non-live 66 passed + 10 skipped (live-DB, reported separately). Frontend unchanged (already canonical).
+
+**Resume point / next.** Source `main` checkout remains unmodified (worktree is the PR-02D state; merge/port strategy to be decided by user). PR-03 (deadline semantics) is NEXT and must NOT be started until instructed.
+
 ### PR-02 (prior slice — legal capability boundary / quarantine; for context)
 - Inventory: traced counterargument_service, narrative_service, roadmap_service, generic chat (+stream), document analysis, templates, bot intents, capability registry, and OpenAPI. Produced the affected-surface map (entry point → route → service → LLM/RAG dep → persistence → consumer → auth → class). No mutation before inventory was complete.
 - Canonical vocabulary: `backend/app/services/legal_boundary.py` — classes `L0_GENERAL_INFORMATION`, `L1_DOCUMENT_EXPLANATION`, `L2_PROCESS_NAVIGATION`, `L3_INDIVIDUAL_LEGAL_ASSESSMENT`, `L4_STRATEGIC_DRAFTING_OR_REPRESENTATION` + approval states `APPROVED`/`REVIEW_REQUIRED`/`DISABLED`. Engineering/risk-review categories, NOT RDG-legality declarations. Single canonical gate `require_executable()`; `BoundaryDisabled` handled in `main.py` as a deterministic typed 403 (capability_id, class, approval_state, safe_handoff `/urgent/select`, lawyer_handoff `/find-lawyer`).
@@ -162,3 +188,27 @@ Exact resume commands for the next session run backend tests with the **repo ven
 - Started the backend on port 8004 with `PYTHONPATH` cleared so the repo venv could load; health returned HTTP 200 but `status: degraded` because the dedicated Postgres connection was refused.
 - Ran `iterate.py --auto --base-url http://127.0.0.1:8004`; result: `no READY backlog items — loop is caught up; refresh backlog from metrics/scenarios`.
 - No item ID was selected, no files or database rows were changed by the loop, and no metric delta is claimable. Exact resume point: restore `fellaw-postgres`/`FELLAW_TEST_DB`, refresh the backlog from current metrics/scenarios, then run one new `--auto` cycle.
+
+---
+
+## E2E FINAL ACCEPTANCE (2026-09-11) — A/B/C corrections, all proven
+
+Slice in canonical worktree `Legal_Aid/fellaw-e2e` (branch `e2e-first-response-build`, HEAD `50ea13da…`, no commit/push).
+
+### A — Hard-reload reconstruction (CLOSED)
+- New `GET /api/v1/first-response/{case_id}/state` persisted-read contract (facts+review, semantic clocks, reminders, latest handoff dossier, north star, timeline; ownership 404).
+- `frontend/src/pages/CaseJourney.tsx` mount effect now loads ALL journey state from that contract (destroyed React memory rebuilds from API/DB, never prior state).
+- Browser proven with ACTUAL hard reloads of `/case/{id}?document={id}`: reload #1 reconstructed facts (USER_CONFIRMED), clocks (STATUTORY_DEADLINE no-date REVIEW_REQUIRED, DOCUMENT_STATED_DEADLINE VERIFIED), reminder 2026-03-15 scheduled, handoff created (dossier facts=2 clocks=2 reminders=1), north No. After completing the action, reload #2 showed north **Yes** (events [action_completed, handoff_created]).
+
+### B — Supported notice, no confirmed trigger (CLOSED)
+- Uploaded Kündigung, facts NOT confirmed → family EMPLOYMENT_TERMINATION_OR_ADVERSE_NOTICE; rendered STATUTORY_DEADLINE (no date) REVIEW_REQUIRED + DOCUMENT_STATED_DEADLINE 2026-03-31 NEEDS_CONFIRMATION; due null; no guessed statutory date in UI.
+
+### C — Unsupported doc abstention + positive domain transition (CLOSED)
+- BetrVG fixture → UNKNOWN_OR_UNSUPPORTED; STATUTORY_DEADLINE (no date) REVIEW_REQUIRED; no fabricated date/assessment.
+- New `POST /api/v1/first-response/{case_id}/actions/complete` (server-owned): ownership 404, incomplete 422, double 409; marks clocks completed; emits `action_completed` internally. Test `test_north_star_true_only_from_real_domain_completion` covers telemetry-only false, unrelated-handoff false, incomplete 422, complete→true→fresh reload true, forge 422, double 409, cross-user 404. Direct-ORM positive test REMOVED.
+
+### Gates (all green, real exit codes)
+- Backend non-live: 82 passed. Combined live: 14 passed, 1 skipped. Frontend: tsc 0, vitest 46, build ok. OpenAPI regenerated (142 KB) incl. both new paths. `git diff --check` clean; quarantine scan 0.
+
+### Resume point
+Nothing pending. Professional release remains BLOCKED_EXTERNAL_VALIDATION (counsel/rule/gold/pilot evidence). No commit/push made. Backend (8001) + frontend (5174) running against disposable DB if further browser work needed.

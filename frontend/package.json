@@ -9,7 +9,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --pool=threads --maxWorkers=1 --minWorkers=1",
     "test:watch": "vitest",
     "check:fabricated": "node scripts/check-fabricated-state.mjs"
   },

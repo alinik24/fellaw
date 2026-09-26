@@ -18,6 +18,7 @@ from app.api.auth import CurrentUser
 from app.config import settings
 from app.database import get_db, AsyncSessionLocal
 from app.models.evidence import Document
+from app.models.case import Case
 from app.schemas.case import DocumentResponse
 from app.services.document_service import get_safe_filename, process_uploaded_document
 
@@ -98,6 +99,11 @@ async def upload_document(
         )
 
     content_type = file.content_type or "application/octet-stream"
+
+    if case_id is not None:
+        owned_case = (await db.execute(select(Case).where(Case.id == case_id, Case.user_id == current_user.id))).scalar_one_or_none()
+        if owned_case is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Fall nicht gefunden.")
 
     # Read file content and check size
     content = await file.read()
