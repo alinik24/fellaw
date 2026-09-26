@@ -41,3 +41,7 @@ Add a forward Alembic migration; do not rewrite an applied migration. Check that
 ```
 
 Live/provider tests are opt-in and must not be required for the default offline gate.
+
+## Dependency maintenance
+
+Audit the frontend with `npm audit` and the backend requirements with `pip-audit -r backend/requirements.txt`; classify runtime versus development exposure and direct versus transitive dependencies before changing versions. Never use force-fix or bulk major upgrades blindly. After dependency changes, run bootstrap, doctor, all backend tests, each frontend contract test file separately on Windows, and the production frontend build. Preserve the OpenClaw boundary and never inspect or copy its runtime state while auditing portable source.
