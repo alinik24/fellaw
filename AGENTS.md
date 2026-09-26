@@ -25,6 +25,10 @@ Fellaw is a legal first-response and case-navigation product. It gives structure
 
 Never commit `.env`, tokens, credentials, user documents, transcripts, runtime databases, or OpenClaw sessions. Use `.env.example`. Synthetic fixtures must be clearly synthetic.
 
+## Starting from no local checkout
+
+Confirm private `alinik24/fellaw` and its current default, clone it, and record branch/HEAD. Run the repository bootstrap and doctor commands, read only task-relevant architecture/development docs, and run the documented baseline tests. Implement, rerun affected gates, commit and push, verify the remote commit, and leave clean remote-backed state. The OpenClaw profile is private runtime state, not a source backup; no sibling checkout or personal absolute path may be required.
+
 ## Database changes
 
 Add a forward Alembic migration; do not rewrite an applied migration. Check that revision links form one head. Keep ORM and API schemas aligned.
